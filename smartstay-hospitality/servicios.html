@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/app.js"></script>
+<script>requireGuestSession();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .page-wrap { max-width: 1160px; margin: 0 auto; padding: 32px 32px 60px; }
+  .page-head h1 { font-size: 25px; }
+  .page-head p { margin-top: 4px; }
+
+  .cat-tabs { display: flex; gap: 10px; margin: 26px 0; flex-wrap: wrap; }
+  .cat-tab {
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    background: #fff;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .cat-tab.active { background: var(--blue-primary); color: #fff; border-color: var(--blue-primary); }
+
+  .cat-section { margin-bottom: 40px; }
+  .cat-title { display: flex; align-items: center; gap: 10px; font-size: 17px; margin-bottom: 16px; }
+  .cat-title .icon-circle { width: 34px; height: 34px; }
+  .cat-title .icon-circle svg { width: 16px; height: 16px; }
+
+  .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .service-card { padding: 22px; display: flex; flex-direction: column; height: 100%; }
+  .service-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #c9d6f5; }
+  .service-card .top-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .service-card h5 { font-size: 15px; margin: 14px 0 6px; }
+  .service-card p.desc { font-size: 13px; flex-grow: 1; }
+  .service-card .price { font-family: var(--font-heading); font-weight: 700; color: var(--text-primary); font-size: 15px; margin: 14px 0; }
+  .service-card .price span { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+
+  .btn-request {
+    width: 100%;
+  }
+  .btn-request.requested {
+    background: var(--blue-light-bg);
+    color: var(--blue-primary-hover);
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .btn-request.in-progress {
+    background: #fef3c7;
+    color: #b45309;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .btn-request.done {
+    background: #dcfce7;
+    color: #16a34a;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  @media (max-width: 960px) { .service-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .service-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <a href="index.html" class="logo">
+    <img src="assets/logo.svg" alt="SmartStay">
+    <div class="logo-text">
+      <span class="logo-main">SMARTSTAY</span>
+      <span class="logo-sub">HOSPITALITY</span>
+    </div>
+  </a>
+  <div class="app-nav-links">
+    <a href="portal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span data-i18n="gnav.home">Inicio</span></a>
+    <a href="checkin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M9 11l2 2 4-4"/></svg><span data-i18n="gnav.checkin">Check-in</span></a>
+    <a href="portal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><span data-i18n="gnav.stay">Mi estadía</span></a>
+    <a href="servicios.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg><span data-i18n="gnav.services">Servicios</span></a>
+    <a href="cuenta.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="gnav.account">Mi cuenta</span></a>
+    <a href="asistencia.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.7.4-1.2 1-1.2 1.9M12 17h.01"/></svg><span data-i18n="gnav.help">Asistencia</span></a>
+  </div>
+  <div class="app-nav-right">
+    <button class="mobile-menu-btn" onclick="toggleMobileNav(this)" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="lang-select" title="Español / English">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
+      <span class="lang-code">ES</span>
+    </div>
+    <button class="bell-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span></button>
+    <a href="index.html" class="btn btn-outline btn-sm" onclick="logoutGuest(); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      <span data-i18n="gnav.logout">Cerrar sesión</span>
+    </a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-head">
+    <h1 data-i18n="svc.title">Servicios del hotel</h1>
+    <p data-i18n="svc.subtitle">Solicita los servicios que necesites, se cargarán directamente a tu habitación.</p>
+  </div>
+
+  <div class="cat-tabs" id="catTabs">
+    <button class="cat-tab active" onclick="setCat(this,'todos')" data-i18n="svc.all">Todos</button>
+  </div>
+
+  <div id="catalogSections"></div>
+  <p id="emptyCatalogState" style="display:none; text-align:center; padding:40px 0; font-size:13.5px; color:var(--text-secondary);">Este hotel todavía no cargó servicios en su catálogo.</p>
+</div>
+
+<script>
+  function currentGuestName() {
+    const guest = getGuestInfo() || {};
+    return guest.firstName ? (guest.firstName + ' ' + (guest.lastName || '')).trim() : 'Huésped';
+  }
+
+  function priceLabel(item) {
+    if (item.priceLabel) return item.priceLabel;
+    if (item.price > 0) return '$' + item.price.toLocaleString('es-PY') + (item.unit ? ' ' + item.unit : '');
+    return 'Sin cargo';
+  }
+
+  function slugifyCat(cat) {
+    return cat.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-');
+  }
+
+  function renderCatalog() {
+    const catalog = getServiceCatalog();
+    document.getElementById('emptyCatalogState').style.display = catalog.length ? 'none' : 'block';
+
+    const categories = [...new Set(catalog.map(s => s.category))];
+    const tabs = document.getElementById('catTabs');
+    tabs.innerHTML = '<button class="cat-tab active" onclick="setCat(this,\'todos\')" data-i18n="svc.all">Todos</button>'
+      + categories.map(cat => `<button class="cat-tab" onclick="setCat(this,'${slugifyCat(cat)}')">${cat}</button>`).join('');
+
+    const sections = document.getElementById('catalogSections');
+    sections.innerHTML = categories.map(cat => {
+      const items = catalog.filter(s => s.category === cat);
+      return `
+      <div class="cat-section" data-cat="${slugifyCat(cat)}">
+        <div class="cat-title">
+          <div class="icon-circle icon-circle--light">${serviceIconSvg(items[0].icon)}</div>
+          ${cat}
+        </div>
+        <div class="service-grid">
+          ${items.map(item => `
+            <div class="card service-card" data-service-id="${item.id}">
+              <div class="top-row">
+                <div class="icon-circle icon-circle--light icon-circle-md">${serviceIconSvg(item.icon)}</div>
+                ${item.badge ? `<span class="badge">${item.badge}</span>` : ''}
+              </div>
+              <h5>${item.title}</h5>
+              <p class="desc">${item.desc || ''}</p>
+              <div class="price">${priceLabel(item)}</div>
+              <button class="btn btn-primary btn-request" onclick="requestService(this)">Solicitar</button>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+
+    applyI18n();
+    syncRequestButtons();
+  }
+
+  function requestService(btn) {
+    const card = btn.closest('.service-card');
+    const item = getServiceCatalog().find(s => s.id === card.dataset.serviceId);
+    if (!item) return;
+    const myGuest = getMyGuestRecord();
+    if (!myGuest) {
+      showToast('Completá tu check-in digital antes de solicitar un servicio');
+      return;
+    }
+    addServiceRequest({
+      title: item.title,
+      guest: currentGuestName(),
+      guestId: myGuest.id,
+      room: myGuest.room,
+      price: item.price || 0,
+    });
+    setButtonState(btn, 'pending');
+    showToast('Servicio solicitado, se cargará a tu habitación');
+  }
+
+  function setButtonState(btn, status) {
+    btn.classList.remove('requested', 'in-progress', 'done');
+    if (status === 'pending') { btn.textContent = 'Solicitado'; btn.classList.add('requested'); }
+    if (status === 'progress') { btn.textContent = 'En proceso'; btn.classList.add('in-progress'); }
+    if (status === 'done') { btn.textContent = 'Completado ✓'; btn.classList.add('done'); }
+  }
+
+  // Reflect the real, latest status of each service the current guest
+  // already requested (kept in sync with what staff updates in admin).
+  function syncRequestButtons() {
+    const myGuest = getMyGuestRecord();
+    const name = currentGuestName();
+    const myRequests = myGuest ? _servicesForGuestRecord(myGuest, getActiveHotelId(), name) : [];
+    document.querySelectorAll('.service-card').forEach(card => {
+      const btn = card.querySelector('.btn-request');
+      const title = card.querySelector('h5').textContent;
+      const match = myRequests.find(r => r.title === title);
+      if (match) setButtonState(btn, match.status);
+    });
+  }
+
+  function setCat(btn, cat) {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.cat-section').forEach(section => {
+      section.style.display = (cat === 'todos' || section.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+
+  renderCatalog();
+</script>
+
+</body>
+</html>

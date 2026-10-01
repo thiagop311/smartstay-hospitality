@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/app.js"></script>
+<script>requireStaffSession();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel administrativo — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="logo logo--on-dark">
+      <img src="assets/logo-white.svg" alt="SmartStay">
+      <div class="logo-text">
+        <span class="logo-main">SMARTSTAY</span>
+        <span class="logo-sub">HOSPITALITY</span>
+      </div>
+    </a>
+    <nav class="sidebar-nav">
+      <a href="admin.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="admin-huespedes.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Huéspedes
+      </a>
+      <a href="admin-habitaciones.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V8l6-4 6 4v13M9 21v-6h6v6"/></svg>
+        Habitaciones
+      </a>
+      <a href="admin-servicios.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg>
+        Servicios
+      </a>
+      <a href="admin-accesos.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
+        Accesos
+      </a>
+      <a href="admin-configuracion.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="index.html" onclick="logoutStaff(); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="topSearch" placeholder="Buscar huésped, habitación o reserva..." onkeydown="if(event.key==='Enter'){window.location.href='admin-huespedes.html?q='+encodeURIComponent(this.value);}">
+      </div>
+      <div class="admin-user" style="position:relative;">
+        <button class="bell-btn" onclick="document.getElementById('notifDropdown').toggleAttribute('hidden')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span>
+        </button>
+        <div id="notifDropdown" hidden style="position:absolute; top:48px; right:0; width:300px; background:#fff; border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-md); padding:8px; z-index:100;">
+          <div style="padding:10px 12px; font-size:13px; font-weight:700;">Notificaciones</div>
+          <div id="notifList"></div>
+        </div>
+        <div class="avatar" data-staff="initials">PH</div>
+        <div>
+          <div class="uname" data-staff="name">Personal del hotel</div>
+          <div class="urole" data-staff="role">Sin sesión iniciada</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="page-title">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Resumen de la actividad del hotel · <span id="dashDate"></span></p>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <div class="top-row">
+            <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          </div>
+          <div class="stat-value" id="statActiveGuests">0</div>
+          <div class="stat-label">Huéspedes activos</div>
+        </div>
+        <div class="card stat-card">
+          <div class="top-row">
+            <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V8l6-4 6 4v13M9 21v-6h6v6"/></svg></div>
+          </div>
+          <div class="stat-value" id="statOccupancyPct">0%</div>
+          <div class="stat-label">Habitaciones ocupadas</div>
+        </div>
+        <div class="card stat-card">
+          <div class="top-row">
+            <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg></div>
+          </div>
+          <div class="stat-value" id="statPendingRequests">0</div>
+          <div class="stat-label">Servicios pendientes</div>
+        </div>
+        <div class="card stat-card">
+          <div class="top-row">
+            <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+          </div>
+          <div class="stat-value" id="statTodayRevenue">$0</div>
+          <div class="stat-label">Ingresos totales (habitación + servicios)</div>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <div class="card panel-card">
+          <div class="panel-head">
+            <h3>Check-ins de hoy</h3>
+            <a href="admin-huespedes.html" class="btn btn-outline btn-sm">Ver todos</a>
+          </div>
+          <table class="admin-table" id="dashCheckinsTable">
+            <thead>
+              <tr><th>Huésped</th><th>Habitación</th><th>Hora</th><th>Estado</th></tr>
+            </thead>
+            <tbody id="dashCheckinsBody"></tbody>
+          </table>
+          <p id="dashCheckinsEmpty" style="display:none; text-align:center; padding:24px 0; font-size:13.5px;">Todavía no hay check-ins registrados. Van a aparecer acá cuando un huésped complete el check-in digital.</p>
+        </div>
+
+        <div>
+          <div class="card panel-card" style="margin-bottom:20px;">
+            <div class="panel-head">
+              <h3>Servicios pendientes</h3>
+              <a href="admin-servicios.html" class="btn btn-outline btn-sm">Ver todos</a>
+            </div>
+            <div id="dashRequestsList"></div>
+            <p id="dashRequestsEmpty" style="display:none; text-align:center; padding:16px 0; font-size:13px;">Sin solicitudes de servicio por ahora.</p>
+          </div>
+
+          <div class="card panel-card">
+            <div class="panel-head"><h3>Ocupación por piso</h3></div>
+            <div id="floorOccList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initials(name) {
+    return name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  }
+  function statusPill(status) {
+    if (status === 'activo') return '<span class="status-pill ok">Activo</span>';
+    if (status === 'pendiente') return '<span class="status-pill pending">Check-in pendiente</span>';
+    return '<span class="status-pill off">' + status + '</span>';
+  }
+
+  const guests = getGuestsRegistry();
+  const requests = getServiceRequests();
+
+  document.getElementById('dashDate').textContent = formatTodayEs();
+  document.getElementById('statActiveGuests').textContent = guests.filter(g => g.status === 'activo').length;
+  document.getElementById('statPendingRequests').textContent = requests.filter(r => r.status === 'pending').length;
+  const hotelStats = getCGOHotelStats(getActiveHotelId());
+  document.getElementById('statTodayRevenue').textContent = '$' + Math.round(hotelStats.revenue).toLocaleString('es-PY');
+
+  const occ = getOccupancyStats();
+  document.getElementById('statOccupancyPct').textContent = occ.pct + '%';
+  const floorList = document.getElementById('floorOccList');
+  const floors = Object.keys(occ.byFloor).sort();
+  floorList.innerHTML = floors.length ? floors.map(f => {
+    const fl = occ.byFloor[f];
+    const pct = fl.total ? Math.round((fl.occupied / fl.total) * 100) : 0;
+    return `<div class="occ-row"><span class="floor">Piso ${f}</span><div class="occ-bar"><div class="fill" style="width:${pct}%"></div></div><span class="pct">${pct}%</span></div>`;
+  }).join('') : '<p style="font-size:13px; color:var(--text-secondary);">Sin datos de habitaciones.</p>';
+
+  const checkinsBody = document.getElementById('dashCheckinsBody');
+  if (guests.length) {
+    checkinsBody.innerHTML = guests.slice(0, 5).map(g => {
+      const name = (g.firstName + ' ' + (g.lastName || '')).trim();
+      const time = (g.checkin || '').split('·').pop().trim();
+      return `<tr>
+        <td><div class="guest-cell"><div class="mini-avatar">${initials(name)}</div>${name}</div></td>
+        <td>${g.room || '—'}</td>
+        <td>${time || '—'}</td>
+        <td>${statusPill(g.status)}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    document.getElementById('dashCheckinsTable').style.display = 'none';
+    document.getElementById('dashCheckinsEmpty').style.display = 'block';
+  }
+
+  const reqList = document.getElementById('dashRequestsList');
+  const pending = requests.slice(0, 3);
+  if (pending.length) {
+    reqList.innerHTML = pending.map(r => `
+      <div class="service-req">
+        <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg></div>
+        <div class="sr-info"><h6>${r.title} · Hab. ${r.room}</h6><p>${r.guest} · ${timeAgo(r.createdAt)}</p></div>
+        <span class="status-pill ${r.status === 'done' ? 'ok' : 'pending'}">${r.status === 'done' ? 'Completado' : 'Pendiente'}</span>
+      </div>`).join('');
+  } else {
+    document.getElementById('dashRequestsEmpty').style.display = 'block';
+  }
+
+  const notifList = document.getElementById('notifList');
+  const notifItems = [];
+  if (requests[0]) {
+    notifItems.push(`<div class="service-req" style="padding:8px 12px;"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg></div><div class="sr-info"><h6>Nueva solicitud · Hab. ${requests[0].room}</h6><p>${requests[0].title} · ${timeAgo(requests[0].createdAt)}</p></div></div>`);
+  }
+  if (guests[0]) {
+    const name = (guests[0].firstName + ' ' + (guests[0].lastName || '')).trim();
+    notifItems.push(`<div class="service-req" style="padding:8px 12px; border-bottom:none;"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="sr-info"><h6>Check-in completado</h6><p>${name} · Hab. ${guests[0].room}</p></div></div>`);
+  }
+  notifList.innerHTML = notifItems.length ? notifItems.join('') : '<p style="padding:10px 12px; font-size:12.5px; color:var(--text-secondary);">Sin notificaciones por ahora.</p>';
+</script>
+</body>
+</html>

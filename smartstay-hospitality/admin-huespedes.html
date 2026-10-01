@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/app.js"></script>
+<script>requireStaffSession();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huéspedes — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/admin.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  .new-guest-form .form-group:last-child { margin-bottom: 0; }
+  #gd-qr img { border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="logo logo--on-dark">
+      <img src="assets/logo-white.svg" alt="SmartStay">
+      <div class="logo-text"><span class="logo-main">SMARTSTAY</span><span class="logo-sub">HOSPITALITY</span></div>
+    </a>
+    <nav class="sidebar-nav">
+      <a href="admin.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="admin-huespedes.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Huéspedes
+      </a>
+      <a href="admin-habitaciones.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M6 21V8l6-4 6 4v13M9 21v-6h6v6"/></svg>
+        Habitaciones
+      </a>
+      <a href="admin-servicios.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg>
+        Servicios
+      </a>
+      <a href="admin-accesos.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
+        Accesos
+      </a>
+      <a href="admin-configuracion.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="index.html" onclick="logoutStaff(); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="topSearch" placeholder="Buscar huésped, habitación o reserva...">
+      </div>
+      <div class="admin-user">
+        <button class="bell-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span></button>
+        <div class="avatar" data-staff="initials">PH</div>
+        <div><div class="uname" data-staff="name">Personal del hotel</div><div class="urole" data-staff="role">Sin sesión iniciada</div></div>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="page-title">
+        <div>
+          <h1>Huéspedes</h1>
+          <p>Gestioná los huéspedes activos, sus habitaciones y reservas.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openNewGuestModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+          Nuevo huésped
+        </button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="todos" onclick="setFilter(this,'todos')">Todos</button>
+        <button class="filter-tab" data-filter="activo" onclick="setFilter(this,'activo')">Activos</button>
+        <button class="filter-tab" data-filter="pendiente" onclick="setFilter(this,'pendiente')">Check-in pendiente</button>
+        <button class="filter-tab" data-filter="checkout" onclick="setFilter(this,'checkout')">Check-out hoy</button>
+        <button class="filter-tab" data-filter="cancelada" onclick="setFilter(this,'cancelada')">Canceladas</button>
+      </div>
+
+      <div class="card panel-card">
+        <div class="panel-head">
+          <h3><span id="resultCount">0</span> huéspedes</h3>
+        </div>
+        <table class="admin-table" id="guestTable">
+          <thead>
+            <tr><th>Huésped</th><th>Habitación</th><th>Check-in</th><th>Check-out</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody id="guestTableBody"></tbody>
+        </table>
+        <p id="emptyState" style="display:none; text-align:center; padding:30px 0; font-size:13.5px;">No encontramos huéspedes con esos filtros.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Guest detail modal -->
+<div class="modal-overlay" id="guestDetailModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('guestDetailModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="gd-name">—</h3>
+    <p class="modal-sub" id="gd-room">—</p>
+    <div class="hint-box" style="margin-bottom:16px; align-items:center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h1M8 16h1"/></svg>
+      <div style="flex:1;">Código de reserva para el check-in: <strong id="gd-code">—</strong><br><span style="font-size:11.5px;">Escaneá el QR o pasá el código para que el huésped lo use en checkin.html.</span></div>
+      <div id="gd-qr" style="flex-shrink:0;"></div>
+    </div>
+    <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Check-in</div><div id="gd-checkin" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Check-out</div><div id="gd-checkout" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Email</div><div id="gd-email" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Estado</div><div id="gd-status" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Cargo por habitación</div><div id="gd-roomcharge" style="font-weight:600;">—</div></div>
+    </div>
+    <div id="gd-cancelbox" class="hint-box" style="display:none; margin-bottom:16px; background:#fef2f2; border-color:#fecaca;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <div>Reserva cancelada<span id="gd-canceldate"></span>.<br><span style="font-size:11.5px;">Motivo: <strong id="gd-cancelreason">—</strong></span></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">Documento de identidad</div>
+      <div id="gd-document" style="font-size:13px;">—</div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">Firma digital</div>
+      <div id="gd-signature" style="font-size:13px;">—</div>
+    </div>
+    <div class="modal-btn-row" style="display:flex; gap:10px;">
+      <button class="btn btn-outline btn-block" onclick="closeModal('guestDetailModal')">Cerrar</button>
+      <button class="btn btn-outline btn-block" onclick="editGuest(currentDetailGuestId)">Editar</button>
+      <button class="btn btn-primary btn-block" onclick="showToast('Mensaje enviado al huésped'); closeModal('guestDetailModal')">Enviar mensaje</button>
+    </div>
+    <div id="gd-cancel-section" style="display:none; border-top:1px solid var(--border-color); margin-top:16px; padding-top:16px;">
+      <button class="btn btn-outline btn-block" style="color:#b45309; border-color:#fde68a;" onclick="openCancelReservationModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        Cancelar reserva
+      </button>
+      <p style="font-size:12px; color:var(--text-secondary); text-align:center; margin-top:8px;">Se guarda el motivo y la reserva queda como cancelada, sin borrar el registro.</p>
+    </div>
+    <div style="border-top:1px solid var(--border-color); margin-top:16px; padding-top:16px;">
+      <button class="btn btn-outline btn-block" style="color:#dc2626; border-color:#fecaca;" onclick="deleteGuest(currentDetailGuestId)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/></svg>
+        Eliminar huésped
+      </button>
+      <p style="font-size:12px; color:var(--text-secondary); text-align:center; margin-top:8px;">Usalo si el huésped se fue antes de su check-out. No se puede deshacer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel reservation modal -->
+<div class="modal-overlay" id="cancelReservationModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('cancelReservationModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>Cancelar reserva</h3>
+    <p class="modal-sub">Contanos el motivo — queda guardado en el historial de la reserva.</p>
+    <form onsubmit="submitCancelReservation(event)">
+      <div class="form-group">
+        <label class="form-label">Motivo de la cancelación</label>
+        <textarea class="form-input" id="cr-reason" style="padding:12px 14px; min-height:90px; resize:vertical;" placeholder="Ej: el huésped avisó que no puede viajar" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="background:#b45309; border-color:#b45309;">Confirmar cancelación</button>
+    </form>
+  </div>
+</div>
+
+<!-- New / edit guest modal -->
+<div class="modal-overlay" id="newGuestModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('newGuestModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="ng-title">Nuevo huésped</h3>
+    <p class="modal-sub" id="ng-subtitle">Completá los datos para registrar un nuevo huésped.</p>
+    <form class="new-guest-form" onsubmit="submitGuestForm(event)">
+      <div class="form-group"><label class="form-label">Nombre y apellido</label><input class="form-input" id="ng-name" style="padding-left:14px;" placeholder="Ej: Martina Ruiz" required></div>
+      <div class="form-group"><label class="form-label">Habitación</label>
+        <select class="form-input" id="ng-room" style="padding-left:14px;" required>
+          <option value="" disabled selected>Seleccioná una habitación</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="ng-email" style="padding-left:14px;" placeholder="ejemplo@correo.com" required></div>
+      <div class="form-group"><label class="form-label">Número de documento (opcional)</label><input class="form-input" id="ng-docnumber" style="padding-left:14px;" placeholder="Para que el huésped pueda buscar su reserva por documento"></div>
+      <div class="form-group"><label class="form-label">Fecha de check-in (15:00)</label><input class="form-input" type="date" id="ng-checkin" style="padding-left:14px;" required></div>
+      <div class="form-group"><label class="form-label">Fecha de check-out (11:00)</label><input class="form-input" type="date" id="ng-checkout" style="padding-left:14px;" required></div>
+      <button type="submit" class="btn btn-primary btn-block" id="ng-submit">Registrar huésped</button>
+    </form>
+  </div>
+</div>
+
+<!-- Reservation created confirmation -->
+<div class="modal-overlay" id="reservationCreatedModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('reservationCreatedModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="icon-circle icon-circle--light icon-circle-lg" style="margin:0 auto 14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h3 style="text-align:center;">Reserva creada</h3>
+    <p class="modal-sub" style="text-align:center;">Código para el check-in: <strong id="rc-code">—</strong></p>
+    <button class="btn btn-primary btn-block" onclick="sendReservationEmail()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+      Enviar confirmación por email
+    </button>
+    <p style="font-size:12px; color:var(--text-secondary); text-align:center; margin-top:8px;">Abre un borrador en tu programa de correo, dirigido al huésped, con el código y el enlace de check-in.</p>
+    <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="closeModal('reservationCreatedModal')">Cerrar</button>
+  </div>
+</div>
+
+<!-- Reservation created — real email confirmation -->
+<div class="modal-overlay" id="reservationCreatedModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('reservationCreatedModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="icon-circle icon-circle--light" style="width:56px; height:56px; margin-bottom:14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h3>Reserva creada</h3>
+    <p class="modal-sub">Código de reserva: <strong id="rc-code">—</strong>. Pasáselo al huésped o enviáselo por email para que haga su check-in.</p>
+    <div class="modal-btn-row" style="display:flex; gap:10px; margin-top:16px;">
+      <button class="btn btn-outline btn-block" onclick="closeModal('reservationCreatedModal')">Cerrar</button>
+      <button class="btn btn-primary btn-block" id="rc-emailbtn" onclick="sendReservationEmail()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+        Enviar confirmación por email
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFilter = 'todos';
+let currentSearch = '';
+
+function guestName(g) {
+  return (g.firstName + ' ' + (g.lastName || '')).trim();
+}
+
+function statusPill(status) {
+  if (status === 'activo') return '<span class="status-pill ok">Activo</span>';
+  if (status === 'pendiente') return '<span class="status-pill pending">Check-in pendiente</span>';
+  if (status === 'checkout') return '<span class="status-pill warn">Check-out hoy</span>';
+  if (status === 'cancelada') return '<span class="status-pill off">Cancelada</span>';
+  return '<span class="status-pill off">—</span>';
+}
+
+function initials(name) {
+  return name.split(' ').filter(Boolean).map(w => w[0]).slice(0,2).join('').toUpperCase();
+}
+
+function render() {
+  const guests = getGuestsRegistry();
+  const body = document.getElementById('guestTableBody');
+  const q = currentSearch.trim().toLowerCase();
+  const filtered = guests.filter(g => {
+    const matchesFilter = currentFilter === 'todos' || g.status === currentFilter;
+    const name = guestName(g).toLowerCase();
+    const matchesSearch = !q || name.includes(q) || (g.room || '').toLowerCase().includes(q);
+    return matchesFilter && matchesSearch;
+  });
+  document.getElementById('resultCount').textContent = filtered.length;
+  document.getElementById('guestTable').style.display = filtered.length ? '' : 'none';
+  document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+  document.getElementById('emptyState').textContent = guests.length
+    ? 'No encontramos huéspedes con esos filtros.'
+    : 'Todavía no hay huéspedes registrados. Van a aparecer acá cuando completen el check-in digital o los agregues manualmente.';
+  body.innerHTML = filtered.map(g => `
+    <tr>
+      <td><div class="guest-cell"><div class="mini-avatar">${initials(guestName(g))}</div>${guestName(g)}</div></td>
+      <td>${g.room || '—'}</td>
+      <td>${g.checkin || '—'}</td>
+      <td>${g.checkout || '—'}</td>
+      <td>${statusPill(g.status)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="viewGuest('${g.id}')">Ver</button></td>
+    </tr>`).join('');
+}
+
+function setFilter(btn, filter) {
+  currentFilter = filter;
+  document.querySelectorAll('#filterTabs .filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+let currentDetailGuestId = null;
+let editingGuestId = null;
+let lastCreatedReservation = null;
+
+// Opens a real email draft, addressed to the guest's own real email, with
+// their reservation code and check-in link — clicking send in the staff
+// member's own mail client sends a genuine confirmation email. There's no
+// mail server behind this static site, so this is the most real delivery
+// possible without fabricating credentials.
+function sendReservationEmail() {
+  const r = lastCreatedReservation;
+  if (!r || !r.email) { showToast('Esta reserva no tiene un email cargado'); return; }
+  const hotel = getHotelInfo();
+  const checkinUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'checkin.html?code=' + encodeURIComponent(r.reservationCode);
+  const subject = `Tu reserva en ${hotel.name}`;
+  const body = `Hola ${r.firstName || ''},\n\n` +
+    `Confirmamos tu reserva en ${hotel.name}.\n\n` +
+    `Habitación: ${r.room || '—'}\n` +
+    `Check-in: ${r.checkin || '—'}\n` +
+    `Check-out: ${r.checkout || '—'}\n` +
+    `Código de reserva: ${r.reservationCode}\n\n` +
+    `Hacé tu check-in digital desde este enlace:\n${checkinUrl}\n\n` +
+    `Te esperamos.\n${hotel.name}`;
+  const mailtoUrl = `mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const a = document.createElement('a');
+  a.href = mailtoUrl;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('Abrimos el borrador del email · confirmá el envío en tu programa de correo');
+}
+
+function viewGuest(id) {
+  const g = getGuestsRegistry().find(x => x.id === id);
+  if (!g) return;
+  currentDetailGuestId = id;
+  document.getElementById('gd-name').textContent = guestName(g);
+  document.getElementById('gd-room').textContent = g.room || '—';
+  document.getElementById('gd-checkin').textContent = g.checkin || '—';
+  document.getElementById('gd-checkout').textContent = g.checkout || '—';
+  document.getElementById('gd-email').textContent = g.email || '—';
+  document.getElementById('gd-status').innerHTML = statusPill(g.status);
+  const roomType = (g.room || '').split('·')[1] ? g.room.split('·')[1].trim() : '';
+  const rate = (getHotelInfo().roomRates || {})[roomType] || 0;
+  const nights = getNightsCount(g.checkinDate, g.checkoutDate);
+  document.getElementById('gd-roomcharge').textContent = rate
+    ? `$${(rate * nights).toLocaleString('es-PY')} (${nights} noche${nights === 1 ? '' : 's'} × $${rate.toLocaleString('es-PY')})`
+    : 'Sin tarifa configurada para este tipo de habitación';
+  document.getElementById('gd-code').textContent = g.reservationCode || '—';
+  const qrBox = document.getElementById('gd-qr');
+  qrBox.innerHTML = '';
+  if (g.reservationCode && window.QRCode) {
+    const url = location.origin + '/checkin.html?code=' + encodeURIComponent(g.reservationCode);
+    new QRCode(qrBox, { text: url, width: 76, height: 76, colorDark: '#0d1b4c', colorLight: '#ffffff' });
+  }
+  function docThumb(photo, fileName) {
+    if (!photo) return `<div style="width:70px; height:70px; border-radius:8px; border:1px dashed var(--border-color); display:flex; align-items:center; justify-content:center; color:var(--text-secondary); font-size:11px; text-align:center; flex-shrink:0;">Sin foto</div>`;
+    return photo.startsWith('data:image')
+      ? `<img src="${photo}" style="width:70px; height:70px; object-fit:cover; border-radius:8px; border:1px solid var(--border-color); flex-shrink:0;">`
+      : `<div class="icon-circle icon-circle--light" style="width:44px; height:44px; flex-shrink:0;" title="${fileName || ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>`;
+  }
+  document.getElementById('gd-document').innerHTML = (g.documentPhotoFront || g.documentPhotoBack) ? `
+    <div style="margin-bottom:8px; font-weight:600;">${g.documentType || 'Documento'}${g.documentNumber ? ' · ' + g.documentNumber : ''}</div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="text-align:center;">${docThumb(g.documentPhotoFront, g.documentFileNameFront)}<div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Frente</div></div>
+      <div style="text-align:center;">${docThumb(g.documentPhotoBack, g.documentFileNameBack)}<div style="font-size:11px; color:var(--text-secondary); margin-top:4px;">Dorso</div></div>
+    </div>` : 'No disponible';
+  document.getElementById('gd-signature').innerHTML = g.signature
+    ? `<img src="${g.signature}" style="max-width:180px; border:1px solid var(--border-color); border-radius:8px; background:#fff;">`
+    : 'No disponible';
+  document.getElementById('gd-cancel-section').style.display = g.status === 'pendiente' ? 'block' : 'none';
+  document.getElementById('gd-cancelbox').style.display = g.status === 'cancelada' ? 'flex' : 'none';
+  if (g.status === 'cancelada') {
+    document.getElementById('gd-cancelreason').textContent = g.cancelReason || '(sin motivo indicado)';
+    document.getElementById('gd-canceldate').textContent = g.canceledAt ? ' el ' + formatDateShortEs(g.canceledAt.slice(0, 10)) : '';
+  }
+  openModal('guestDetailModal');
+}
+
+function openCancelReservationModal() {
+  document.getElementById('cr-reason').value = '';
+  closeModal('guestDetailModal');
+  openModal('cancelReservationModal');
+}
+
+function submitCancelReservation(e) {
+  e.preventDefault();
+  const reason = document.getElementById('cr-reason').value.trim();
+  cancelReservation(currentDetailGuestId, reason);
+  closeModal('cancelReservationModal');
+  showToast('Reserva cancelada');
+  render();
+}
+
+function renderRoomOptions(keepRoomNum) {
+  const rooms = getRoomsWithOccupancy();
+  const statusLabel = { available: 'Disponible', occupied: 'Ocupada', cleaning: 'Limpieza', maintenance: 'Mantenimiento' };
+  const sel = document.getElementById('ng-room');
+  const options = rooms.map(r => {
+    const isThisReservation = r.n === keepRoomNum;
+    const disabled = r.status === 'occupied' && !isThisReservation;
+    const label = isThisReservation ? 'Esta reserva' : statusLabel[r.status];
+    return `<option value="${r.n}" ${disabled ? 'disabled' : ''}>${r.n} · ${r.type} · Piso ${r.floor} — ${label}</option>`;
+  }).join('');
+  sel.innerHTML = '<option value="" disabled' + (keepRoomNum ? '' : ' selected') + '>Seleccioná una habitación</option>' + options;
+  if (keepRoomNum) sel.value = keepRoomNum;
+}
+
+function openNewGuestModal() {
+  editingGuestId = null;
+  document.getElementById('ng-title').textContent = 'Nuevo huésped';
+  document.getElementById('ng-subtitle').textContent = 'Completá los datos para registrar un nuevo huésped.';
+  document.getElementById('ng-submit').textContent = 'Registrar huésped';
+  document.querySelector('#newGuestModal form').reset();
+  renderRoomOptions(null);
+  openModal('newGuestModal');
+}
+
+function deleteGuest(id) {
+  const g = getGuestsRegistry().find(x => x.id === id);
+  if (!g) return;
+  const ok = confirm('¿Eliminar el registro de ' + guestName(g) + '? Se libera la habitación ' + (g.room || 'asignada') + ' y esta acción no se puede deshacer.');
+  if (!ok) return;
+  saveGuestsRegistry(getGuestsRegistry().filter(x => x.id !== id));
+  closeModal('guestDetailModal');
+  showToast('Huésped eliminado correctamente');
+  render();
+}
+
+function editGuest(id) {
+  const g = getGuestsRegistry().find(x => x.id === id);
+  if (!g) return;
+  editingGuestId = id;
+  document.getElementById('ng-title').textContent = 'Editar huésped';
+  document.getElementById('ng-subtitle').textContent = 'Corregí los datos si el huésped se equivocó al escribirlos.';
+  document.getElementById('ng-submit').textContent = 'Guardar cambios';
+  document.getElementById('ng-name').value = guestName(g);
+  renderRoomOptions(parseInt((g.room || '').split('·')[0], 10) || null);
+  document.getElementById('ng-email').value = g.email || '';
+  document.getElementById('ng-docnumber').value = g.documentNumber || '';
+  document.getElementById('ng-checkin').value = g.checkinDate || '';
+  document.getElementById('ng-checkout').value = g.checkoutDate || '';
+  closeModal('guestDetailModal');
+  openModal('newGuestModal');
+}
+
+function submitGuestForm(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('ng-name').value.trim();
+  const [firstName, ...rest] = fullName.split(' ');
+  const roomNum = parseInt(document.getElementById('ng-room').value, 10);
+  if (!roomNum) {
+    showToast('Seleccioná una habitación para continuar');
+    return;
+  }
+  const roomInv = getRooms().find(r => r.n === roomNum);
+  const room = roomInv ? `${roomInv.n} · ${roomInv.type}` : document.getElementById('ng-room').value;
+  const email = document.getElementById('ng-email').value;
+  const documentNumber = document.getElementById('ng-docnumber').value.trim();
+  const checkinDate = document.getElementById('ng-checkin').value;
+  const checkoutDate = document.getElementById('ng-checkout').value;
+  if (checkinDate && checkoutDate && checkoutDate <= checkinDate) {
+    showToast('El check-out debe ser posterior al check-in');
+    return;
+  }
+  const data = {
+    firstName, lastName: rest.join(' '), room, email, documentNumber,
+    checkinDate, checkoutDate,
+    checkin: formatDateShortEs(checkinDate) + ' · 15:00',
+    checkout: formatDateShortEs(checkoutDate) + ' · 11:00',
+  };
+
+  if (editingGuestId) {
+    updateGuest(editingGuestId, data);
+    showToast('Huésped actualizado correctamente');
+    e.target.reset();
+    editingGuestId = null;
+    closeModal('newGuestModal');
+  } else {
+    const record = registerGuest({ ...data, status: "pendiente" });
+    e.target.reset();
+    editingGuestId = null;
+    closeModal('newGuestModal');
+    lastCreatedReservation = record;
+    document.getElementById('rc-code').textContent = record.reservationCode;
+    openModal('reservationCreatedModal');
+  }
+  render();
+}
+
+document.getElementById('topSearch').addEventListener('input', (e) => {
+  currentSearch = e.target.value;
+  render();
+});
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('q')) {
+  currentSearch = urlParams.get('q');
+  document.getElementById('topSearch').value = currentSearch;
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crear cuenta de personal — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body { background: #fff; }
+  .rs-shell { min-height: 100vh; display: flex; flex-direction: column; }
+  .rs-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+  .rs-card { width: 100%; max-width: 440px; }
+  .rs-card .logo { justify-content: center; margin-bottom: 18px; }
+  .rs-card .logo img { width: 48px; height: 48px; }
+  .rs-card .logo-text { display: none; }
+  .rs-card h1 { font-size: 22px; text-align: center; }
+  .rs-card > p.sub { margin-top: 8px; margin-bottom: 26px; font-size: 14px; text-align: center; }
+  .rs-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .sent-state { display: none; text-align: center; }
+  .sent-state .icon-circle { width: 60px; height: 60px; margin: 0 auto 16px; }
+</style>
+</head>
+<body>
+<div class="rs-shell">
+  <div class="rs-main">
+    <div class="rs-card">
+      <div class="logo"><img src="assets/logo.svg" alt="SmartStay"></div>
+
+      <div id="formState">
+        <h1>Crear cuenta de personal</h1>
+        <p class="sub">Registrate para acceder al panel administrativo de SmartStay.</p>
+        <form id="staffForm" onsubmit="handleStaffRegister(event)">
+          <div class="rs-grid2">
+            <div class="form-group"><label class="form-label">Nombre</label><input class="form-input" id="rs-firstname" style="padding-left:14px;" placeholder="Ej: Pablo" required></div>
+            <div class="form-group"><label class="form-label">Apellido</label><input class="form-input" id="rs-lastname" style="padding-left:14px;" placeholder="Ej: Ibarra" required></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <div class="input-wrap">
+              <svg class="leading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+              <input class="form-input" type="email" id="rs-email" placeholder="ejemplo@hotel.com" required>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="rs-phone" style="padding-left:14px;" placeholder="+595 9 00 000 000"></div>
+          <div class="form-group"><label class="form-label">Hotel</label>
+            <select class="form-input" id="rs-hotel" style="padding-left:14px;" required></select>
+          </div>
+          <div class="form-group"><label class="form-label">Rol</label>
+            <select class="form-input" id="rs-role" style="padding-left:14px;">
+              <option>Recepcionista</option>
+              <option>Administrador</option>
+              <option>Housekeeping</option>
+              <option>Mantenimiento</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <div class="input-wrap">
+              <svg class="leading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <input class="form-input" type="password" id="rs-password" placeholder="••••••••" required minlength="6">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+        </form>
+        <a href="login.html" class="back-link" style="justify-content:center; margin-top:22px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Ya tengo cuenta, iniciar sesión
+        </a>
+      </div>
+
+      <div class="sent-state" id="sentState">
+        <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h1>¡Cuenta creada!</h1>
+        <p class="sub">Ya podés acceder al panel administrativo de SmartStay.</p>
+        <a href="admin.html" class="btn btn-primary btn-block">Ir al panel administrativo</a>
+      </div>
+    </div>
+  </div>
+  <footer class="footer-simple">
+    <span>SmartStay Hospitality © 2025 · Todos los derechos reservados</span>
+    <div class="legal-links">
+      <a href="terminos.html">Términos de uso</a>
+      <a href="privacidad.html">Política de privacidad</a>
+    </div>
+  </footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  const hotels = getHotelsRegistry().filter(h => h.active !== false);
+  const hotelSelect = document.getElementById('rs-hotel');
+  hotelSelect.innerHTML = hotels.length
+    ? hotels.map(h => `<option value="${h.id}">${h.name}</option>`).join('')
+    : '<option value="" disabled selected>No hay hoteles afiliados todavía</option>';
+
+  function handleStaffRegister(e) {
+    e.preventDefault();
+    const email = document.getElementById('rs-email').value.trim();
+    const hotelId = document.getElementById('rs-hotel').value;
+    if (findStaffByEmail(email)) {
+      showToast('Ya existe una cuenta con ese correo');
+      return;
+    }
+    if (!hotelId) {
+      showToast('Todavía no hay ningún hotel afiliado a SmartStay. Contactá al área CGO.');
+      return;
+    }
+    registerStaff({
+      firstName: document.getElementById('rs-firstname').value.trim(),
+      lastName: document.getElementById('rs-lastname').value.trim(),
+      email: email,
+      phone: document.getElementById('rs-phone').value.trim(),
+      role: document.getElementById('rs-role').value,
+      password: document.getElementById('rs-password').value,
+      hotelId: hotelId,
+    });
+    document.getElementById('formState').style.display = 'none';
+    document.getElementById('sentState').style.display = 'block';
+  }
+</script>
+</body>
+</html>

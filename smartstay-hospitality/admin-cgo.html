@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/app.js"></script>
+<script>requireCGOSession();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel central CGO — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/admin.css">
+<style>
+  .hotel-row { display: flex; align-items: center; gap: 10px; }
+  .hotel-row .icon-circle { width: 36px; height: 36px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="logo logo--on-dark">
+      <img src="assets/logo-white.svg" alt="SmartStay">
+      <div class="logo-text"><span class="logo-main">SMARTSTAY</span><span class="logo-sub">PANEL CENTRAL</span></div>
+    </a>
+    <nav class="sidebar-nav">
+      <a href="admin-cgo.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1M9 13h1M14 9h1M14 13h1M9 21v-4h6v4"/></svg>
+        Hoteles afiliados
+      </a>
+      <a href="admin-cgo-reportes.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
+        Reportes
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <a href="index.html" onclick="logoutCGO(); return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="topSearch" placeholder="Buscar hotel por nombre o dirección...">
+      </div>
+      <div class="admin-user">
+        <div class="avatar" data-cgo="initials">CG</div>
+        <div><div class="uname" data-cgo="name">Equipo central</div><div class="urole">SmartStay CGO</div></div>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="page-title">
+        <div>
+          <h1>Hoteles afiliados</h1>
+          <p>Gestioná los hoteles que operan sobre la plataforma SmartStay.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openNewHotelModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M19 8v6M22 11h-6"/></svg>
+          Nuevo hotel
+        </button>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="card stat-card"><div class="stat-value" id="cnt-hotels">0</div><div class="stat-label">Hoteles afiliados</div></div>
+        <div class="card stat-card"><div class="stat-value" id="cnt-active">0</div><div class="stat-label">Activos</div></div>
+        <div class="card stat-card"><div class="stat-value" id="cnt-staff">0</div><div class="stat-label">Personal total</div></div>
+      </div>
+
+      <div class="card panel-card">
+        <div class="panel-head">
+          <h3><span id="resultCount">0</span> hoteles</h3>
+        </div>
+        <table class="admin-table" id="hotelsTable">
+          <thead>
+            <tr><th>Hotel</th><th>Dirección</th><th>Contacto</th><th>Personal</th><th>Estado</th><th></th></tr>
+          </thead>
+          <tbody id="hotelsTableBody"></tbody>
+        </table>
+        <p id="emptyState" style="display:none; text-align:center; padding:30px 0; font-size:13.5px;">Todavía no afiliaste ningún hotel a la plataforma.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hotel detail modal -->
+<div class="modal-overlay" id="hotelDetailModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('hotelDetailModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="gd-name">—</h3>
+    <p class="modal-sub" id="gd-address">—</p>
+    <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Teléfono</div><div id="gd-phone" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Email</div><div id="gd-email" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Personal registrado</div><div id="gd-staffcount" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Huéspedes activos</div><div id="gd-guestcount" style="font-weight:600;">—</div></div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">Personal del hotel</div>
+      <div id="gd-stafflist"></div>
+    </div>
+    <div class="modal-btn-row" style="display:flex; gap:10px;">
+      <button class="btn btn-outline btn-block" onclick="closeModal('hotelDetailModal')">Cerrar</button>
+      <button class="btn btn-outline btn-block" onclick="editHotel(currentDetailHotelId)">Editar</button>
+      <button class="btn btn-primary btn-block" id="toggleActiveBtn" onclick="toggleHotelActive()">Desactivar</button>
+    </div>
+  </div>
+</div>
+
+<!-- New / edit hotel modal -->
+<div class="modal-overlay" id="newHotelModal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('newHotelModal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <h3 id="nh-title">Nuevo hotel</h3>
+    <p class="modal-sub" id="nh-subtitle">Afiliá un nuevo hotel a la plataforma SmartStay.</p>
+    <form onsubmit="submitHotelForm(event)">
+      <div class="form-group"><label class="form-label">Nombre del hotel</label><input class="form-input" id="nh-name" style="padding-left:14px;" placeholder="Ej: Hotel Las Palmas" required></div>
+      <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="nh-address" style="padding-left:14px;" placeholder="Ej: Calle Falsa 123, Asunción" required></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="nh-phone" style="padding-left:14px;" placeholder="Ej: 0985 000 000" required></div>
+      <div class="form-group"><label class="form-label">Email de contacto</label><input class="form-input" type="email" id="nh-email" style="padding-left:14px;" placeholder="contacto@hotel.com" required></div>
+      <button type="submit" class="btn btn-primary btn-block" id="nh-submit">Afiliar hotel</button>
+    </form>
+  </div>
+</div>
+
+<script>
+let editingHotelId = null;
+let currentDetailHotelId = null;
+
+function hotelStaffCount(hotelId) {
+  return getStaffRegistry().filter(s => s.hotelId === hotelId).length;
+}
+function hotelGuestCount(hotelId) {
+  return _readList('ss_guests_registry').filter(g => g.hotelId === hotelId && g.status === 'activo').length;
+}
+
+function render() {
+  const q = (document.getElementById('topSearch').value || '').trim().toLowerCase();
+  const hotels = getHotelsRegistry().filter(h => {
+    if (!q) return true;
+    return (h.name || '').toLowerCase().includes(q) || (h.address || '').toLowerCase().includes(q);
+  });
+  const all = getHotelsRegistry();
+
+  document.getElementById('cnt-hotels').textContent = all.length;
+  document.getElementById('cnt-active').textContent = all.filter(h => h.active !== false).length;
+  document.getElementById('cnt-staff').textContent = getStaffRegistry().length;
+  document.getElementById('resultCount').textContent = hotels.length;
+
+  const body = document.getElementById('hotelsTableBody');
+  document.getElementById('hotelsTable').style.display = hotels.length ? '' : 'none';
+  document.getElementById('emptyState').style.display = hotels.length ? 'none' : 'block';
+
+  body.innerHTML = hotels.map(h => `
+    <tr>
+      <td>
+        <div class="hotel-row">
+          <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div>
+          ${h.name}
+        </div>
+      </td>
+      <td>${h.address || '—'}</td>
+      <td>${h.phone || '—'}</td>
+      <td>${hotelStaffCount(h.id)}</td>
+      <td>${h.active !== false ? '<span class="status-pill ok">Activo</span>' : '<span class="status-pill off">Inactivo</span>'}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="viewHotel('${h.id}')">Ver</button></td>
+    </tr>`).join('');
+}
+
+function viewHotel(id) {
+  const h = getHotelById(id);
+  if (!h) return;
+  currentDetailHotelId = id;
+  document.getElementById('gd-name').textContent = h.name;
+  document.getElementById('gd-address').textContent = h.address || '—';
+  document.getElementById('gd-phone').textContent = h.phone || '—';
+  document.getElementById('gd-email').textContent = h.email || '—';
+  document.getElementById('gd-staffcount').textContent = hotelStaffCount(h.id);
+  document.getElementById('gd-guestcount').textContent = hotelGuestCount(h.id);
+  document.getElementById('toggleActiveBtn').textContent = h.active !== false ? 'Desactivar' : 'Reactivar';
+
+  const staff = getStaffRegistry().filter(s => s.hotelId === h.id);
+  document.getElementById('gd-stafflist').innerHTML = staff.length
+    ? staff.map(s => `
+        <div class="staff-row" style="display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border-color);">
+          <div class="avatar" style="width:32px; height:32px; font-size:11px;">${(s.firstName[0]+(s.lastName?s.lastName[0]:'')).toUpperCase()}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:13px; font-weight:600;">${s.firstName} ${s.lastName||''}</div>
+            <div style="font-size:11.5px; color:var(--text-secondary);">${s.email}</div>
+          </div>
+          <span class="status-pill off">${s.role || 'Personal'}</span>
+        </div>`).join('')
+    : '<p style="font-size:12.5px; color:var(--text-secondary); padding:8px 0;">Este hotel todavía no tiene personal registrado.</p>';
+
+  openModal('hotelDetailModal');
+}
+
+function toggleHotelActive() {
+  const h = getHotelById(currentDetailHotelId);
+  if (!h) return;
+  updateHotel(h.id, { active: h.active === false });
+  closeModal('hotelDetailModal');
+  showToast(h.active === false ? 'Hotel reactivado' : 'Hotel desactivado');
+  render();
+}
+
+function openNewHotelModal() {
+  editingHotelId = null;
+  document.getElementById('nh-title').textContent = 'Nuevo hotel';
+  document.getElementById('nh-subtitle').textContent = 'Afiliá un nuevo hotel a la plataforma SmartStay.';
+  document.getElementById('nh-submit').textContent = 'Afiliar hotel';
+  document.querySelector('#newHotelModal form').reset();
+  openModal('newHotelModal');
+}
+
+function editHotel(id) {
+  const h = getHotelById(id);
+  if (!h) return;
+  editingHotelId = id;
+  document.getElementById('nh-title').textContent = 'Editar hotel';
+  document.getElementById('nh-subtitle').textContent = 'Actualizá los datos de este hotel afiliado.';
+  document.getElementById('nh-submit').textContent = 'Guardar cambios';
+  document.getElementById('nh-name').value = h.name || '';
+  document.getElementById('nh-address').value = h.address || '';
+  document.getElementById('nh-phone').value = h.phone || '';
+  document.getElementById('nh-email').value = h.email || '';
+  closeModal('hotelDetailModal');
+  openModal('newHotelModal');
+}
+
+function submitHotelForm(e) {
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('nh-name').value.trim(),
+    address: document.getElementById('nh-address').value.trim(),
+    phone: document.getElementById('nh-phone').value.trim(),
+    email: document.getElementById('nh-email').value.trim(),
+  };
+  if (editingHotelId) {
+    updateHotel(editingHotelId, data);
+    showToast('Hotel actualizado correctamente');
+  } else {
+    registerHotel(data);
+    showToast('Hotel afiliado correctamente');
+  }
+  editingHotelId = null;
+  closeModal('newHotelModal');
+  render();
+}
+
+document.getElementById('topSearch').addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
