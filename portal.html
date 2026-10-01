@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/app.js"></script>
+<script>requireGuestSession();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi estadía — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .page-wrap { max-width: 1160px; margin: 0 auto; padding: 32px 32px 60px; }
+  .greeting h1 { font-size: 25px; }
+  .greeting p { margin-top: 4px; }
+
+  .portal-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-top: 26px; }
+
+  .room-hero {
+    background: linear-gradient(130deg, var(--navy-dark), var(--navy) 60%, var(--blue-primary) 130%);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .room-hero::after {
+    content: "";
+    position: absolute; right: -60px; top: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .room-hero .rh-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1;}
+  .room-hero .rh-label { font-size: 12.5px; color: rgba(255,255,255,0.65); }
+  .room-hero .rh-num { font-family: var(--font-heading); font-size: 40px; font-weight: 700; margin-top: 2px; }
+  .room-hero .rh-type { font-size: 14px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+  .rh-status { background: rgba(255,255,255,0.16); padding: 6px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .rh-status svg { width: 14px; height: 14px; }
+  .rh-dates { display: flex; gap: 32px; margin-top: 26px; position: relative; z-index: 1; }
+  .rh-dates div span { display: block; font-size: 12px; color: rgba(255,255,255,0.6); }
+  .rh-dates div strong { font-size: 15px; font-weight: 600; }
+  .rh-key-btn {
+    margin-top: 26px;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  .rh-key-btn .left { display: flex; align-items: center; gap: 12px; }
+  .rh-key-btn h5 { color: #fff; font-size: 14px; }
+  .rh-key-btn p { color: rgba(255,255,255,0.65); font-size: 12px; }
+
+  .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .quick-card { padding: 22px; text-align: left; }
+  .quick-card h5 { font-size: 14.5px; margin: 14px 0 4px; }
+  .quick-card p { font-size: 12.5px; }
+
+  .side-card { padding: 24px; margin-bottom: 20px; }
+  .side-card h4 { font-size: 15px; margin-bottom: 14px; }
+  .consumo-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13.5px; }
+  .consumo-row:last-child { border-bottom: none; }
+  .consumo-row .label { color: var(--text-secondary); }
+  .consumo-total { display: flex; justify-content: space-between; margin-top: 12px; font-weight: 700; font-size: 15px; }
+
+  .notif-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-item .icon-circle { width: 34px; height: 34px; flex-shrink: 0; }
+  .notif-item .icon-circle svg { width: 16px; height: 16px; }
+  .notif-item h6 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .notif-item p { font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .portal-grid { grid-template-columns: 1fr; }
+    .quick-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <a href="index.html" class="logo">
+    <img src="assets/logo.svg" alt="SmartStay">
+    <div class="logo-text">
+      <span class="logo-main">SMARTSTAY</span>
+      <span class="logo-sub">HOSPITALITY</span>
+    </div>
+  </a>
+  <div class="app-nav-links">
+    <a href="portal.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span data-i18n="gnav.home">Inicio</span></a>
+    <a href="checkin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M9 11l2 2 4-4"/></svg><span data-i18n="gnav.checkin">Check-in</span></a>
+    <a href="portal.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg><span data-i18n="gnav.stay">Mi estadía</span></a>
+    <a href="servicios.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg><span data-i18n="gnav.services">Servicios</span></a>
+    <a href="cuenta.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="gnav.account">Mi cuenta</span></a>
+    <a href="asistencia.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.7.4-1.2 1-1.2 1.9M12 17h.01"/></svg><span data-i18n="gnav.help">Asistencia</span></a>
+  </div>
+  <div class="app-nav-right">
+    <button class="mobile-menu-btn" onclick="toggleMobileNav(this)" aria-label="Abrir menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="lang-select" title="Español / English">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
+      <span class="lang-code">ES</span>
+    </div>
+    <button class="bell-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span></button>
+    <a href="index.html" class="btn btn-outline btn-sm" onclick="logoutGuest(); return false;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      <span data-i18n="gnav.logout">Cerrar sesión</span>
+    </a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="greeting">
+    <h1 id="greetingTitle" data-i18n="portal.welcome">¡Bienvenido/a!</h1>
+    <p data-i18n="portal.subtitle">Esto es lo que pasa hoy en tu estadía.</p>
+  </div>
+
+  <div class="portal-grid">
+    <div>
+      <div class="room-hero" id="roomHero"></div>
+
+      <div class="quick-grid">
+        <a href="servicios.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg></div>
+          <h5 data-i18n="gnav.services">Servicios</h5>
+          <p data-i18n="portal.qServicesDesc">Solicita room service, spa y más.</p>
+        </a>
+        <a href="cuenta.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+          <h5 data-i18n="gnav.account">Mi cuenta</h5>
+          <p data-i18n="portal.qAccountDesc">Datos, facturación y preferencias.</p>
+        </a>
+        <a href="informacion.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M11 12h1v4h1"/></svg></div>
+          <h5 data-i18n="portal.qInfo">Información</h5>
+          <p data-i18n="portal.qInfoDesc">Wi-Fi, horarios y datos del hotel.</p>
+        </a>
+        <a href="asistencia.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.7.4-1.2 1-1.2 1.9M12 17h.01"/></svg></div>
+          <h5 data-i18n="gnav.help">Asistencia</h5>
+          <p data-i18n="portal.qHelpDesc">Contacta a recepción las 24 horas.</p>
+        </a>
+        <a href="perfil.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
+          <h5 data-i18n="portal.qProfile">Mi perfil</h5>
+          <p data-i18n="portal.qProfileDesc">Editá tu información personal.</p>
+        </a>
+        <a href="mas.html" class="card quick-card">
+          <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></div>
+          <h5 data-i18n="portal.qMore">Más</h5>
+          <p data-i18n="portal.qMoreDesc">Todas las opciones disponibles.</p>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="card side-card">
+        <h4 data-i18n="portal.spending">Control de consumos</h4>
+        <div id="consumoRows"></div>
+      </div>
+
+      <div class="card side-card">
+        <h4 data-i18n="portal.notifications">Notificaciones</h4>
+        <div id="notifRows"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const myGuest = getMyGuestRecord();
+  const firstName = (getGuestInfo() || {}).firstName;
+  if (firstName) document.getElementById('greetingTitle').textContent = t('portal.greeting') + firstName;
+
+  function money(n) { return '$' + n.toLocaleString('es-PY'); }
+
+  document.getElementById('roomHero').innerHTML = `
+    <div class="rh-top">
+      <div>
+        <div class="rh-label" data-i18n="portal.room">Habitación</div>
+        <div class="rh-num">${myGuest.room.split('·')[0].trim()}</div>
+        <div class="rh-type">${myGuest.room.split('·')[1] ? myGuest.room.split('·')[1].trim() : ''}</div>
+      </div>
+      <div class="rh-status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        ${t('portal.checkinActive')}
+      </div>
+    </div>
+    <div class="rh-dates">
+      <div><span>Check-in</span><strong>${myGuest.checkin || '—'}</strong></div>
+      <div><span>Check-out</span><strong>${myGuest.checkout || '—'}</strong></div>
+    </div>
+    <div class="rh-key-btn">
+      <div class="left">
+        <div class="icon-circle icon-circle--white icon-circle-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
+        </div>
+        <div>
+          <h5>${t('portal.nfcTitle')}</h5>
+          <p>${t('portal.nfcDesc')}</p>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="showToast('${t('portal.doorUnlocked')}' + ' · ${t('portal.room')} ${myGuest.room.split('·')[0].trim()}')">${t('portal.openKey')}</button>
+    </div>`;
+
+  const { items: billItems, total, serviceItems } = getMyBilling();
+  const consumoRows = document.getElementById('consumoRows');
+  consumoRows.innerHTML = billItems.length
+    ? billItems.map(i => `<div class="consumo-row"><span class="label">${i.title}</span><span>${i.price ? money(i.price) : t('common.noCharge')}</span></div>`).join('') + `<div class="consumo-total"><span>${t('portal.stayTotal')}</span><span>${money(total)}</span></div>`
+    : `<p style="font-size:13px; color:var(--text-secondary);">${t('portal.noServicesYet')}</p>`;
+
+  const notifRows = document.getElementById('notifRows');
+  const notifs = [`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><h6>${t('portal.checkinConfirmedTitle')}</h6><p>${t('portal.keyActive')}</p></div></div>`];
+  if (serviceItems.length) {
+    const last = serviceItems[serviceItems.length - 1];
+    const statusLabel = last.status === 'done' ? t('portal.completed') : last.status === 'progress' ? t('portal.inProgress') : t('portal.requestReceived');
+    notifs.push(`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/></svg></div><div><h6>${last.title}</h6><p>${statusLabel}</p></div></div>`);
+  }
+  notifs.push(`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M11 12h1v4h1"/></svg></div><div><h6>${t('portal.checkoutReminderTitle')}</h6><p>${t('portal.departureIs')} ${myGuest.checkout || t('portal.coordinateWithReception')}.</p></div></div>`);
+  notifRows.innerHTML = notifs.join('');
+</script>
+</body>
+</html>
