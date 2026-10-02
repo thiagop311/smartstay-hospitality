@@ -16,6 +16,8 @@
 <style>
   .hotel-row { display: flex; align-items: center; gap: 10px; }
   .hotel-row .icon-circle { width: 36px; height: 36px; flex-shrink: 0; }
+  #hotelsTable td:nth-child(2) { min-width: 190px; }
+  #hotelsTable td:first-child { min-width: 170px; }
 </style>
 </head>
 <body>
@@ -68,7 +70,7 @@
         </button>
       </div>
 
-      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-grid cols-3">
         <div class="card stat-card"><div class="stat-value" id="cnt-hotels">0</div><div class="stat-label">Hoteles afiliados</div></div>
         <div class="card stat-card"><div class="stat-value" id="cnt-active">0</div><div class="stat-label">Activos</div></div>
         <div class="card stat-card"><div class="stat-value" id="cnt-staff">0</div><div class="stat-label">Personal total</div></div>

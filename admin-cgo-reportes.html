@@ -16,6 +16,7 @@
 <style>
   .hotel-row { display: flex; align-items: center; gap: 10px; }
   .hotel-row .icon-circle { width: 36px; height: 36px; flex-shrink: 0; }
+  #reportTable td:first-child { min-width: 170px; }
   .occ-bar-wrap { width: 90px; height: 6px; border-radius: 4px; background: var(--border-color); overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px; }
   .occ-bar { height: 100%; background: var(--blue-primary); }
 </style>
@@ -66,7 +67,7 @@
         </div>
       </div>
 
-      <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat-grid cols-4">
         <div class="card stat-card"><div class="stat-value" id="st-revenue">$0</div><div class="stat-label">Ingresos totales</div></div>
         <div class="card stat-card"><div class="stat-value" id="st-occupancy">0%</div><div class="stat-label">Ocupación promedio</div></div>
         <div class="card stat-card"><div class="stat-value" id="st-guests">0</div><div class="stat-label">Huéspedes activos</div></div>

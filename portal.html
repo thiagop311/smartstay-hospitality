@@ -52,7 +52,7 @@
     position: relative; z-index: 1;
   }
   .rh-key-btn .left { display: flex; align-items: center; gap: 12px; }
-  .rh-key-btn h5 { color: #fff; font-size: 14px; }
+  .rh-key-btn h5 { color: #fff; font-size: 14px; margin: 0 0 2px; }
   .rh-key-btn p { color: rgba(255,255,255,0.65); font-size: 12px; }
 
   .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
@@ -74,9 +74,23 @@
   .notif-item h6 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
   .notif-item p { font-size: 12px; }
 
+  .rh-key-btn .left { min-width: 0; }
+  .rh-key-btn .icon-circle { flex-shrink: 0; }
+
   @media (max-width: 900px) {
-    .portal-grid { grid-template-columns: 1fr; }
+    .portal-grid { grid-template-columns: minmax(0, 1fr); }
     .quick-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .page-wrap { padding: 24px 20px 50px; }
+    .room-hero { padding: 22px; }
+    .room-hero .rh-top { gap: 12px; flex-wrap: wrap; }
+    .rh-dates { gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+    .rh-key-btn { flex-direction: column; align-items: stretch; gap: 14px; margin-top: 20px; }
+    .rh-key-btn .btn { width: 100%; justify-content: center; }
+  }
+  @media (max-width: 400px) {
+    .quick-grid { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
 </head>
@@ -107,7 +121,7 @@
       <span class="lang-code">ES</span>
     </div>
     <button class="bell-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span></button>
-    <a href="index.html" class="btn btn-outline btn-sm" onclick="logoutGuest(); return false;">
+    <a href="index.html" class="btn btn-outline btn-sm" onclick="logoutGuest(); return false;" data-i18n-aria="gnav.logout">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
       <span data-i18n="gnav.logout">Cerrar sesión</span>
     </a>

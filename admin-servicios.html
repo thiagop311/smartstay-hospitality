@@ -21,6 +21,13 @@
   .req-row h6 { font-size: 14px; font-weight: 600; }
   .req-row p { font-size: 12.5px; margin-top: 2px; }
   .req-row .actions { display: flex; gap: 8px; flex-shrink: 0; }
+  @media (max-width: 640px) {
+    .req-row { flex-wrap: wrap; }
+    .req-row .ri { flex: 1 1 calc(100% - 56px); }
+    .req-row > .status-pill { margin-left: 54px; }
+    .req-row .actions { flex: 1 1 auto; flex-shrink: 1; flex-wrap: wrap; }
+    .req-row .ri + .actions { margin-left: 54px; }
+  }
 </style>
 </head>
 <body>
@@ -93,7 +100,7 @@
 
       <div data-settings-panels>
         <div class="settings-panel" id="panel-requests">
-          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="stat-grid cols-3">
             <div class="card stat-card"><div class="stat-value" id="cnt-pending">0</div><div class="stat-label">Pendientes</div></div>
             <div class="card stat-card"><div class="stat-value" id="cnt-progress">0</div><div class="stat-label">En proceso</div></div>
             <div class="card stat-card"><div class="stat-value" id="cnt-done">0</div><div class="stat-label">Completados hoy</div></div>
@@ -138,15 +145,15 @@
       <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input" id="ns-desc" style="padding-left:14px; padding-top:10px; height:70px; resize:vertical;" placeholder="Qué incluye este servicio"></textarea></div>
       <div class="form-group">
         <label class="form-label">Categoría</label>
-        <input class="form-input" id="ns-category" list="ns-category-options" style="padding-left:14px;" placeholder="Ej: Room service, Spa, Transporte..." required>
+        <input class="form-input" id="ns-category" list="ns-category-options" style="padding-left:14px;" placeholder="Ej: Spa, Transporte" required>
         <datalist id="ns-category-options"></datalist>
       </div>
       <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
         <div class="form-group"><label class="form-label">Precio</label><input class="form-input" type="number" min="0" step="100" id="ns-price" style="padding-left:14px;" placeholder="0"></div>
-        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" id="ns-unit" style="padding-left:14px;" placeholder="Ej: / sesión, / bolsa"></div>
+        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" id="ns-unit" style="padding-left:14px;" placeholder="Ej: / sesión"></div>
       </div>
       <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-        <div class="form-group"><label class="form-label">Etiqueta (opcional)</label><input class="form-input" id="ns-badge" style="padding-left:14px;" placeholder="Ej: 24/7, 30 min"></div>
+        <div class="form-group"><label class="form-label">Etiqueta (opcional)</label><input class="form-input" id="ns-badge" style="padding-left:14px;" placeholder="Ej: 24/7"></div>
         <div class="form-group">
           <label class="form-label">Ícono</label>
           <select class="form-input" id="ns-icon" style="padding-left:14px;">
@@ -167,7 +174,7 @@
           </select>
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Texto de precio personalizado (opcional)</label><input class="form-input" id="ns-pricelabel" style="padding-left:14px;" placeholder='Ej: "Incluido", "Según consumo" (reemplaza el precio)'></div>
+      <div class="form-group"><label class="form-label">Texto de precio personalizado (opcional)</label><input class="form-input" id="ns-pricelabel" style="padding-left:14px;" placeholder='Ej: "Incluido"'></div>
       <button type="submit" class="btn btn-primary btn-block" id="ns-submit">Agregar servicio</button>
     </form>
   </div>

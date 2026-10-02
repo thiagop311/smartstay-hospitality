@@ -29,6 +29,8 @@
 
 * { box-sizing: border-box; }
 
+html { scroll-padding-top: 84px; }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -60,6 +62,7 @@ h1, h2, h3, h4 {
 }
 
 p { margin: 0; color: var(--text-secondary); }
+h5, h6 { margin: 0 0 3px; }
 
 .container {
   max-width: 1240px;
@@ -73,6 +76,7 @@ p { margin: 0; color: var(--text-secondary); }
   align-items: center;
   gap: 12px;
 }
+.logo { flex-shrink: 0; }
 .logo img { width: 40px; height: 40px; }
 .logo-text {
   display: flex;
@@ -202,6 +206,7 @@ a.card:hover, button.card:hover {
   height: 18px;
   color: var(--text-secondary);
 }
+.form-input.has-trailing { padding-right: 46px; }
 .input-wrap .trailing-btn {
   position: absolute;
   right: 12px;
@@ -498,6 +503,7 @@ a.card:hover, button.card:hover {
   background: var(--text-primary); color: #fff; padding: 13px 22px;
   border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600;
   display: flex; align-items: center; gap: 10px;
+  width: max-content; max-width: calc(100vw - 32px);
   box-shadow: var(--shadow-lg); z-index: 300;
   opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -542,6 +548,29 @@ a.card:hover, button.card:hover {
 @media (max-width: 960px) {
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .benefits-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* The guest app-nav carries six links plus lang/bell/logout, which needs
+   ~1210px. Below that, fold the links into the same hamburger dropdown. */
+@media (max-width: 1240px) {
+  .app-nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    background: #fff;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    padding: 10px 20px 14px;
+    z-index: 49;
+  }
+  .app-nav-links.mobile-nav-open { display: flex; }
+  .app-nav-links a { padding: 11px 4px; border-bottom: 1px solid var(--border-color); }
+  .app-nav-links a:last-child { border-bottom: none; }
+  .app-nav .mobile-menu-btn { display: flex; }
 }
 
 /* Below this, the full inline nav-links list no longer reliably fits next
@@ -593,4 +622,21 @@ a.card:hover, button.card:hover {
   .app-nav-right [data-i18n="gnav.logout"] { display: none; }
   .app-nav-right a.btn-outline { padding: 0; width: 40px; height: 40px; border-radius: 50%; }
   .logo-text .logo-sub { display: none; }
+  .logo img { width: 32px; height: 32px; }
+  .logo-text .logo-main { font-size: 14px; }
+  .navbar-right .btn-primary { padding: 10px 12px; font-size: 13px; }
+  .navbar-right .btn-primary svg { display: none; }
+}
+
+@media (max-width: 400px) {
+  .navbar-right .btn-primary { padding: 9px 10px; font-size: 12.5px; }
+}
+
+@media (max-width: 360px) {
+  .navbar-right .btn-primary { width: 40px; height: 40px; padding: 0; border-radius: 50%; }
+  .navbar-right .btn-primary span { display: none; }
+  .navbar-right .btn-primary svg { display: block; }
+  .navbar-inner, .app-nav { padding-left: 14px; padding-right: 14px; }
+  .app-nav .logo-text { display: none; }
+  .navbar-right, .app-nav-right { gap: 6px; }
 }

@@ -102,7 +102,7 @@
   .restricted-note svg { width: 18px; height: 18px; color: var(--blue-primary); flex-shrink: 0; margin-top: 1px; }
 
   @media (max-width: 900px) {
-    .login-main { grid-template-columns: 1fr; }
+    .login-main { grid-template-columns: minmax(0, 1fr); }
     .login-visual { display: none; }
   }
 </style>
@@ -192,7 +192,7 @@
             <label class="form-label" for="password" data-i18n="login.password">Contraseña</label>
             <div class="input-wrap">
               <svg class="leading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-              <input class="form-input" type="password" id="password" placeholder="••••••••" required>
+              <input class="form-input has-trailing" type="password" id="password" placeholder="••••••••" required>
               <button type="button" class="trailing-btn" onclick="togglePassword()" aria-label="Mostrar contraseña">
                 <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </button>

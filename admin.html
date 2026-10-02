@@ -69,7 +69,7 @@
         <button class="bell-btn" onclick="document.getElementById('notifDropdown').toggleAttribute('hidden')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg><span class="bell-dot"></span>
         </button>
-        <div id="notifDropdown" hidden style="position:absolute; top:48px; right:0; width:300px; background:#fff; border:1px solid var(--border-color); border-radius:var(--radius-md); box-shadow:var(--shadow-md); padding:8px; z-index:100;">
+        <div id="notifDropdown" class="notif-dropdown" hidden>
           <div style="padding:10px 12px; font-size:13px; font-weight:700;">Notificaciones</div>
           <div id="notifList"></div>
         </div>
