@@ -349,7 +349,7 @@ function viewGuest(id) {
   const qrBox = document.getElementById('gd-qr');
   qrBox.innerHTML = '';
   if (g.reservationCode && window.QRCode) {
-    const url = location.origin + '/checkin.html?code=' + encodeURIComponent(g.reservationCode);
+    const url = location.origin + location.pathname.replace(/[^/]*$/, '') + 'checkin.html?code=' + encodeURIComponent(g.reservationCode);
     new QRCode(qrBox, { text: url, width: 76, height: 76, colorDark: '#0d1b4c', colorLight: '#ffffff' });
   }
   function docThumb(photo, fileName) {
