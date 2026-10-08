@@ -137,7 +137,7 @@
 
 <div class="page-wrap">
   <div class="greeting">
-    <h1 id="greetingTitle" data-i18n="portal.welcome">¡Bienvenido/a!</h1>
+    <h1 id="greetingTitle">¡Bienvenido/a!</h1>
     <p data-i18n="portal.subtitle">Esto es lo que pasa hoy en tu estadía.</p>
   </div>
 
@@ -196,7 +196,13 @@
 <script>
   const myGuest = getMyGuestRecord();
   const firstName = (getGuestInfo() || {}).firstName;
-  if (firstName) document.getElementById('greetingTitle').textContent = t('portal.greeting') + firstName;
+  // "Hola, María" — written here (not through data-i18n) so the language
+  // switch can't replace the name with the generic welcome.
+  function renderGreeting() {
+    document.getElementById('greetingTitle').textContent = firstName ? t('portal.greeting') + firstName : t('portal.welcome');
+  }
+  renderGreeting();
+  window.addEventListener('ss:lang', renderGreeting);
 
   function money(n) { return '$' + n.toLocaleString('es-PY'); }
 

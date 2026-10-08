@@ -288,6 +288,7 @@ function applyI18n() {
 function setLanguage(lang) {
   localStorage.setItem(LANG_KEY, lang === 'en' ? 'en' : 'es');
   applyI18n();
+  window.dispatchEvent(new Event('ss:lang'));
 }
 function initLangSelectors() {
   document.querySelectorAll('.lang-select').forEach(el => {
