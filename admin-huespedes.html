@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireStaffSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,10 @@
 <style>
   .new-guest-form .form-group:last-child { margin-bottom: 0; }
   #gd-qr img { border-radius: 8px; }
+  /* long emails / card numbers must wrap instead of widening the two columns */
+  #guestDetailModal .room-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+  #guestDetailModal .room-field { min-width: 0; }
+  #guestDetailModal .room-field > div { overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
@@ -129,6 +134,7 @@
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Email</div><div id="gd-email" style="font-weight:600;">—</div></div>
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Estado</div><div id="gd-status" style="font-weight:600;">—</div></div>
       <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Cargo por habitación</div><div id="gd-roomcharge" style="font-weight:600;">—</div></div>
+      <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Tarjeta NFC</div><div id="gd-card" style="font-weight:600; overflow-wrap:anywhere;">—</div></div>
     </div>
     <div id="gd-cancelbox" class="hint-box" style="display:none; margin-bottom:16px; background:#fef2f2; border-color:#fecaca;">
       <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -312,7 +318,7 @@ function sendReservationEmail() {
 }
 
 function viewGuest(id) {
-  const g = getGuestsRegistry().find(x => x.id === id);
+  const g = ensureGuestFiles(getGuestsRegistry().find(x => x.id === id));
   if (!g) return;
   currentDetailGuestId = id;
   document.getElementById('gd-name').textContent = guestName(g);
@@ -328,6 +334,11 @@ function viewGuest(id) {
     ? `$${(rate * nights).toLocaleString('es-PY')} (${nights} noche${nights === 1 ? '' : 's'} × $${rate.toLocaleString('es-PY')})`
     : 'Sin tarifa configurada para este tipo de habitación';
   document.getElementById('gd-code').textContent = g.reservationCode || '—';
+  const cardState = getCardState(g);
+  document.getElementById('gd-card').innerHTML = cardState === 'active' ? 'Activa · ' + g.cardUid + ' <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px; margin-left:6px;">Gestionar</a>'
+    : cardState === 'blocked' ? 'Bloqueada · <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px;">Asignar nueva</a>'
+    : cardState === 'pending' ? 'Sin asignar · <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px;">Asignar tarjeta</a>'
+    : (g.cardUid ? 'Estadía finalizada (tarjeta liberada)' : '—');
   const qrBox = document.getElementById('gd-qr');
   qrBox.innerHTML = '';
   if (g.reservationCode && window.QRCode) {
@@ -481,6 +492,7 @@ if (urlParams.get('q')) {
 }
 
 render();
+window.ssRefreshPage = () => { render(); };
 </script>
 </body>
 </html>

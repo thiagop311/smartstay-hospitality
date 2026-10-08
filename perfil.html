@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireGuestSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -101,8 +102,10 @@
   function renderAvatar() {
     const g = getGuestInfo() || {};
     const avatar = document.getElementById('profileAvatar');
-    if (g.avatarPhoto) {
-      avatar.innerHTML = `<img src="${g.avatarPhoto}" alt="Foto de perfil" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+    // on a new device the photo isn't here yet: it comes from the cloud record
+    const photo = g.avatarPhoto || (ensureGuestFiles(getMyGuestRecord() || {}) || {}).avatarPhoto;
+    if (photo) {
+      avatar.innerHTML = `<img src="${photo}" alt="Foto de perfil" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
     } else {
       avatar.textContent = getGuestInitials();
     }

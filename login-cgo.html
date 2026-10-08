@@ -84,6 +84,7 @@
   </footer>
 </div>
 
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
   function handleCGOLogin(e) {
@@ -92,11 +93,11 @@
     const password = document.getElementById('cgo-password').value;
     const result = verifyCGOLogin(email, password);
     if (result === null) {
-      showToast('No existe una cuenta CGO con ese correo. Registrate primero.');
+      showToast(SS_CLOUD ? 'Esa cuenta no es del equipo CGO. Si sos personal de un hotel, entrá por el acceso del personal.' : 'No existe una cuenta CGO con ese correo. Registrate primero.');
       return;
     }
     if (result === false) {
-      showToast('Contraseña incorrecta');
+      showToast(SS_CLOUD ? 'Correo o contraseña incorrectos' : 'Contraseña incorrecta');
       return;
     }
     setCurrentCGOEmail(email);

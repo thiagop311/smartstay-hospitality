@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireStaffSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,6 +117,11 @@
             <h3>Usuarios del staff</h3>
             <a class="btn btn-outline btn-sm" href="registro-staff.html" target="_blank" rel="noopener">+ Invitar usuario</a>
           </div>
+          <div id="staffCodeBox" style="display:none; border:1px dashed var(--blue-primary); background:var(--blue-lighter-bg); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px;">
+            <div style="font-size:12px; color:var(--text-secondary);">Código de invitación de tu hotel</div>
+            <div id="staffCodeValue" style="font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-weight:700; font-size:18px; letter-spacing:2px; margin:4px 0; overflow-wrap:anywhere;">—</div>
+            <div style="font-size:11.5px; color:var(--text-secondary);">Quien se registre como personal de tu hotel debe ingresarlo. Compartilo solo con gente de confianza.</div>
+          </div>
           <div id="staffList"></div>
         </div>
 
@@ -209,6 +215,14 @@ function handleChangePassword(e) {
     showToast('Tu sesión expiró, iniciá sesión nuevamente');
     return;
   }
+  if (result === 'weak') {
+    showToast('La contraseña nueva es muy corta: usá al menos 6 caracteres.');
+    return;
+  }
+  if (result === 'error') {
+    showToast('No se pudo cambiar la contraseña. Intentá de nuevo.');
+    return;
+  }
   showToast('Contraseña actualizada correctamente');
   e.target.reset();
 }
@@ -272,6 +286,11 @@ function saveHotelForm(e) {
   showToast('Datos del hotel actualizados');
 }
 
+const myHotel = SS_CLOUD ? getHotelById(getActiveHotelId()) : null;
+if (myHotel && myHotel.staffCode) {
+  document.getElementById('staffCodeBox').style.display = '';
+  document.getElementById('staffCodeValue').textContent = myHotel.staffCode;
+}
 const staff = getStaffRegistry();
 document.getElementById('staffList').innerHTML = staff.length ? staff.map(s => {
   const name = (s.firstName + ' ' + (s.lastName || '')).trim();

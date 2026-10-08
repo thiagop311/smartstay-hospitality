@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireGuestSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +52,12 @@
     display: flex; align-items: center; justify-content: space-between;
     position: relative; z-index: 1;
   }
+  .rh-key-btn { gap: 12px; }
   .rh-key-btn .left { display: flex; align-items: center; gap: 12px; }
+  .rh-key-btn .btn-ghost { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.35); white-space: nowrap; }
+  .rh-key-btn .btn-ghost:hover { background: rgba(255,255,255,0.22); transform: translateY(-1px); }
+  .rh-card-pill { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.16); color: #fff; white-space: nowrap; }
+  .rh-card-pill.blocked { background: rgba(248,113,113,0.25); color: #fecaca; }
   .rh-key-btn h5 { color: #fff; font-size: 14px; margin: 0 0 2px; }
   .rh-key-btn p { color: rgba(255,255,255,0.65); font-size: 12px; }
 
@@ -88,6 +94,7 @@
     .rh-dates { gap: 20px; flex-wrap: wrap; margin-top: 20px; }
     .rh-key-btn { flex-direction: column; align-items: stretch; gap: 14px; margin-top: 20px; }
     .rh-key-btn .btn { width: 100%; justify-content: center; }
+    .rh-key-btn .rh-card-pill { text-align: center; }
   }
   @media (max-width: 400px) {
     .quick-grid { grid-template-columns: minmax(0, 1fr); }
@@ -209,18 +216,43 @@
       <div><span>Check-in</span><strong>${myGuest.checkin || '—'}</strong></div>
       <div><span>Check-out</span><strong>${myGuest.checkout || '—'}</strong></div>
     </div>
-    <div class="rh-key-btn">
+    <div class="rh-key-btn" id="keyCardBox"></div>`;
+
+  // The room key is a physical NFC card handed over by reception, so this
+  // card just reflects its state: pending delivery, active or blocked.
+  function keyCardMessage(state) {
+    return state === 'active' ? t('portal.keyActive') : state === 'blocked' ? t('portal.keyBlocked') : t('portal.keyPending');
+  }
+  function renderKeyCard() {
+    const g = getMyGuestRecord();
+    const state = getCardState(g);
+    const desc = state === 'active' ? t('portal.nfcDescActive') : state === 'blocked' ? t('portal.nfcDescBlocked') : t('portal.nfcDescPending');
+    const cardNo = state === 'active' ? `<p>${t('portal.cardNo')} ••••${shortCardUid(g.cardUid)}</p>` : '';
+    const right = state === 'active'
+      ? `<button class="btn btn-ghost btn-sm" onclick="reportLostCard()">${t('portal.lostCard')}</button>`
+      : `<span class="rh-card-pill ${state}">${t(state === 'blocked' ? 'portal.cardBlocked' : 'portal.cardPending')}</span>`;
+    document.getElementById('keyCardBox').innerHTML = `
       <div class="left">
         <div class="icon-circle icon-circle--white icon-circle-sm">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
         </div>
         <div>
           <h5>${t('portal.nfcTitle')}</h5>
-          <p>${t('portal.nfcDesc')}</p>
+          <p>${desc}</p>
+          ${cardNo}
         </div>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="showToast('${t('portal.doorUnlocked')}' + ' · ${t('portal.room')} ${myGuest.room.split('·')[0].trim()}')">${t('portal.openKey')}</button>
-    </div>`;
+      ${right}`;
+    const note = document.getElementById('keyNotifText');
+    if (note) note.textContent = keyCardMessage(state);
+  }
+  function reportLostCard() {
+    if (!confirm(t('portal.lostCardConfirm'))) return;
+    blockCard(myGuest.id, 'lost');
+    renderKeyCard();
+    showToast(t('portal.cardBlockedToast'));
+  }
+  renderKeyCard();
 
   const { items: billItems, total, serviceItems } = getMyBilling();
   const consumoRows = document.getElementById('consumoRows');
@@ -229,7 +261,7 @@
     : `<p style="font-size:13px; color:var(--text-secondary);">${t('portal.noServicesYet')}</p>`;
 
   const notifRows = document.getElementById('notifRows');
-  const notifs = [`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><h6>${t('portal.checkinConfirmedTitle')}</h6><p>${t('portal.keyActive')}</p></div></div>`];
+  const notifs = [`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><h6>${t('portal.checkinConfirmedTitle')}</h6><p id="keyNotifText">${keyCardMessage(getCardState(getMyGuestRecord()))}</p></div></div>`];
   if (serviceItems.length) {
     const last = serviceItems[serviceItems.length - 1];
     const statusLabel = last.status === 'done' ? t('portal.completed') : last.status === 'progress' ? t('portal.inProgress') : t('portal.requestReceived');
@@ -237,6 +269,7 @@
   }
   notifs.push(`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M11 12h1v4h1"/></svg></div><div><h6>${t('portal.checkoutReminderTitle')}</h6><p>${t('portal.departureIs')} ${myGuest.checkout || t('portal.coordinateWithReception')}.</p></div></div>`);
   notifRows.innerHTML = notifs.join('');
+window.ssRefreshPage = ssReloadIfIdle;
 </script>
 </body>
 </html>

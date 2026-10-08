@@ -50,6 +50,10 @@
           <div class="form-group"><label class="form-label">Hotel</label>
             <select class="form-input" id="rs-hotel" style="padding-left:14px;" required></select>
           </div>
+          <div class="form-group" id="rs-code-group" style="display:none;"><label class="form-label">Código de invitación del hotel</label>
+            <input class="form-input" id="rs-code" style="padding-left:14px; text-transform:uppercase;" placeholder="Código de 8 caracteres" autocomplete="off">
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Te lo da el administrador de tu hotel (o el equipo CGO de SmartStay). Así nos aseguramos de que solo el personal real se registre.</p>
+          </div>
           <div class="form-group"><label class="form-label">Rol</label>
             <select class="form-input" id="rs-role" style="padding-left:14px;">
               <option>Recepcionista</option>
@@ -90,6 +94,7 @@
   </footer>
 </div>
 
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
   const hotels = getHotelsRegistry().filter(h => h.active !== false);
@@ -97,6 +102,22 @@
   hotelSelect.innerHTML = hotels.length
     ? hotels.map(h => `<option value="${h.id}">${h.name}</option>`).join('')
     : '<option value="" disabled selected>No hay hoteles afiliados todavía</option>';
+
+  if (SS_CLOUD) {
+    document.getElementById('rs-code-group').style.display = '';
+    document.getElementById('rs-code').required = true;
+  }
+
+  function registerErrorMessage(err) {
+    const m = {
+      invalid_code: 'El código de invitación no es correcto para ese hotel. Pedíselo al administrador de tu hotel.',
+      exists: 'Ya existe una cuenta con ese correo (o la contraseña no coincide con la cuenta existente).',
+      weak_password: 'La contraseña es muy corta: usá al menos 6 caracteres.',
+      confirm_email: 'Te enviamos un correo para confirmar tu cuenta. Confirmala y después iniciá sesión.',
+      network: 'No hay conexión con la nube. Revisá tu internet e intentá de nuevo.',
+    };
+    return m[err.error] || ('No se pudo crear la cuenta' + (err.message ? ': ' + err.message : '.'));
+  }
 
   function handleStaffRegister(e) {
     e.preventDefault();
@@ -110,7 +131,8 @@
       showToast('Todavía no hay ningún hotel afiliado a SmartStay. Contactá al área CGO.');
       return;
     }
-    registerStaff({
+    const result = registerStaff({
+      staffCode: SS_CLOUD ? document.getElementById('rs-code').value.trim() : '',
       firstName: document.getElementById('rs-firstname').value.trim(),
       lastName: document.getElementById('rs-lastname').value.trim(),
       email: email,
@@ -119,6 +141,10 @@
       password: document.getElementById('rs-password').value,
       hotelId: hotelId,
     });
+    if (result && result.error) {
+      showToast(registerErrorMessage(result));
+      return;
+    }
     document.getElementById('formState').style.display = 'none';
     document.getElementById('sentState').style.display = 'block';
   }

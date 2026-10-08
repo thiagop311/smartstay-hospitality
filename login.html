@@ -234,6 +234,7 @@
   </footer>
 </div>
 
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
   function handleStaffLogin(e) {
@@ -242,11 +243,11 @@
     const password = document.getElementById('password').value;
     const result = verifyStaffLogin(email, password);
     if (result === null) {
-      showToast('No existe una cuenta con ese correo. Registrate primero.');
+      showToast(SS_CLOUD ? 'Esa cuenta no es de personal de hotel. Si sos del equipo central, entrá por el acceso CGO.' : 'No existe una cuenta con ese correo. Registrate primero.');
       return;
     }
     if (result === false) {
-      showToast('Contraseña incorrecta');
+      showToast(SS_CLOUD ? 'Correo o contraseña incorrectos' : 'Contraseña incorrecta');
       return;
     }
     setCurrentStaffEmail(email);

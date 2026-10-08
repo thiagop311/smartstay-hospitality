@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireCGOSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -106,6 +107,11 @@
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Personal registrado</div><div id="gd-staffcount" style="font-weight:600;">—</div></div>
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Huéspedes activos</div><div id="gd-guestcount" style="font-weight:600;">—</div></div>
     </div>
+    <div id="gd-codebox" style="display:none; border:1px dashed var(--blue-primary); background:var(--blue-lighter-bg); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text-secondary);">Código de invitación para el personal de este hotel</div>
+      <div id="gd-staffcode" style="font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-weight:700; font-size:18px; letter-spacing:2px; margin:4px 0; overflow-wrap:anywhere;">—</div>
+      <div style="font-size:11.5px; color:var(--text-secondary);">Quien se registre como personal de este hotel debe ingresarlo. Compartilo solo con gente de confianza.</div>
+    </div>
     <div style="margin-bottom:16px;">
       <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">Personal del hotel</div>
       <div id="gd-stafflist"></div>
@@ -191,6 +197,8 @@ function viewHotel(id) {
   document.getElementById('gd-staffcount').textContent = hotelStaffCount(h.id);
   document.getElementById('gd-guestcount').textContent = hotelGuestCount(h.id);
   document.getElementById('toggleActiveBtn').textContent = h.active !== false ? 'Desactivar' : 'Reactivar';
+  document.getElementById('gd-codebox').style.display = SS_CLOUD && h.staffCode ? '' : 'none';
+  document.getElementById('gd-staffcode').textContent = h.staffCode || '—';
 
   const staff = getStaffRegistry().filter(s => s.hotelId === h.id);
   document.getElementById('gd-stafflist').innerHTML = staff.length
@@ -253,8 +261,14 @@ function submitHotelForm(e) {
     updateHotel(editingHotelId, data);
     showToast('Hotel actualizado correctamente');
   } else {
-    registerHotel(data);
+    const created = registerHotel(data);
     showToast('Hotel afiliado correctamente');
+    editingHotelId = null;
+    closeModal('newHotelModal');
+    render();
+    // in the cloud the hotel gets its staff invitation code: show it right away
+    if (SS_CLOUD && created && getHotelById(created.id)) viewHotel(created.id);
+    return;
   }
   editingHotelId = null;
   closeModal('newHotelModal');
@@ -263,6 +277,7 @@ function submitHotelForm(e) {
 
 document.getElementById('topSearch').addEventListener('input', render);
 render();
+window.ssRefreshPage = () => { render(); };
 </script>
 </body>
 </html>

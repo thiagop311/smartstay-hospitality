@@ -47,6 +47,10 @@
             </div>
           </div>
           <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cg-phone" style="padding-left:14px;" placeholder="+595 9 00 000 000"></div>
+          <div class="form-group" id="cg-code-group" style="display:none;"><label class="form-label">Código de acceso CGO</label>
+            <input class="form-input" id="cg-code" style="padding-left:14px;" placeholder="El código del equipo central" autocomplete="off">
+            <p style="font-size:12px; color:var(--text-secondary); margin-top:6px;">Solo el equipo central de SmartStay conoce este código. Sin él no se puede crear una cuenta CGO.</p>
+          </div>
           <div class="form-group"><label class="form-label">Cargo</label>
             <select class="form-input" id="cg-role" style="padding-left:14px;">
               <option>Presidencia de Directorio</option>
@@ -90,8 +94,25 @@
   </footer>
 </div>
 
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
+  if (SS_CLOUD) {
+    document.getElementById('cg-code-group').style.display = '';
+    document.getElementById('cg-code').required = true;
+  }
+
+  function registerErrorMessage(err) {
+    const m = {
+      invalid_code: 'El código de acceso CGO no es correcto.',
+      exists: 'Ya existe una cuenta con ese correo (o la contraseña no coincide con la cuenta existente).',
+      weak_password: 'La contraseña es muy corta: usá al menos 6 caracteres.',
+      confirm_email: 'Te enviamos un correo para confirmar tu cuenta. Confirmala y después iniciá sesión.',
+      network: 'No hay conexión con la nube. Revisá tu internet e intentá de nuevo.',
+    };
+    return m[err.error] || ('No se pudo crear la cuenta' + (err.message ? ': ' + err.message : '.'));
+  }
+
   function handleCGORegister(e) {
     e.preventDefault();
     const email = document.getElementById('cg-email').value.trim();
@@ -99,7 +120,8 @@
       showToast('Ya existe una cuenta CGO con ese correo');
       return;
     }
-    registerCGO({
+    const result = registerCGO({
+      accessCode: SS_CLOUD ? document.getElementById('cg-code').value.trim() : '',
       firstName: document.getElementById('cg-firstname').value.trim(),
       lastName: document.getElementById('cg-lastname').value.trim(),
       email: email,
@@ -107,6 +129,10 @@
       role: document.getElementById('cg-role').value,
       password: document.getElementById('cg-password').value,
     });
+    if (result && result.error) {
+      showToast(registerErrorMessage(result));
+      return;
+    }
     document.getElementById('formState').style.display = 'none';
     document.getElementById('sentState').style.display = 'block';
   }

@@ -251,7 +251,7 @@
       </div>
       <div class="reserva-feature">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg></div>
-        <div><h5 data-i18n="portal.nfcTitle">Llave digital NFC</h5><p data-i18n="ci.feature2Desc">Accede a tu habitación y áreas autorizadas.</p></div>
+        <div><h5 data-i18n="portal.nfcTitle">Tarjeta NFC</h5><p data-i18n="ci.feature2Desc">Accede a tu habitación y áreas autorizadas.</p></div>
       </div>
       <div class="reserva-feature">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 18h6"/></svg></div>
@@ -276,6 +276,7 @@
   </div>
 </div>
 
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>
 const steps = [
@@ -341,8 +342,8 @@ function submitReservationSearch() {
   } else {
     const code = document.getElementById('rv-code').value.trim();
     const lastname = document.getElementById('rv-lastname').value.trim();
-    if (!code && !lastname) {
-      showToast('Ingresá tu código de reserva o tu apellido para continuar');
+    if (SS_CLOUD ? !code : (!code && !lastname)) {
+      showToast(SS_CLOUD ? 'Ingresá tu código de reserva para continuar' : 'Ingresá tu código de reserva o tu apellido para continuar');
       return;
     }
     reservation = findPendingReservation({ code, lastname });
@@ -353,6 +354,7 @@ function submitReservationSearch() {
     return;
   }
 
+  const alreadyCheckedIn = reservation.status === 'activo';
   saveGuestInfo({
     registeredGuestId: reservation.id,
     firstName: reservation.firstName || '',
@@ -365,6 +367,13 @@ function submitReservationSearch() {
     resCheckin: reservation.checkin || '',
     resCheckout: reservation.checkout || '',
   });
+  if (alreadyCheckedIn) {
+    // Same reservation, new device (or cleared browser): the stay already
+    // exists in the cloud, so skip the form and go straight to it.
+    showToast('Ya hiciste tu check-in. Te llevamos a tu estadía.');
+    setTimeout(() => { window.location.href = 'portal.html'; }, 900);
+    return;
+  }
   goNext();
 }
 
@@ -404,6 +413,15 @@ function finishCheckin() {
     // Promotes the real reservation (found in step 1) to a checked-in
     // guest, instead of creating a separate duplicate record.
     updateGuest(g.registeredGuestId, checkinData);
+    if (SS_CLOUD) {
+      const saved = getGuestsRegistry().find(x => x.id === g.registeredGuestId);
+      if (!saved || saved.status !== 'activo') {
+        showToast('No pudimos completar tu check-in. Revisá tu conexión e intentá de nuevo.');
+        return;
+      }
+      // the photos now live in the cloud: don't keep copies in this device
+      saveGuestInfo({ documentPhotoFront: '', documentPhotoBack: '', documentFileNameFront: '', documentFileNameBack: '' });
+    }
   } else {
     const todayISO = new Date().toISOString().slice(0, 10);
     const outDate = new Date();
@@ -634,9 +652,9 @@ function renderMain() {
               Este código fue enviado a tu correo electrónico por el hotel o tu canal de reserva.
             </div>
           </div>
-          <div class="or-sep">o</div>
+          <div class="or-sep">${SS_CLOUD ? 'y' : 'o'}</div>
           <div class="form-group">
-            <label class="form-label">Apellido del titular de la reserva</label>
+            <label class="form-label">${SS_CLOUD ? 'Apellido del titular (opcional)' : 'Apellido del titular de la reserva'}</label>
             <div class="input-wrap">
               <svg class="leading-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
               <input class="form-input" id="rv-lastname" placeholder="Ej: González">
@@ -763,7 +781,7 @@ function renderMain() {
         <p class="subtitle">Lee y acepta los términos antes de finalizar tu registro.</p>
         <div class="terms-box">
           <p>Al aceptar estos términos, confirmas que la información proporcionada es correcta y autorizas a SmartStay Hospitality a procesar tus datos personales para gestionar tu estadía.</p>
-          <p>El hotel se reserva el derecho de solicitar una garantía sobre consumos adicionales. La llave digital NFC es de uso personal e intransferible durante la estadía.</p>
+          <p>El hotel se reserva el derecho de solicitar una garantía sobre consumos adicionales. La tarjeta NFC es de uso personal e intransferible durante la estadía; en caso de pérdida debes reportarla de inmediato.</p>
           <p>El check-out se realiza de forma automática a la hora indicada, salvo coordinación previa con recepción.</p>
         </div>
         <label class="terms-check">
@@ -812,7 +830,7 @@ function renderMain() {
         <div class="complete-state">
           <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
           <h2>¡Check-in completado!</h2>
-          <p>Tu registro fue exitoso. Ya puedes acceder a tu habitación con tu llave digital NFC y disfrutar de todos los servicios del hotel.</p>
+          <p>Tu registro fue exitoso. Retira tu tarjeta NFC en recepción para acceder a tu habitación y disfruta de todos los servicios del hotel.</p>
           <a href="portal.html" class="btn btn-primary" style="margin-top:24px;">
             Ir a mi estadía
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>

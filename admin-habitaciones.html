@@ -5,6 +5,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="alternate icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
 <script src="assets/app.js"></script>
 <script>requireStaffSession();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@
   .room-tile.st-available { border-color: #bbf7d0; }
   .room-tile.st-cleaning { border-color: #fde68a; }
   .room-tile.st-maintenance { border-color: #fecaca; }
+  #roomModal .btn-sm { white-space: normal; line-height: 1.25; text-align: center; justify-content: center; }
 </style>
 </head>
 <body>
@@ -120,7 +122,7 @@
     <p class="modal-sub" id="rm-sub">—</p>
     <div id="rm-guest" style="margin-bottom:16px;"></div>
     <p style="font-size:13px; font-weight:600; margin-bottom:10px;">Cambiar estado</p>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; margin-bottom:16px;">
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('available')">Disponible</button>
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('cleaning')">Enviar a limpieza</button>
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('maintenance')">Mantenimiento</button>
@@ -290,6 +292,7 @@ function removeRoom() {
 }
 
 renderGrid();
+window.ssRefreshPage = () => { rooms = getRoomsWithOccupancy(); renderCounts(); renderGrid(); };
 </script>
 </body>
 </html>
