@@ -46,11 +46,11 @@ const I18N = {
     'hero.badge': 'Tecnología que transforma tu estadía',
     'hero.title': 'Bienvenido a',
     'hero.lead': 'La plataforma inteligente que te acompaña durante toda tu estadía, desde tu llegada hasta tu salida.',
-    'hero.feature1': 'Llave digital<br>NFC', 'hero.feature2': 'Servicios<br>a un clic', 'hero.feature3': 'Control de<br>consumos',
+    'hero.feature1': 'Tarjeta<br>NFC', 'hero.feature2': 'Servicios<br>a un clic', 'hero.feature3': 'Control de<br>consumos',
     'continue.heading': '¿Cómo deseas continuar?', 'continue.sub': 'Selecciona una opción para empezar',
     'continue.guestTitle': 'Soy huésped', 'continue.guestDesc': 'Realiza tu check-in, accede a tu habitación y gestiona tu estadía.', 'continue.guestBtn': 'Continuar',
     'continue.staffTitle': 'Soy personal del hotel', 'continue.staffDesc': 'Accede al panel administrativo para gestionar huéspedes, servicios y más.', 'continue.staffBtn': 'Iniciar sesión',
-    'benefits.b1Title': 'Acceso sin límites', 'benefits.b1Desc': 'Llave digital NFC para habitaciones y áreas del hotel',
+    'benefits.b1Title': 'Acceso sin límites', 'benefits.b1Desc': 'Tarjeta NFC para habitaciones y áreas del hotel',
     'benefits.b2Title': 'Todo en un solo lugar', 'benefits.b2Desc': 'Servicios, consumos, información y más desde tu móvil',
     'benefits.b3Title': 'Seguridad y confianza', 'benefits.b3Desc': 'Tecnología avanzada para proteger tu información y accesos',
     'benefits.b4Title': 'Soporte 24/7', 'benefits.b4Desc': 'Estamos para ayudarte en todo momento',
@@ -122,14 +122,14 @@ const I18N = {
     'info.locationContact': 'Ubicación y contacto',
     'asis.subtitle': 'Estamos disponibles las 24 horas para ayudarte con lo que necesites.',
     'asis.faq': 'Preguntas frecuentes',
-    'asis.q1': '¿Cómo abro la puerta con la llave digital?',
-    'asis.a1': 'Acercá tu celular con la app de SmartStay abierta al lector NFC de la puerta. La llave se activa automáticamente al completar el check-in.',
+    'asis.q1': '¿Cómo abro la puerta de mi habitación?',
+    'asis.a1': 'Acercá la tarjeta NFC que te entrega recepción al lector de la puerta. La tarjeta se activa cuando recepción te la entrega, después de completar el check-in digital.',
     'asis.q2': '¿Puedo cambiar la hora de mi check-out?',
     'asis.a2': 'Sí, escribinos por WhatsApp o contactá a recepción con al menos 3 horas de anticipación para coordinar un check-out tardío, sujeto a disponibilidad.',
     'asis.q3': '¿Cómo solicito un servicio a mi habitación?',
     'asis.a3': 'Ingresá a la sección "Servicios" desde el menú principal, elegí lo que necesites y tocá "Solicitar". Se carga automáticamente a tu habitación.',
-    'asis.q4': '¿Qué pasa si pierdo el acceso a mi llave digital?',
-    'asis.a4': 'Contactá a recepción desde esta misma pantalla (WhatsApp, llamada o en persona) y te generamos una nueva llave digital al instante.',
+    'asis.q4': '¿Qué hago si pierdo mi tarjeta NFC?',
+    'asis.a4': 'Bloqueala ahora desde "Mi estadía" con el botón "Perdí mi tarjeta", o avisá a recepción (WhatsApp, llamada o en persona). La tarjeta perdida deja de abrir tu puerta y te entregamos una nueva.',
     'asis.writeUs': 'Escribinos', 'asis.subject': 'Asunto', 'asis.message': 'Mensaje', 'asis.sendMessage': 'Enviar mensaje',
     'asis.messageSent': '¡Mensaje enviado!', 'asis.willReply': 'Nuestro equipo te va a responder a la brevedad.',
     'asis.directContact': 'Contacto directo', 'asis.replyMinutes': 'Respuesta en minutos', 'asis.chat': 'Chatear',
@@ -143,10 +143,13 @@ const I18N = {
     'portal.qMore': 'Más', 'portal.qMoreDesc': 'Todas las opciones disponibles.',
     'portal.spending': 'Control de consumos', 'portal.notifications': 'Notificaciones',
     'portal.greeting': 'Hola, ', 'portal.room': 'Habitación', 'portal.checkinActive': 'Check-in activo',
-    'portal.nfcTitle': 'Llave digital NFC', 'portal.nfcDesc': 'Acerca tu celular a la puerta para ingresar.',
-    'portal.doorUnlocked': 'Puerta desbloqueada', 'portal.openKey': 'Abrir llave',
+    'portal.nfcTitle': 'Tarjeta NFC', 'portal.nfcDescPending': 'Retírala en recepción para ingresar a tu habitación.',
+    'portal.nfcDescActive': 'Acércala al lector de la puerta para ingresar.', 'portal.nfcDescBlocked': 'Tu tarjeta está bloqueada. Pide una nueva en recepción.',
+    'portal.cardNo': 'N.º', 'portal.cardPending': 'Pendiente', 'portal.cardBlocked': 'Bloqueada', 'portal.lostCard': 'Perdí mi tarjeta',
+    'portal.lostCardConfirm': '¿Bloquear tu tarjeta NFC? Dejará de abrir tu habitación y vas a poder pedir una nueva en recepción.',
+    'portal.cardBlockedToast': 'Tarjeta bloqueada. Pide una nueva en recepción.',
     'portal.stayTotal': 'Total estadía', 'portal.noServicesYet': 'Todavía no solicitaste ningún servicio.',
-    'portal.checkinConfirmedTitle': 'Check-in confirmado', 'portal.keyActive': 'Tu llave digital ya está activa.',
+    'portal.checkinConfirmedTitle': 'Check-in confirmado', 'portal.keyActive': 'Tu tarjeta NFC ya está activa.', 'portal.keyPending': 'Retira tu tarjeta NFC en recepción.', 'portal.keyBlocked': 'Tu tarjeta NFC está bloqueada. Pide una nueva en recepción.',
     'portal.completed': 'Completado', 'portal.inProgress': 'En proceso', 'portal.requestReceived': 'Solicitud recibida',
     'portal.checkoutReminderTitle': 'Recordatorio de check-out', 'portal.departureIs': 'Tu salida es',
     'portal.coordinateWithReception': 'a coordinar con recepción',
@@ -157,11 +160,11 @@ const I18N = {
     'hero.badge': 'Technology that transforms your stay',
     'hero.title': 'Welcome to',
     'hero.lead': 'The smart platform that goes with you through your whole stay, from arrival to departure.',
-    'hero.feature1': 'NFC digital<br>key', 'hero.feature2': 'Services<br>in one tap', 'hero.feature3': 'Spending<br>tracker',
+    'hero.feature1': 'NFC room<br>card', 'hero.feature2': 'Services<br>in one tap', 'hero.feature3': 'Spending<br>tracker',
     'continue.heading': 'How would you like to continue?', 'continue.sub': 'Choose an option to get started',
     'continue.guestTitle': "I'm a guest", 'continue.guestDesc': 'Check in, unlock your room, and manage your stay.', 'continue.guestBtn': 'Continue',
     'continue.staffTitle': "I'm hotel staff", 'continue.staffDesc': 'Access the admin panel to manage guests, services, and more.', 'continue.staffBtn': 'Sign in',
-    'benefits.b1Title': 'Unlimited access', 'benefits.b1Desc': 'NFC digital key for rooms and hotel areas',
+    'benefits.b1Title': 'Unlimited access', 'benefits.b1Desc': 'NFC card for rooms and hotel areas',
     'benefits.b2Title': 'Everything in one place', 'benefits.b2Desc': 'Services, spending, information and more from your phone',
     'benefits.b3Title': 'Security and trust', 'benefits.b3Desc': 'Advanced technology to protect your information and access',
     'benefits.b4Title': '24/7 support', 'benefits.b4Desc': "We're here to help at any time",
@@ -233,14 +236,14 @@ const I18N = {
     'info.locationContact': 'Location and contact',
     'asis.subtitle': "We're available 24 hours a day to help with anything you need.",
     'asis.faq': 'Frequently asked questions',
-    'asis.q1': 'How do I open the door with the digital key?',
-    'asis.a1': 'Hold your phone, with the SmartStay app open, near the door\'s NFC reader. The key activates automatically once you complete check-in.',
+    'asis.q1': 'How do I open my room door?',
+    'asis.a1': 'Hold the NFC card the front desk gives you near the door\'s reader. The card is activated when the front desk hands it to you, after you complete digital check-in.',
     'asis.q2': 'Can I change my check-out time?',
     'asis.a2': 'Yes — message us on WhatsApp or contact the front desk at least 3 hours ahead to arrange a late check-out, subject to availability.',
     'asis.q3': 'How do I request a service to my room?',
     'asis.a3': 'Go to the "Services" section from the main menu, choose what you need, and tap "Request." It\'s charged to your room automatically.',
-    'asis.q4': 'What happens if I lose access to my digital key?',
-    'asis.a4': "Contact the front desk right from this screen (WhatsApp, call, or in person) and we'll issue you a new digital key instantly.",
+    'asis.q4': 'What do I do if I lose my NFC card?',
+    'asis.a4': "Block it right away from \"My stay\" with the \"I lost my card\" button, or tell the front desk (WhatsApp, call, or in person). The lost card stops opening your door and we hand you a new one.",
     'asis.writeUs': 'Message us', 'asis.subject': 'Subject', 'asis.message': 'Message', 'asis.sendMessage': 'Send message',
     'asis.messageSent': 'Message sent!', 'asis.willReply': "Our team will get back to you shortly.",
     'asis.directContact': 'Direct contact', 'asis.replyMinutes': 'Reply within minutes', 'asis.chat': 'Chat',
@@ -254,10 +257,13 @@ const I18N = {
     'portal.qMore': 'More', 'portal.qMoreDesc': 'All the available options.',
     'portal.spending': 'Spending', 'portal.notifications': 'Notifications',
     'portal.greeting': 'Hi, ', 'portal.room': 'Room', 'portal.checkinActive': 'Check-in active',
-    'portal.nfcTitle': 'NFC digital key', 'portal.nfcDesc': 'Hold your phone near the door to get in.',
-    'portal.doorUnlocked': 'Door unlocked', 'portal.openKey': 'Unlock',
+    'portal.nfcTitle': 'NFC card', 'portal.nfcDescPending': 'Pick it up at the front desk to enter your room.',
+    'portal.nfcDescActive': 'Hold it near the door reader to get in.', 'portal.nfcDescBlocked': 'Your card is blocked. Ask the front desk for a new one.',
+    'portal.cardNo': 'No.', 'portal.cardPending': 'Pending', 'portal.cardBlocked': 'Blocked', 'portal.lostCard': 'I lost my card',
+    'portal.lostCardConfirm': 'Block your NFC card? It will stop opening your room and you can ask the front desk for a new one.',
+    'portal.cardBlockedToast': 'Card blocked. Ask the front desk for a new one.',
     'portal.stayTotal': 'Stay total', 'portal.noServicesYet': "You haven't requested any service yet.",
-    'portal.checkinConfirmedTitle': 'Check-in confirmed', 'portal.keyActive': 'Your digital key is already active.',
+    'portal.checkinConfirmedTitle': 'Check-in confirmed', 'portal.keyActive': 'Your NFC card is already active.', 'portal.keyPending': 'Pick up your NFC card at the front desk.', 'portal.keyBlocked': 'Your NFC card is blocked. Ask the front desk for a new one.',
     'portal.completed': 'Completed', 'portal.inProgress': 'In progress', 'portal.requestReceived': 'Request received',
     'portal.checkoutReminderTitle': 'Check-out reminder', 'portal.departureIs': 'Your departure is',
     'portal.coordinateWithReception': 'to be coordinated with the front desk',
@@ -389,6 +395,10 @@ document.addEventListener('DOMContentLoaded', applyGuestInfo);
 // =========================================================
 
 function _readList(key) {
+  if (SS_CLOUD && SS_COLL[key]) {
+    if (key === 'ss_hotels_registry') ssLoadPublicHotels();
+    try { return JSON.parse(SS_CACHE[key] || '[]'); } catch (e) { return []; }
+  }
   try {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
@@ -397,7 +407,344 @@ function _readList(key) {
   }
 }
 function _writeList(key, list) {
+  if (SS_CLOUD && SS_COLL[key]) { ssCloudWrite(key, list); return; }
   localStorage.setItem(key, JSON.stringify(list));
+}
+
+// =========================================================
+// Cloud data (Supabase). When assets/config.js carries the project's URL
+// and public key, every registry in this file lives in the cloud database
+// instead of localStorage: the CGO sees every hotel, each hotel's staff
+// sees their own hotel, and a guest only their own stay (permissions are
+// enforced by the database itself — see nube/schema.sql). Without that
+// config the site keeps working fully local, exactly as before.
+//
+// How it fits the rest of this file: at page load the data the signed-in
+// person may see is fetched once into SS_CACHE, so every getter below stays
+// synchronous; every write goes straight to the cloud and only updates the
+// cache once the cloud accepted it.
+// =========================================================
+const SS_CFG = (typeof window !== 'undefined' && window.SS_CONFIG) || {};
+const SS_CLOUD = !!(SS_CFG.supabaseUrl && SS_CFG.supabaseKey);
+const SS_AUTH_KEY = 'ss_auth';
+// Heavy photos live in their own table and are only downloaded when needed
+const SS_FILE_FIELDS = { documentPhotoFront: 'docFront', documentPhotoBack: 'docBack', signature: 'signature', avatarPhoto: 'avatar' };
+const SS_COLL = {
+  ss_hotels_registry:  { table: 'hotels',           snap: 'hotels',    id: r => r.id },
+  ss_staff_registry:   { table: 'profiles',         snap: 'staff',     id: r => r.id, profile: true },
+  ss_cgo_registry:     { table: 'profiles',         snap: 'cgo',       id: r => r.id, profile: true },
+  ss_guests_registry:  { table: 'guests',           snap: 'guests',    id: r => r.id, hotel: true, files: true },
+  ss_rooms:            { table: 'rooms',            snap: 'rooms',     id: r => r.hotelId + ':' + r.n, hotel: true },
+  ss_service_catalog:  { table: 'service_catalog',  snap: 'catalog',   id: r => r.hotelId + ':' + r.id, hotel: true },
+  ss_service_requests: { table: 'service_requests', snap: 'requests',  id: r => r.id, hotel: true },
+  ss_access_log:       { table: 'access_log',       snap: 'accessLog', id: r => r.id, hotel: true },
+};
+let SS_MODE = 'anon';   // 'staff' | 'cgo' | 'guest' | 'anon' (nobody signed in)
+let SS_PROFILE = null;  // the signed-in staff / CGO profile
+const SS_CACHE = {};    // collection key -> JSON string of its array
+const SS_FILES = {};    // guestId -> { kind: dataUrl } downloaded on demand
+let SS_WRITES = 0;      // bumps on every write so a slow refresh can't overwrite newer data
+let SS_PUBLIC_LOADED = false;
+
+// Synchronous request: the page's own scripts run right after this file
+// and expect their data to be there, so the data load can't be async.
+function ssHttp(method, path, body, opts) {
+  opts = opts || {};
+  const xhr = new XMLHttpRequest();
+  xhr.open(method, SS_CFG.supabaseUrl.replace(/\/+$/, '') + path, false);
+  xhr.setRequestHeader('apikey', SS_CFG.supabaseKey);
+  const token = opts.token !== undefined ? opts.token : (opts.anon ? '' : ssAccessToken());
+  if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+  else if (SS_CFG.supabaseKey.split('.').length === 3) xhr.setRequestHeader('Authorization', 'Bearer ' + SS_CFG.supabaseKey);
+  if (body !== undefined) xhr.setRequestHeader('Content-Type', 'application/json');
+  if (opts.prefer) xhr.setRequestHeader('Prefer', opts.prefer);
+  try {
+    xhr.send(body === undefined ? null : JSON.stringify(body));
+  } catch (e) {
+    return { ok: false, status: 0, data: null, message: 'network' };
+  }
+  let data = null;
+  try { data = xhr.responseText ? JSON.parse(xhr.responseText) : null; } catch (e) {}
+  const message = data && (data.message || data.msg || data.error_description || data.error) || '';
+  return { ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, data, message: String(message) };
+}
+function ssRpc(name, args, opts) { return ssHttp('POST', '/rest/v1/rpc/' + name, args || {}, opts); }
+
+function ssAuthRead() {
+  try { const raw = localStorage.getItem(SS_AUTH_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+}
+function ssAuthSave(s) {
+  localStorage.setItem(SS_AUTH_KEY, JSON.stringify({
+    access_token: s.access_token,
+    refresh_token: s.refresh_token,
+    expires_at: s.expires_at || (Math.floor(Date.now() / 1000) + (s.expires_in || 3600)),
+    email: (s.user && s.user.email) || (ssAuthRead() || {}).email || '',
+  }));
+}
+function ssAuthClear() { localStorage.removeItem(SS_AUTH_KEY); }
+function ssAccessToken() { const a = ssAuthRead(); return a ? a.access_token : ''; }
+// Renews the access token shortly before it expires. false = no valid session.
+function ssAuthRefresh() {
+  const a = ssAuthRead();
+  if (!a) return false;
+  if (a.expires_at - Date.now() / 1000 > 90) return true;
+  const r = ssHttp('POST', '/auth/v1/token?grant_type=refresh_token', { refresh_token: a.refresh_token }, { anon: true });
+  if (r.ok && r.data && r.data.access_token) { ssAuthSave(r.data); return true; }
+  if (r.status >= 400 && r.status < 500) ssAuthClear();
+  return false;
+}
+
+function ssPutCollections(map) {
+  Object.keys(SS_COLL).forEach(key => { const v = map[SS_COLL[key].snap]; if (v) SS_CACHE[key] = JSON.stringify(v); });
+}
+function ssApplyAccountSnapshot(snap) {
+  SS_PROFILE = snap.profile;
+  SS_MODE = snap.profile.kind === 'cgo' ? 'cgo' : 'staff';
+  SS_CACHE['ss_hotels_registry'] = '[]';
+  ssPutCollections(snap);
+}
+function ssApplyGuestSnapshot(snap) {
+  SS_MODE = 'guest';
+  ssPutCollections({ hotels: snap.hotels, guests: [snap.guest], catalog: snap.catalog, requests: snap.requests, rooms: [], staff: [], cgo: [], accessLog: [] });
+}
+function ssGuestToken() { const gi = getGuestInfo(); return gi && gi.token ? gi.token : ''; }
+// (Re)loads the guest's own stay from the cloud. false = no valid guest session.
+function ssGuestBoot() {
+  const gi = getGuestInfo();
+  if (!gi || !gi.registeredGuestId || !gi.token) return false;
+  const r = ssRpc('guest_snapshot', { p_id: gi.registeredGuestId, p_token: gi.token }, { anon: true });
+  if (r.ok && r.data) { ssApplyGuestSnapshot(r.data); return true; }
+  if (r.status >= 400 && r.status < 500) {
+    // the session is no longer valid (reservation removed, token revoked...)
+    const rest = { ...gi }; delete rest.registeredGuestId; delete rest.token;
+    localStorage.setItem(GUEST_KEY, JSON.stringify(rest));
+  }
+  return false;
+}
+function ssCloudBoot() {
+  if (!SS_CLOUD) return;
+  if (ssAuthRead() && ssAuthRefresh()) {
+    const r = ssRpc('app_snapshot');
+    if (r.ok && r.data && r.data.profile) { ssApplyAccountSnapshot(r.data); return; }
+    if (r.status === 401 || r.status === 403) ssAuthClear();
+  }
+  ssGuestBoot();
+}
+// Visitors with no session only need the public hotel list (to pick a hotel
+// when registering staff) — fetched lazily, never on pages that don't ask.
+function ssLoadPublicHotels() {
+  if (SS_MODE !== 'anon' || SS_PUBLIC_LOADED) return;
+  SS_PUBLIC_LOADED = true;
+  const r = ssRpc('public_hotels', {}, { anon: true });
+  if (r.ok && Array.isArray(r.data)) SS_CACHE['ss_hotels_registry'] = JSON.stringify(r.data);
+}
+
+function ssNotifyError(msg) {
+  try { showToast(msg); } catch (e) {}
+  console.warn('[SmartStay cloud]', msg);
+}
+function ssRowBody(spec, r) {
+  const data = { ...r };
+  if (spec.table === 'hotels') delete data.staffCode;
+  if (spec.profile) ['id', 'email', 'hotelId', 'kind', 'password', 'staffCode'].forEach(k => delete data[k]);
+  const files = {};
+  if (spec.files) {
+    Object.keys(SS_FILE_FIELDS).forEach(f => {
+      if (data[f] && data[f] !== '@file') files[SS_FILE_FIELDS[f]] = data[f];
+      delete data[f];
+    });
+  }
+  return { data, files };
+}
+function ssWithPlaceholders(spec, r, prev, files) {
+  const out = { ...r };
+  if (!spec.files) return out;
+  Object.keys(SS_FILE_FIELDS).forEach(f => {
+    if (files[SS_FILE_FIELDS[f]] || r[f] === '@file' || (prev && prev[f] === '@file' && r[f])) out[f] = '@file';
+  });
+  return out;
+}
+function ssEnc(v) { return encodeURIComponent(v); }
+
+// Saves one added/changed row. Returns the record as stored, or null if the
+// cloud refused it (no permission, no connection...).
+function ssPersistRow(key, spec, r, prev) {
+  if (SS_MODE === 'guest') return ssGuestPersist(key, r, prev);
+  if (SS_MODE !== 'staff' && SS_MODE !== 'cgo') { ssNotifyError('Iniciá sesión para guardar los cambios.'); return null; }
+  if (!ssAuthRefresh()) { ssNotifyError('Tu sesión expiró. Iniciá sesión de nuevo.'); return null; }
+  const id = spec.id(r);
+  const { data, files } = ssRowBody(spec, r);
+  let res;
+  if (prev) {
+    res = ssHttp('PATCH', '/rest/v1/' + spec.table + '?id=eq.' + ssEnc(id), { data }, { prefer: 'return=representation' });
+    if (res.ok && Array.isArray(res.data) && !res.data.length) res = { ok: false, status: 403, message: 'sin permiso' };
+  } else if (spec.profile) {
+    return null; // accounts are only created by registering (claim_staff / claim_cgo)
+  } else {
+    const row = { id, data };
+    if (spec.hotel) {
+      if (!r.hotelId) { ssNotifyError('Falta el hotel de este registro.'); return null; }
+      row.hotel_id = r.hotelId;
+    }
+    res = ssHttp('POST', '/rest/v1/' + spec.table, row, { prefer: 'return=representation' });
+  }
+  if (!res.ok) { ssNotifyError('No se pudo guardar en la nube: ' + (res.message || 'error ' + res.status)); return null; }
+  // photos go to their own table
+  for (const kind of Object.keys(files)) {
+    const fr = ssHttp('POST', '/rest/v1/guest_files?on_conflict=guest_id,kind', [{ guest_id: id, kind, content: files[kind] }], { prefer: 'resolution=merge-duplicates,return=minimal' });
+    if (!fr.ok) { ssNotifyError('No se pudo guardar una foto: ' + (fr.message || fr.status)); continue; }
+    (SS_FILES[id] = SS_FILES[id] || {})[kind] = files[kind];
+  }
+  if (spec.files) {
+    Object.keys(SS_FILE_FIELDS).forEach(f => {
+      if (prev && prev[f] && !r[f]) ssHttp('DELETE', '/rest/v1/guest_files?guest_id=eq.' + ssEnc(id) + '&kind=eq.' + SS_FILE_FIELDS[f]);
+    });
+  }
+  const out = ssWithPlaceholders(spec, r, prev, files);
+  if (spec.table === 'hotels') {
+    const row = Array.isArray(res.data) && res.data[0];
+    out.staffCode = (row && row.staff_code) || (prev && prev.staffCode) || '';
+  }
+  return out;
+}
+function ssRemoveRow(key, spec, prev) {
+  if (SS_MODE !== 'staff' && SS_MODE !== 'cgo') { ssNotifyError('No tenés permiso para eliminar esto.'); return false; }
+  if (!ssAuthRefresh()) { ssNotifyError('Tu sesión expiró. Iniciá sesión de nuevo.'); return false; }
+  const res = ssHttp('DELETE', '/rest/v1/' + spec.table + '?id=eq.' + ssEnc(spec.id(prev)), undefined, { prefer: 'return=representation' });
+  if (!res.ok || (Array.isArray(res.data) && !res.data.length)) {
+    ssNotifyError('No se pudo eliminar: ' + (res.message || 'sin permiso'));
+    return false;
+  }
+  return true;
+}
+// A guest has no database account: they can only edit their own record and
+// add service requests, always through functions that check their token.
+function ssGuestPersist(key, r, prev) {
+  const info = getGuestInfo() || {};
+  const token = ssGuestToken();
+  if (key === 'ss_guests_registry' && prev && prev.id === info.registeredGuestId) {
+    const changes = {};
+    const files = {};
+    Object.keys(r).forEach(k => {
+      if (JSON.stringify(r[k]) === JSON.stringify(prev[k])) return;
+      if (SS_FILE_FIELDS[k]) { if (r[k] && r[k] !== '@file') files[SS_FILE_FIELDS[k]] = r[k]; }
+      else changes[k] = r[k];
+    });
+    let rec = prev;
+    if (Object.keys(changes).length) {
+      const res = ssRpc('guest_save', { p_id: prev.id, p_token: token, p_changes: changes }, { anon: true });
+      if (!res.ok) { ssNotifyError('No se pudo guardar en la nube: ' + (res.message || 'error ' + res.status)); return null; }
+      rec = res.data;
+    }
+    for (const kind of Object.keys(files)) {
+      const fr = ssRpc('guest_save_file', { p_id: prev.id, p_token: token, p_kind: kind, p_content: files[kind] }, { anon: true });
+      if (!fr.ok) { ssNotifyError('No se pudo guardar una foto: ' + (fr.message || fr.status)); continue; }
+      (SS_FILES[prev.id] = SS_FILES[prev.id] || {})[kind] = files[kind];
+      Object.keys(SS_FILE_FIELDS).forEach(f => { if (SS_FILE_FIELDS[f] === kind) rec = { ...rec, [f]: '@file' }; });
+    }
+    return rec;
+  }
+  if (key === 'ss_service_requests' && !prev) {
+    const res = ssRpc('guest_add_request', { p_id: info.registeredGuestId, p_token: token, p_request: r }, { anon: true });
+    if (!res.ok) { ssNotifyError('No se pudo enviar la solicitud: ' + (res.message || 'error ' + res.status)); return null; }
+    return res.data;
+  }
+  return prev || null; // everything else is read-only for guests
+}
+function ssCloudWrite(key, list) {
+  const spec = SS_COLL[key];
+  const prev = JSON.parse(SS_CACHE[key] || '[]');
+  const prevMap = new Map(prev.map(r => [spec.id(r), r]));
+  const result = [];
+  const seen = new Set();
+  let changed = false;
+  list.forEach(r => {
+    const id = spec.id(r);
+    if (seen.has(id)) return;
+    seen.add(id);
+    const p = prevMap.get(id);
+    if (p && JSON.stringify(p) === JSON.stringify(r)) { result.push(r); return; }
+    changed = true;
+    const saved = ssPersistRow(key, spec, r, p);
+    if (saved) result.push(saved); else if (p) result.push(p);
+  });
+  prevMap.forEach((p, id) => {
+    if (seen.has(id)) return;
+    changed = true;
+    if (!ssRemoveRow(key, spec, p)) result.push(p);
+  });
+  SS_CACHE[key] = JSON.stringify(result);
+  if (changed) SS_WRITES++;
+}
+
+// Real photos for a guest record whose photo fields hold the "@file" marker
+function ensureGuestFiles(g) {
+  if (!SS_CLOUD || !g) return g;
+  Object.keys(SS_FILE_FIELDS).forEach(f => {
+    if (g[f] !== '@file') return;
+    const kind = SS_FILE_FIELDS[f];
+    let content = SS_FILES[g.id] && SS_FILES[g.id][kind];
+    if (!content) {
+      if (SS_MODE === 'guest') {
+        const r = ssRpc('guest_get_file', { p_id: g.id, p_token: ssGuestToken(), p_kind: kind }, { anon: true });
+        content = r.ok ? r.data : '';
+      } else {
+        const r = ssHttp('GET', '/rest/v1/guest_files?guest_id=eq.' + ssEnc(g.id) + '&kind=eq.' + kind + '&select=content');
+        content = r.ok && r.data && r.data[0] ? r.data[0].content : '';
+      }
+      if (content) (SS_FILES[g.id] = SS_FILES[g.id] || {})[kind] = content;
+    }
+    g[f] = content || '';
+  });
+  return g;
+}
+
+// Keeps what's on screen current when someone else (a colleague, a guest,
+// the CGO) changes data: re-checks the cloud every few seconds and, if
+// anything differs, tells the page to redraw via window.ssRefreshPage().
+// For pages without forms: reload to show fresh data, but never while
+// someone is typing or a window is open (it would throw their work away).
+function ssReloadIfIdle() {
+  const a = document.activeElement;
+  const typing = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+  const modal = document.querySelector('.modal-overlay:not([hidden])');
+  if (!typing && !modal) window.location.reload();
+}
+let ssPolling = false;
+async function ssPollOnce() {
+  if (!SS_CLOUD || ssPolling || document.hidden) return;
+  if (SS_MODE === 'anon') return;
+  ssPolling = true;
+  const version = SS_WRITES;
+  try {
+    let url, body, token;
+    if (SS_MODE === 'guest') {
+      const info = getGuestInfo() || {};
+      url = '/rest/v1/rpc/guest_snapshot'; body = { p_id: info.registeredGuestId, p_token: ssGuestToken() }; token = '';
+    } else {
+      if (!ssAuthRefresh()) return;
+      url = '/rest/v1/rpc/app_snapshot'; body = {}; token = ssAccessToken();
+    }
+    const headers = { apikey: SS_CFG.supabaseKey, 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    else if (SS_CFG.supabaseKey.split('.').length === 3) headers.Authorization = 'Bearer ' + SS_CFG.supabaseKey;
+    const res = await fetch(SS_CFG.supabaseUrl.replace(/\/+$/, '') + url, { method: 'POST', headers, body: JSON.stringify(body) });
+    if (!res.ok) return;
+    const snap = await res.json();
+    if (version !== SS_WRITES) return; // something was saved meanwhile: this answer may be older
+    const before = JSON.stringify(SS_CACHE);
+    if (SS_MODE === 'guest') ssApplyGuestSnapshot(snap); else if (snap.profile) ssApplyAccountSnapshot(snap);
+    if (JSON.stringify(SS_CACHE) !== before) {
+      if (typeof window.ssRefreshPage === 'function') { try { window.ssRefreshPage(); } catch (e) { console.warn(e); } }
+      window.dispatchEvent(new CustomEvent('ss:data'));
+    }
+  } catch (e) { /* offline: try again at the next tick */ }
+  finally { ssPolling = false; }
+}
+function ssStartPolling() {
+  if (!SS_CLOUD || SS_MODE === 'anon') return;
+  setInterval(ssPollOnce, 12000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) ssPollOnce(); });
 }
 function _newId(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -411,7 +758,7 @@ const HOTELS_KEY = 'ss_hotels_registry';
 
 function getHotelsRegistry() {
   const list = _readList(HOTELS_KEY);
-  if (list.length) return list;
+  if (list.length || SS_CLOUD) return list;
   // Seeds the original demo hotel so existing flows (and a fresh visitor
   // who hasn't used the CGO panel yet) keep working out of the box.
   const seeded = [{ id: 'h_default', createdAt: new Date().toISOString(), active: true, ...DEFAULT_HOTEL }];
@@ -456,7 +803,8 @@ function getHotelById(id) {
 // current guest matched during check-in. Every hotel-scoped getter/setter
 // below filters through this so one hotel's data never leaks into another's.
 function getActiveHotelId() {
-  const staffEmail = localStorage.getItem(CURRENT_STAFF_KEY);
+  if (SS_CLOUD && SS_MODE === 'staff' && SS_PROFILE) return SS_PROFILE.hotelId || null;
+  const staffEmail = SS_CLOUD ? null : localStorage.getItem(CURRENT_STAFF_KEY);
   if (staffEmail) {
     const staff = _readList(STAFF_KEY).find(s => (s.email || '').toLowerCase() === staffEmail.toLowerCase());
     if (staff && staff.hotelId) return staff.hotelId;
@@ -527,6 +875,7 @@ function cancelReservation(id, reason) {
 // Searches ACROSS every affiliated hotel (unscoped) since a guest doesn't
 // know their hotel's internal id yet — the match itself is what tells us.
 function findPendingReservation({ code, lastname, documentNumber } = {}) {
+  if (SS_CLOUD) return ssFindReservation({ code, lastname, documentNumber });
   const norm = s => (s || '').trim().toLowerCase();
   const pending = _readList(GUESTS_KEY).filter(g => g.status === 'pendiente');
   if (code) {
@@ -577,6 +926,189 @@ function findGuestByRoom(roomPrefix) {
   return getGuestsRegistry().find(g => g.room && g.room.startsWith(roomPrefix) && g.status !== 'revocado');
 }
 
+// ---- NFC room cards ----
+// The room key is a physical NFC card: after digital check-in, reception
+// encodes one and hands it to the guest. It deliberately doesn't depend on
+// the guest's phone (many phones have no NFC, and iPhones can't act as a
+// card). The card lives on the guest record — cardUid, cardStatus
+// ('active' | 'blocked'; absent means "not delivered yet"), retiredCards
+// (UIDs replaced after a loss) — and every door read is kept in the log.
+const ACCESS_LOG_KEY = 'ss_access_log';
+
+function _generateCardUid() {
+  // 7-byte UID like real NFC cards (first byte 04), shown as hex pairs
+  const bytes = [0x04];
+  for (let i = 0; i < 6; i++) bytes.push(Math.floor(Math.random() * 256));
+  return bytes.map(b => b.toString(16).padStart(2, '0')).join(':').toUpperCase();
+}
+// Last two bytes of a UID, enough for a guest to recognise their card.
+function shortCardUid(uid) {
+  return uid ? uid.split(':').slice(-2).join('') : '';
+}
+// 'none' (no stay in progress: pending reservation, canceled or checked
+// out — a checked-out guest's card stops working by itself),
+// 'pending' (checked in, card not handed over yet), 'active' or 'blocked'.
+function getCardState(g) {
+  if (!g || g.status === 'pendiente' || g.status === 'cancelada' || g.status === 'checkout') return 'none';
+  if (g.status === 'revocado') return 'blocked'; // older records from when the key was revoked per guest
+  if (g.cardStatus === 'active' || g.cardStatus === 'blocked') return g.cardStatus;
+  return 'pending';
+}
+// Who currently holds a card. Cards go back to reception at check-out and
+// get reused, so several records can carry the same UID over time: the
+// holder is the one it was issued to most recently.
+function findCardOwner(uid) {
+  return getGuestsRegistry()
+    .filter(g => g.cardUid === uid)
+    .sort((a, b) => (b.cardIssuedAt || '').localeCompare(a.cardIssuedAt || ''))[0] || null;
+}
+// Normalizes whatever reception types or a reader sends ("04:a2:3b...",
+// "04-A2-3B...", "04A23B...") to "04:A2:3B:..."; '' if it isn't a UID.
+function normalizeCardUid(raw) {
+  const s = String(raw || '').trim();
+  if (!/^[0-9a-f]+([:\-\s][0-9a-f]+)*$/i.test(s)) return '';
+  const hex = s.replace(/[^0-9a-f]/gi, '').toUpperCase();
+  if (hex.length < 8 || hex.length > 20 || hex.length % 2) return '';
+  return hex.match(/.{2}/g).join(':');
+}
+// Links a physical card (by its UID) to a guest's stay and account. Returns
+// { ok:true, guest } or { ok:false, error, owner }. If the guest already had
+// a card, the old UID is retired so it stops opening doors (lost/replaced).
+function assignCard(guestId, rawUid, method) {
+  const uid = normalizeCardUid(rawUid);
+  if (!uid) return { ok: false, error: 'invalid' };
+  const g = _readList(GUESTS_KEY).find(x => x.id === guestId);
+  if (!g) return { ok: false, error: 'noguest' };
+  const owner = findCardOwner(uid);
+  if (owner && owner.id !== guestId && getCardState(owner) !== 'none') return { ok: false, error: 'inuse', owner };
+  const changes = {
+    cardUid: uid,
+    cardStatus: 'active',
+    cardMethod: method || 'manual',
+    cardIssuedAt: new Date().toISOString(),
+    cardBlockReason: '',
+    retiredCards: (g.retiredCards || []).filter(u => u !== uid).concat(g.cardUid && g.cardUid !== uid ? [g.cardUid] : []),
+  };
+  if (g.status === 'revocado') changes.status = 'activo';
+  return { ok: true, guest: updateGuest(guestId, changes) };
+}
+// A card with a generated UID, for demos without a physical card.
+function issueCard(guestId) {
+  const r = assignCard(guestId, _generateCardUid(), 'virtual');
+  return r.ok ? r.guest : null;
+}
+// reason: 'lost' (reported by the guest) or 'reception'
+function blockCard(guestId, reason) {
+  return updateGuest(guestId, { cardStatus: 'blocked', cardBlockReason: reason || 'reception', cardBlockedAt: new Date().toISOString() });
+}
+
+function getAccessLog() {
+  const hid = getActiveHotelId();
+  return _readList(ACCESS_LOG_KEY).filter(e => e.hotelId === hid).sort((a, b) => b.ts.localeCompare(a.ts));
+}
+// Simulates what a door's NFC reader + controller decide when a card is
+// held against it. door is a room number, or 'common' for shared areas
+// (gym, pool...). Every read — granted or denied — goes to the access log.
+function tryDoorAccess(uid, door) {
+  const guests = getGuestsRegistry();
+  const owner = findCardOwner(uid);
+  const previous = owner ? null : guests.find(g => (g.retiredCards || []).includes(uid));
+  const g = owner || previous || null;
+  let reason = '';
+  if (!g) reason = 'unknown';
+  else if (previous) reason = 'replaced';
+  else {
+    const state = getCardState(g);
+    if (state === 'blocked') reason = 'blocked';
+    else if (state === 'none') reason = 'ended';
+    else if (door !== 'common' && String(door) !== (g.room || '').split('·')[0].trim()) reason = 'wrongDoor';
+  }
+  const result = reason ? 'denied' : 'granted';
+  const all = _readList(ACCESS_LOG_KEY);
+  all.unshift({
+    id: _newId('a'), ts: new Date().toISOString(), hotelId: getActiveHotelId(),
+    uid, guestId: g ? g.id : '', guestName: g ? ((g.firstName || '') + ' ' + (g.lastName || '')).trim() : '',
+    door: String(door), result, reason,
+  });
+  _writeList(ACCESS_LOG_KEY, all.slice(0, 1000));
+  return { result, reason, guest: g };
+}
+
+// ---- Reading and writing real NFC cards (Web NFC) ----
+// Chrome on Android can read a tag's serial number and write NDEF data, but
+// only over HTTPS and from a tap/click. Elsewhere (desktop, iPhone) reception
+// types the card number or uses a USB reader that "types" it for them.
+const NFC_SUPPORTED = typeof window !== 'undefined' && 'NDEFReader' in window;
+
+// What gets written on the card: only a reference (reservation code + hotel),
+// never the guest's name or room — a lost card must not reveal who sleeps
+// where. The door's decision always comes from the UID looked up in the system.
+function buildCardPayload(g) {
+  const hotel = (getHotelInfo().name || 'Hotel').slice(0, 24);
+  return ['SMARTSTAY', g.reservationCode || g.id, hotel].join('|');
+}
+function parseCardPayload(text) {
+  if (!text || text.indexOf('SMARTSTAY|') !== 0) return null;
+  const parts = text.split('|');
+  return { code: parts[1] || '', hotel: parts[2] || '' };
+}
+// Waits for a card to be tapped and resolves { uid, text, written }. If
+// writeText is given, it is written to the card as soon as it's read.
+// Rejects with Error('unsupported' | 'timeout' | 'aborted' | 'readerror' |
+// 'nouid') or the browser's own error (NotAllowedError, NotSupportedError).
+function nfcTapCard({ timeoutMs = 30000, writeText = null, signal = null } = {}) {
+  return new Promise((resolve, reject) => {
+    if (!NFC_SUPPORTED) { reject(new Error('unsupported')); return; }
+    const ctrl = new AbortController();
+    let done = false;
+    let timer = null;
+    const finish = (fn, val) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      try { ctrl.abort(); } catch (e) {}
+      fn(val);
+    };
+    timer = setTimeout(() => finish(reject, new Error('timeout')), timeoutMs);
+    if (signal) signal.addEventListener('abort', () => finish(reject, new Error('aborted')));
+    const reader = new NDEFReader();
+    reader.onreadingerror = () => finish(reject, new Error('readerror'));
+    reader.onreading = async (e) => {
+      if (done) return;
+      const uid = normalizeCardUid(e.serialNumber);
+      if (!uid) { finish(reject, new Error('nouid')); return; }
+      let text = '';
+      for (const rec of e.message.records) {
+        if (rec.recordType === 'text') { text = new TextDecoder(rec.encoding || 'utf-8').decode(rec.data); break; }
+      }
+      let written = null;
+      if (writeText) {
+        const wctrl = new AbortController();
+        const wtimer = setTimeout(() => wctrl.abort(), 10000);
+        try {
+          await reader.write({ records: [{ recordType: 'text', data: writeText }] }, { overwrite: true, signal: wctrl.signal });
+          written = true;
+        } catch (err) { written = false; }
+        clearTimeout(wtimer);
+      }
+      finish(resolve, { uid, text, written });
+    };
+    reader.scan({ signal: ctrl.signal }).catch(err => finish(reject, err));
+  });
+}
+
+// Everything the account holds for a stay, so a tapped card can show the
+// guest's data: the services requested and the stay's running total.
+function getGuestAccountSummary(g) {
+  const hid = g.hotelId;
+  const name = ((g.firstName || '') + ' ' + (g.lastName || '')).trim();
+  const hotelInfo = { ...DEFAULT_HOTEL, ...(getHotelById(hid) || {}) };
+  return {
+    services: _servicesForGuestRecord(g, hid, name),
+    total: _billingForGuestRecord(g, hid, hotelInfo),
+  };
+}
+
 // ---- Staff registry ----
 const STAFF_KEY = 'ss_staff_registry';
 const CURRENT_STAFF_KEY = 'ss_current_staff_email';
@@ -588,6 +1120,7 @@ function saveStaffRegistry(list) {
   _writeList(STAFF_KEY, list);
 }
 function registerStaff(data) {
+  if (SS_CLOUD) return ssRegisterAccount('staff', data);
   const list = getStaffRegistry();
   const record = { id: _newId('s'), createdAt: new Date().toISOString(), ...data };
   list.unshift(record);
@@ -603,6 +1136,7 @@ function findStaffByEmail(email) {
 // Returns: null = no account with that email, false = wrong password,
 // otherwise the staff record on success.
 function verifyStaffLogin(email, password) {
+  if (SS_CLOUD) return ssLogin('staff', email, password);
   const staff = findStaffByEmail(email);
   if (!staff) return null;
   if (staff.password !== password) return false;
@@ -612,6 +1146,7 @@ function verifyStaffLogin(email, password) {
 // 'no-session' (nobody logged in), 'wrong-current' (current password
 // didn't match), or 'ok' (updated).
 function changeCurrentStaffPassword(currentPassword, newPassword) {
+  if (SS_CLOUD) return ssChangePassword(currentPassword, newPassword);
   const staff = getCurrentStaff();
   if (!staff) return 'no-session';
   if (staff.password !== currentPassword) return 'wrong-current';
@@ -636,6 +1171,7 @@ const PASSWORD_RESETS_KEY = 'ss_password_resets';
 // redeems it doesn't need to know in advance which kind it's handling.
 function requestPasswordReset(email, kind) {
   kind = kind === 'cgo' ? 'cgo' : 'staff';
+  if (SS_CLOUD) return ssRequestPasswordReset(email, kind);
   const account = kind === 'cgo' ? findCGOByEmail(email) : findStaffByEmail(email);
   if (!account) return { found: false };
   const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -669,9 +1205,11 @@ function findAnyAccountByEmail(email) {
 }
 
 function setCurrentStaffEmail(email) {
+  if (SS_CLOUD) return; // the cloud session was already set when logging in
   localStorage.setItem(CURRENT_STAFF_KEY, email);
 }
 function getCurrentStaff() {
+  if (SS_CLOUD) return SS_MODE === 'staff' ? SS_PROFILE : null;
   const email = localStorage.getItem(CURRENT_STAFF_KEY);
   return email ? findStaffByEmail(email) : null;
 }
@@ -686,6 +1224,7 @@ function logoutGuest(redirectTo) {
   window.location.href = redirectTo || 'index.html';
 }
 function logoutStaff(redirectTo) {
+  if (SS_CLOUD) ssSignOut();
   localStorage.removeItem(CURRENT_STAFF_KEY);
   window.location.href = redirectTo || 'index.html';
 }
@@ -718,6 +1257,7 @@ const CURRENT_CGO_KEY = 'ss_current_cgo_email';
 function getCGORegistry() { return _readList(CGO_KEY); }
 function saveCGORegistry(list) { _writeList(CGO_KEY, list); }
 function registerCGO(data) {
+  if (SS_CLOUD) return ssRegisterAccount('cgo', data);
   const list = getCGORegistry();
   const record = { id: _newId('cgo'), createdAt: new Date().toISOString(), ...data };
   list.unshift(record);
@@ -730,17 +1270,20 @@ function findCGOByEmail(email) {
   return getCGORegistry().find(c => (c.email || '').toLowerCase() === email.toLowerCase()) || null;
 }
 function verifyCGOLogin(email, password) {
+  if (SS_CLOUD) return ssLogin('cgo', email, password);
   const c = findCGOByEmail(email);
   if (!c) return null;
   if (c.password !== password) return false;
   return c;
 }
-function setCurrentCGOEmail(email) { localStorage.setItem(CURRENT_CGO_KEY, email); }
+function setCurrentCGOEmail(email) { if (!SS_CLOUD) localStorage.setItem(CURRENT_CGO_KEY, email); }
 function getCurrentCGO() {
+  if (SS_CLOUD) return SS_MODE === 'cgo' ? SS_PROFILE : null;
   const email = localStorage.getItem(CURRENT_CGO_KEY);
   return email ? findCGOByEmail(email) : null;
 }
 function logoutCGO(redirectTo) {
+  if (SS_CLOUD) ssSignOut();
   localStorage.removeItem(CURRENT_CGO_KEY);
   window.location.href = redirectTo || 'index.html';
 }
@@ -1264,6 +1807,7 @@ function exportHotelBackup() {
     guests: _readList(GUESTS_KEY).filter(g => g.hotelId === hid),
     staff: _readList(STAFF_KEY).filter(s => s.hotelId === hid),
     requests: _readList(REQUESTS_KEY).filter(r => r.hotelId === hid),
+    accessLog: _readList(ACCESS_LOG_KEY).filter(e => e.hotelId === hid),
   };
 }
 // Replaces this hotel's own slice of every shared collection with what's
@@ -1275,7 +1819,109 @@ function importHotelBackup(data) {
   if (data.hotel) updateHotel(hid, { ...data.hotel, id: hid });
   if (Array.isArray(data.rooms)) _writeList(ROOMS_KEY, [..._readList(ROOMS_KEY).filter(r => r.hotelId !== hid), ...data.rooms.map(r => ({ ...r, hotelId: hid }))]);
   if (Array.isArray(data.guests)) _writeList(GUESTS_KEY, [..._readList(GUESTS_KEY).filter(g => g.hotelId !== hid), ...data.guests.map(g => ({ ...g, hotelId: hid }))]);
-  if (Array.isArray(data.staff)) _writeList(STAFF_KEY, [..._readList(STAFF_KEY).filter(s => s.hotelId !== hid), ...data.staff.map(s => ({ ...s, hotelId: hid }))]);
+  if (Array.isArray(data.staff) && !SS_CLOUD) _writeList(STAFF_KEY, [..._readList(STAFF_KEY).filter(s => s.hotelId !== hid), ...data.staff.map(s => ({ ...s, hotelId: hid }))]);
+  if (Array.isArray(data.accessLog)) _writeList(ACCESS_LOG_KEY, [..._readList(ACCESS_LOG_KEY).filter(e => e.hotelId !== hid), ...data.accessLog.map(e => ({ ...e, hotelId: hid }))]);
   if (Array.isArray(data.requests)) _writeList(REQUESTS_KEY, [..._readList(REQUESTS_KEY).filter(r => r.hotelId !== hid), ...data.requests.map(r => ({ ...r, hotelId: hid }))]);
   return true;
 }
+
+// =========================================================
+// Cloud accounts: sign in / sign up / password, through Supabase Auth.
+// (Staff and CGO accounts are real logins; guests never have an account.)
+// =========================================================
+function ssSignOut() {
+  if (ssAccessToken()) ssHttp('POST', '/auth/v1/logout', {});
+  ssAuthClear();
+  SS_MODE = 'anon';
+  SS_PROFILE = null;
+}
+// kind: 'staff' | 'cgo'. Returns the profile on success, null if that account
+// isn't of this kind (or has no profile yet), false if the email/password is wrong.
+function ssLogin(kind, email, password) {
+  const r = ssHttp('POST', '/auth/v1/token?grant_type=password', { email: (email || '').trim().toLowerCase(), password }, { anon: true });
+  if (!r.ok) {
+    if (r.status === 0) ssNotifyError('No hay conexión con la nube. Revisá tu internet.');
+    return false;
+  }
+  ssAuthSave(r.data);
+  const snap = ssRpc('app_snapshot');
+  if (!snap.ok || !snap.data || !snap.data.profile || snap.data.profile.kind !== kind) {
+    ssSignOut();
+    return null;
+  }
+  ssApplyAccountSnapshot(snap.data);
+  return snap.data.profile;
+}
+// data: { firstName, lastName, email, phone, role, password, hotelId + staffCode (staff) | accessCode (CGO) }
+// Returns the new profile, or { error: 'invalid_code' | 'exists' | 'weak_password' | 'confirm_email' | 'network' | 'failed' }.
+function ssRegisterAccount(kind, data) {
+  const email = (data.email || '').trim().toLowerCase();
+  let r = ssHttp('POST', '/auth/v1/signup', { email, password: data.password }, { anon: true });
+  if (!r.ok) {
+    if (r.status === 0) return { error: 'network' };
+    if (/weak|least/i.test(r.message)) return { error: 'weak_password' };
+    // an earlier attempt may have created the login but not the profile (wrong code): retry with it
+    r = ssHttp('POST', '/auth/v1/token?grant_type=password', { email, password: data.password }, { anon: true });
+    if (!r.ok) return { error: 'exists' };
+  }
+  if (!r.data || !r.data.access_token) return { error: 'confirm_email' };
+  ssAuthSave(r.data);
+  const profile = { firstName: data.firstName, lastName: data.lastName, phone: data.phone, role: data.role, createdAt: new Date().toISOString() };
+  const c = kind === 'cgo'
+    ? ssRpc('claim_cgo', { p_code: data.accessCode || '', p_profile: profile })
+    : ssRpc('claim_staff', { p_hotel_id: data.hotelId, p_code: data.staffCode || '', p_profile: profile });
+  if (!c.ok) {
+    ssAuthClear();
+    if (/invalid_code/.test(c.message)) return { error: 'invalid_code' };
+    if (/already_registered/.test(c.message)) return { error: 'exists' };
+    return { error: 'failed', message: c.message };
+  }
+  const snap = ssRpc('app_snapshot');
+  if (snap.ok && snap.data && snap.data.profile) ssApplyAccountSnapshot(snap.data);
+  return c.data;
+}
+function ssChangePassword(currentPassword, newPassword) {
+  const a = ssAuthRead();
+  if (!a || SS_MODE !== 'staff') return 'no-session';
+  const chk = ssHttp('POST', '/auth/v1/token?grant_type=password', { email: a.email, password: currentPassword }, { anon: true });
+  if (!chk.ok) return 'wrong-current';
+  ssAuthSave(chk.data);
+  const u = ssHttp('PUT', '/auth/v1/user', { password: newPassword });
+  if (u.ok) return 'ok';
+  return /weak|least/i.test(u.message) ? 'weak' : 'error';
+}
+// Supabase sends the recovery email itself; the link brings the person back
+// to resetear-password.html with a one-time token in the URL.
+function ssRequestPasswordReset(email, kind) {
+  const back = location.origin + location.pathname.replace(/[^/]*$/, '') + 'resetear-password.html?kind=' + kind;
+  const r = ssHttp('POST', '/auth/v1/recover?redirect_to=' + ssEnc(back), { email: (email || '').trim().toLowerCase() }, { anon: true });
+  return { found: r.ok, sent: r.ok, cloud: true, status: r.status, message: r.message };
+}
+// token: the access_token from the recovery link. 'ok' | 'expired' | 'weak' | 'error'
+function ssSetRecoveredPassword(token, newPassword) {
+  const r = ssHttp('PUT', '/auth/v1/user', { password: newPassword }, { token });
+  if (r.ok) return 'ok';
+  if (r.status === 401 || r.status === 403) return 'expired';
+  return /weak|least/i.test(r.message) ? 'weak' : 'error';
+}
+// Check-in step 1. A guest has no account: the reservation code (or ID
+// number) is what identifies them, and this device gets its own secret
+// token that the database later checks on every request.
+function ssFindReservation({ code, lastname, documentNumber }) {
+  const gi = getGuestInfo() || {};
+  let token = gi.token;
+  if (!token) {
+    const bytes = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(bytes);
+    token = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  const r = ssRpc('guest_login', { p_code: code || '', p_lastname: lastname || '', p_doc: documentNumber || '', p_token: token }, { anon: true });
+  if (r.status === 0) { ssNotifyError('No hay conexión con la nube. Revisá tu internet.'); return null; }
+  if (!r.ok || !r.data) return null;
+  saveGuestInfo({ token, registeredGuestId: r.data.id });
+  ssGuestBoot();
+  return r.data;
+}
+
+ssCloudBoot();
+document.addEventListener('DOMContentLoaded', ssStartPolling);
