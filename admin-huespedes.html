@@ -134,7 +134,8 @@
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Email</div><div id="gd-email" style="font-weight:600;">—</div></div>
       <div class="room-field" style="border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Estado</div><div id="gd-status" style="font-weight:600;">—</div></div>
       <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Cargo por habitación</div><div id="gd-roomcharge" style="font-weight:600;">—</div></div>
-      <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary);">Tarjeta NFC</div><div id="gd-card" style="font-weight:600; overflow-wrap:anywhere;">—</div></div>
+      <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">Llaves de la habitación</div><div id="gd-card" style="font-weight:600; overflow-wrap:anywhere; line-height:1.6;">—</div></div>
+      <div class="room-field" style="grid-column:1 / -1; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px;"><div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">Cuenta y pagos</div><div id="gd-pay" style="font-size:13px; font-weight:400;"></div></div>
     </div>
     <div id="gd-cancelbox" class="hint-box" style="display:none; margin-bottom:16px; background:#fef2f2; border-color:#fecaca;">
       <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -317,6 +318,57 @@ function sendReservationEmail() {
   showToast('Abrimos el borrador del email · confirmá el envío en tu programa de correo');
 }
 
+function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function money(n) { return formatMoney(n); }
+
+// ---------- account + payments of the guest being viewed ----------
+function renderPaymentsBox(g) {
+  const acc = getGuestAccountSummary(g);
+  const rows = acc.payments.slice().reverse().map(p => {
+    const label = p.method === 'card' ? 'Tarjeta' + (p.last4 ? ' ' + esc(p.brand || '') + ' ••••' + esc(p.last4) : (p.channel === 'reception' ? ' (terminal de recepción)' : '')) : 'Efectivo';
+    const when = new Date(p.ts).toLocaleString('es-PY', { dateStyle: 'short', timeStyle: 'short' });
+    const pill = p.status === 'paid' ? '<span class="status-pill ok">Pagado</span>' : p.status === 'pending' ? '<span class="status-pill warn">Efectivo por cobrar</span>' : '<span class="status-pill off">Anulado</span>';
+    const actions = p.status === 'pending'
+      ? `<button class="btn btn-primary btn-sm" onclick="confirmCash('${esc(g.id)}','${esc(p.id)}')">Confirmar cobro</button> <button class="btn btn-outline btn-sm" onclick="voidPay('${esc(g.id)}','${esc(p.id)}')">Anular</button>`
+      : p.status === 'paid' && p.channel === 'reception' ? `<button class="btn btn-outline btn-sm" onclick="voidPay('${esc(g.id)}','${esc(p.id)}')">Anular</button>` : '';
+    return `<div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; padding:7px 0; border-top:1px solid var(--border-color);">
+      <div><div>${label} · <strong>${money(p.amount)}</strong></div><div style="font-size:11.5px; color:var(--text-secondary);">${when}${p.confirmedBy ? ' · cobró ' + esc(p.confirmedBy) : ''}</div></div>
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">${pill} ${actions}</div></div>`;
+  }).join('');
+  const canCharge = g.status === 'activo' || g.status === 'checkout';
+  document.getElementById('gd-pay').innerHTML = `
+    <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Total de la estadía</span><strong>${money(acc.total)}</strong></div>
+    <div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Pagado</span><span>${money(acc.paid)}</span></div>
+    ${acc.pendingCash ? `<div style="display:flex; justify-content:space-between;"><span style="color:var(--text-secondary);">Efectivo por cobrar</span><span>${money(acc.pendingCash)}</span></div>` : ''}
+    <div style="display:flex; justify-content:space-between; padding-top:4px;"><span style="font-weight:600;">Saldo</span><strong style="color:${acc.due ? '#b45309' : '#15803d'};">${acc.due ? money(acc.due) : 'Saldado'}</strong></div>
+    ${rows ? `<div style="margin-top:10px;">${rows}</div>` : ''}
+    ${canCharge && acc.due > 0 ? `<form onsubmit="addStaffPay(event)" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; border-top:1px solid var(--border-color); padding-top:12px;">
+      <div class="money-field" style="width:170px; flex:0 0 auto;"><span>Gs.</span><input class="form-input money-input" id="sp-amount" inputmode="numeric" autocomplete="off" value="${formatNumberPy(acc.due - acc.pendingCash > 0 ? acc.due - acc.pendingCash : acc.due)}" aria-label="Monto cobrado en guaraníes"></div>
+      <select class="form-input" id="sp-method" style="padding-left:12px; width:auto; flex:0 0 auto;" aria-label="Forma de pago"><option value="cash">Efectivo</option><option value="card">Tarjeta (terminal)</option></select>
+      <button class="btn btn-outline btn-sm" type="submit">Registrar cobro</button></form>` : ''}`;
+}
+function confirmCash(gid, pid) {
+  if (confirmCashPayment(gid, pid)) showToast('Cobro en efectivo confirmado');
+  viewGuest(gid); render();
+}
+function voidPay(gid, pid) {
+  if (!confirm('¿Anular este pago? Volverá a sumarse al saldo del huésped.')) return;
+  cancelPayment(gid, pid);
+  showToast('Pago anulado');
+  viewGuest(gid); render();
+}
+function addStaffPay(e) {
+  e.preventDefault();
+  const amount = getMoneyInput(document.getElementById('sp-amount'));
+  const method = document.getElementById('sp-method').value;
+  if (!amount || amount < 1) { showToast('Ingresá el monto cobrado'); return; }
+  const open = getGuestAccountSummary(getGuestsRegistry().find(x => x.id === currentDetailGuestId)).due;
+  if (amount > open) { showToast('El monto supera el saldo pendiente (' + formatMoney(open) + ')'); return; }
+  recordStaffPayment(currentDetailGuestId, { method, amount });
+  showToast('Cobro registrado');
+  viewGuest(currentDetailGuestId); render();
+}
+
 function viewGuest(id) {
   const g = ensureGuestFiles(getGuestsRegistry().find(x => x.id === id));
   if (!g) return;
@@ -331,14 +383,19 @@ function viewGuest(id) {
   const rate = (getHotelInfo().roomRates || {})[roomType] || 0;
   const nights = getNightsCount(g.checkinDate, g.checkoutDate);
   document.getElementById('gd-roomcharge').textContent = rate
-    ? `$${(rate * nights).toLocaleString('es-PY')} (${nights} noche${nights === 1 ? '' : 's'} × $${rate.toLocaleString('es-PY')})`
+    ? `${formatMoney(rate * nights)} (${nights} noche${nights === 1 ? '' : 's'} × ${formatMoney(rate)})`
     : 'Sin tarifa configurada para este tipo de habitación';
   document.getElementById('gd-code').textContent = g.reservationCode || '—';
+  const phoneState = getPhoneKeyState(g);
   const cardState = getCardState(g);
-  document.getElementById('gd-card').innerHTML = cardState === 'active' ? 'Activa · ' + g.cardUid + ' <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px; margin-left:6px;">Gestionar</a>'
-    : cardState === 'blocked' ? 'Bloqueada · <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px;">Asignar nueva</a>'
-    : cardState === 'pending' ? 'Sin asignar · <a href="admin-accesos.html" style="font-weight:500; font-size:12.5px;">Asignar tarjeta</a>'
-    : (g.cardUid ? 'Estadía finalizada (tarjeta liberada)' : '—');
+  const keysLink = '<a href="admin-accesos.html" style="font-weight:500; font-size:12.5px; margin-left:6px;">Gestionar</a>';
+  const phoneTxt = phoneState === 'active' ? 'Celular: llave activa' : phoneState === 'blocked' ? 'Celular: llave bloqueada' : 'Celular: sin estadía en curso';
+  const cardTxt = cardState === 'active' ? 'Tarjeta (opcional): activa · ' + esc(g.cardUid)
+    : cardState === 'blocked' ? 'Tarjeta (opcional): bloqueada'
+    : cardState === 'nocard' ? (g.cardRequested ? 'Tarjeta (opcional): solicitada por el huésped' : 'Tarjeta (opcional): sin tarjeta')
+    : (g.cardUid ? 'Tarjeta: estadía finalizada (liberada)' : '');
+  document.getElementById('gd-card').innerHTML = esc(phoneTxt) + (cardTxt ? '<br>' + cardTxt : '') + ((phoneState !== 'none' || cardState !== 'none') ? '<br>' + keysLink : '');
+  renderPaymentsBox(g);
   const qrBox = document.getElementById('gd-qr');
   qrBox.innerHTML = '';
   if (g.reservationCode && window.QRCode) {
@@ -386,7 +443,7 @@ function submitCancelReservation(e) {
 
 function renderRoomOptions(keepRoomNum) {
   const rooms = getRoomsWithOccupancy();
-  const statusLabel = { available: 'Disponible', occupied: 'Ocupada', cleaning: 'Limpieza', maintenance: 'Mantenimiento' };
+  const statusLabel = { available: 'Libre', occupied: 'Ocupada', cleaning: 'Limpieza', maintenance: 'Mantenimiento' };
   const sel = document.getElementById('ng-room');
   const options = rooms.map(r => {
     const isThisReservation = r.n === keepRoomNum;

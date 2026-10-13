@@ -60,6 +60,20 @@
   .rh-card-pill.blocked { background: rgba(248,113,113,0.25); color: #fecaca; }
   .rh-key-btn h5 { color: #fff; font-size: 14px; margin: 0 0 2px; }
   .rh-key-btn p { color: rgba(255,255,255,0.65); font-size: 12px; }
+  .rh-key-btn .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+  .rh-key-btn .btn-light { background: #fff; color: var(--navy-dark, #0d1b4c); border: 1px solid #fff; white-space: nowrap; font-weight: 600; }
+  .rh-key-btn .btn-light:hover { background: #e8effe; transform: translateY(-1px); }
+  .rh-key-btn.rh-key-card { margin-top: 12px; padding: 12px 16px; background: rgba(255,255,255,0.07); border-style: dashed; }
+  .rh-key-btn.rh-key-card .icon-circle { opacity: .85; }
+  .rh-card-pill.on { background: rgba(74,222,128,0.22); color: #bbf7d0; }
+  .door-result { text-align: center; padding: 6px 0 4px; }
+  .door-result .dr-icon { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+  .door-result .dr-icon svg { width: 38px; height: 38px; }
+  .door-result.ok .dr-icon { background: #dcfce7; color: #16a34a; }
+  .door-result.denied .dr-icon { background: #fee2e2; color: #dc2626; }
+  .door-result h3 { padding: 0; font-size: 20px; }
+  .door-result .dr-note { font-size: 11.5px; color: var(--text-secondary); margin-top: 16px; }
+  .money-line { display: flex; justify-content: space-between; font-size: 13px; padding-top: 6px; color: var(--text-secondary); }
 
   .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
   .quick-card { padding: 22px; text-align: left; }
@@ -93,7 +107,8 @@
     .room-hero .rh-top { gap: 12px; flex-wrap: wrap; }
     .rh-dates { gap: 20px; flex-wrap: wrap; margin-top: 20px; }
     .rh-key-btn { flex-direction: column; align-items: stretch; gap: 14px; margin-top: 20px; }
-    .rh-key-btn .btn { width: 100%; justify-content: center; }
+    .rh-key-btn .btn { flex: 1; justify-content: center; }
+    .rh-key-btn .actions { justify-content: stretch; }
     .rh-key-btn .rh-card-pill { text-align: center; }
   }
   @media (max-width: 400px) {
@@ -193,6 +208,12 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="doorModal" hidden>
+  <div class="modal-card" style="max-width:380px;">
+    <div id="doorBody"></div>
+  </div>
+</div>
+
 <script>
   const myGuest = getMyGuestRecord();
   const firstName = (getGuestInfo() || {}).firstName;
@@ -204,7 +225,7 @@
   renderGreeting();
   window.addEventListener('ss:lang', renderGreeting);
 
-  function money(n) { return '$' + n.toLocaleString('es-PY'); }
+  function money(n) { return formatMoney(n); }
 
   document.getElementById('roomHero').innerHTML = `
     <div class="rh-top">
@@ -222,52 +243,112 @@
       <div><span>Check-in</span><strong>${myGuest.checkin || '—'}</strong></div>
       <div><span>Check-out</span><strong>${myGuest.checkout || '—'}</strong></div>
     </div>
-    <div class="rh-key-btn" id="keyCardBox"></div>`;
+    <div class="rh-key-btn" id="keyPhoneBox"></div>
+    <div class="rh-key-btn rh-key-card" id="keyCardBox"></div>`;
 
-  // The room key is a physical NFC card handed over by reception, so this
-  // card just reflects its state: pending delivery, active or blocked.
-  function keyCardMessage(state) {
-    return state === 'active' ? t('portal.keyActive') : state === 'blocked' ? t('portal.keyBlocked') : t('portal.keyPending');
+  // The room key is the guest's PHONE (it turns on by itself with check-in);
+  // a physical NFC card is optional, for phones without NFC.
+  const PHONE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2M9.5 6a4 4 0 0 1 5 0"/></svg>';
+  const CARD_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>';
+  function keyNotifMessage(phoneState) {
+    return phoneState === 'blocked' ? t('key.notifPhoneBlocked') : t('key.notifPhone');
   }
-  function renderKeyCard() {
+  function renderKeys() {
     const g = getMyGuestRecord();
-    const state = getCardState(g);
-    const desc = state === 'active' ? t('portal.nfcDescActive') : state === 'blocked' ? t('portal.nfcDescBlocked') : t('portal.nfcDescPending');
-    const cardNo = state === 'active' ? `<p>${t('portal.cardNo')} ••••${shortCardUid(g.cardUid)}</p>` : '';
-    const right = state === 'active'
-      ? `<button class="btn btn-ghost btn-sm" onclick="reportLostCard()">${t('portal.lostCard')}</button>`
-      : `<span class="rh-card-pill ${state}">${t(state === 'blocked' ? 'portal.cardBlocked' : 'portal.cardPending')}</span>`;
+    if (!g) return;
+    // --- phone key (main) ---
+    const ps = getPhoneKeyState(g);
+    const pBlocked = ps === 'blocked';
+    document.getElementById('keyPhoneBox').innerHTML = `
+      <div class="left">
+        <div class="icon-circle icon-circle--white icon-circle-sm">${PHONE_ICON}</div>
+        <div>
+          <h5>${t('key.phoneTitle')}</h5>
+          <p>${pBlocked ? t('key.phoneDescBlocked') : t('key.phoneDescActive')}</p>
+        </div>
+      </div>
+      ${pBlocked
+        ? `<span class="rh-card-pill blocked">${t('key.phoneBlockedPill')}</span>`
+        : `<div class="actions">
+             <button class="btn btn-light btn-sm" onclick="openMyDoor()">${t('key.openRoom')}</button>
+             <button class="btn btn-ghost btn-sm" onclick="reportLostPhone()">${t('key.lostPhone')}</button>
+           </div>`}`;
+    // --- physical card (optional) ---
+    const cs = getCardState(g);
+    let desc, right;
+    if (cs === 'active') {
+      desc = `${t('key.cardActiveDesc')} ${t('portal.cardNo')} ••••${shortCardUid(g.cardUid)}`;
+      right = `<button class="btn btn-ghost btn-sm" onclick="reportLostCard()">${t('portal.lostCard')}</button>`;
+    } else if (cs === 'blocked') {
+      desc = t('key.cardBlockedDesc');
+      right = `<span class="rh-card-pill blocked">${t('portal.cardBlocked')}</span>`;
+    } else if (g.cardRequested) {
+      desc = t('key.cardRequested');
+      right = `<span class="rh-card-pill on">${t('key.cardRequestedPill')}</span>`;
+    } else {
+      desc = t('key.cardDescNone');
+      right = `<button class="btn btn-ghost btn-sm" onclick="askForCard()">${t('key.cardRequest')}</button>`;
+    }
     document.getElementById('keyCardBox').innerHTML = `
       <div class="left">
-        <div class="icon-circle icon-circle--white icon-circle-sm">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>
-        </div>
-        <div>
-          <h5>${t('portal.nfcTitle')}</h5>
-          <p>${desc}</p>
-          ${cardNo}
-        </div>
+        <div class="icon-circle icon-circle--white icon-circle-sm">${CARD_ICON}</div>
+        <div><h5>${t('key.cardTitle')}</h5><p>${desc}</p></div>
       </div>
       ${right}`;
     const note = document.getElementById('keyNotifText');
-    if (note) note.textContent = keyCardMessage(state);
+    if (note) note.textContent = keyNotifMessage(ps);
   }
   function reportLostCard() {
     if (!confirm(t('portal.lostCardConfirm'))) return;
     blockCard(myGuest.id, 'lost');
-    renderKeyCard();
+    renderKeys();
     showToast(t('portal.cardBlockedToast'));
   }
-  renderKeyCard();
+  function reportLostPhone() {
+    if (!confirm(t('key.lostPhoneConfirm'))) return;
+    blockPhoneKey(myGuest.id, 'lost');
+    renderKeys();
+    showToast(t('key.phoneBlockedToast'));
+  }
+  function askForCard() {
+    requestPhysicalCard(myGuest.id);
+    renderKeys();
+    showToast(t('key.cardRequestedToast'));
+  }
+  // "Abrir mi habitación": the same thing that happens when the phone is held
+  // against the door's NFC tag — the system checks the stay and decides.
+  function openMyDoor() {
+    const g = getMyGuestRecord();
+    const roomNo = g.room.split('·')[0].trim();
+    const r = phoneDoorAccess(roomNo, g.hotelId);
+    const ok = r.result === 'granted';
+    document.getElementById('doorBody').innerHTML = `
+      <div class="door-result ${ok ? 'ok' : 'denied'}">
+        <div class="dr-icon">${ok
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>'}</div>
+        <h3>${ok ? t('door.open') : t('door.denied')}</h3>
+        <p style="margin-top:6px;">${ok ? t('door.room') + ' ' + roomNo + '. ' + t('door.openedMsg') : (t('door.r.' + r.reason) !== 'door.r.' + r.reason ? t('door.r.' + r.reason) : t('door.r.error'))}</p>
+        ${ok ? `<p class="dr-note">${t('door.demoNote')}</p>` : ''}
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="closeModal('doorModal')">OK</button>`;
+    openModal('doorModal');
+  }
+  renderKeys();
+  window.addEventListener('ss:lang', renderKeys);
 
-  const { items: billItems, total, serviceItems } = getMyBilling();
+  const { items: billItems, total, serviceItems, paid, pendingCash, due, toPay } = getMyBilling();
   const consumoRows = document.getElementById('consumoRows');
   consumoRows.innerHTML = billItems.length
     ? billItems.map(i => `<div class="consumo-row"><span class="label">${i.title}</span><span>${i.price ? money(i.price) : t('common.noCharge')}</span></div>`).join('') + `<div class="consumo-total"><span>${t('portal.stayTotal')}</span><span>${money(total)}</span></div>`
+      + (paid ? `<div class="money-line"><span>${t('pay.paid')}</span><span>${money(paid)}</span></div>` : '')
+      + (pendingCash ? `<div class="money-line"><span>${t('pay.pendingCash')}</span><span>${money(pendingCash)}</span></div>` : '')
+      + `<div class="consumo-total"><span>${t('pay.balance')}</span><span>${money(due)}</span></div>`
+      + (toPay > 0 ? `<a href="cuenta.html#pagar" class="btn btn-primary btn-block" style="margin-top:14px;">${t('pay.title')}</a>` : '')
     : `<p style="font-size:13px; color:var(--text-secondary);">${t('portal.noServicesYet')}</p>`;
 
   const notifRows = document.getElementById('notifRows');
-  const notifs = [`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><h6>${t('portal.checkinConfirmedTitle')}</h6><p id="keyNotifText">${keyCardMessage(getCardState(getMyGuestRecord()))}</p></div></div>`];
+  const notifs = [`<div class="notif-item"><div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><h6>${t('portal.checkinConfirmedTitle')}</h6><p id="keyNotifText">${keyNotifMessage(getPhoneKeyState(getMyGuestRecord()))}</p></div></div>`];
   if (serviceItems.length) {
     const last = serviceItems[serviceItems.length - 1];
     const statusLabel = last.status === 'done' ? t('portal.completed') : last.status === 'progress' ? t('portal.inProgress') : t('portal.requestReceived');

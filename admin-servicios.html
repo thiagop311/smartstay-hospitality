@@ -150,7 +150,7 @@
         <datalist id="ns-category-options"></datalist>
       </div>
       <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-        <div class="form-group"><label class="form-label">Precio</label><input class="form-input" type="number" min="0" step="100" id="ns-price" style="padding-left:14px;" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Precio en guaraníes</label><div class="money-field"><span>Gs.</span><input class="form-input money-input" inputmode="numeric" autocomplete="off" id="ns-price" placeholder="0"></div></div>
         <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" id="ns-unit" style="padding-left:14px;" placeholder="Ej: / sesión"></div>
       </div>
       <div class="room-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
@@ -175,7 +175,7 @@
           </select>
         </div>
       </div>
-      <div class="form-group"><label class="form-label">Texto de precio personalizado (opcional)</label><input class="form-input" id="ns-pricelabel" style="padding-left:14px;" placeholder='Ej: "Incluido"'></div>
+      <div class="form-group"><label class="form-label">Texto de precio personalizado (opcional)</label><input class="form-input" id="ns-pricelabel" style="padding-left:14px;" placeholder='Ej: "Incluido" o "Desde Gs. 40.000"'></div>
       <button type="submit" class="btn btn-primary btn-block" id="ns-submit">Agregar servicio</button>
     </form>
   </div>
@@ -251,9 +251,7 @@ render();
 
 // ---- Catálogo real de servicios ----
 function priceLabelFor(item) {
-  if (item.priceLabel) return item.priceLabel;
-  if (item.price > 0) return '$' + item.price.toLocaleString('es-PY') + (item.unit ? ' ' + item.unit : '');
-  return 'Sin cargo';
+  return servicePriceLabel(item);
 }
 
 function renderCatalogAdmin() {
@@ -304,7 +302,7 @@ function openEditServiceModal(id) {
   document.getElementById('ns-name').value = item.title;
   document.getElementById('ns-desc').value = item.desc || '';
   document.getElementById('ns-category').value = item.category;
-  document.getElementById('ns-price').value = item.price || '';
+  setMoneyInput(document.getElementById('ns-price'), item.price);
   document.getElementById('ns-unit').value = item.unit || '';
   document.getElementById('ns-badge').value = item.badge || '';
   document.getElementById('ns-icon').value = item.icon || 'bell';
@@ -319,7 +317,7 @@ function submitServiceForm(e) {
     title: document.getElementById('ns-name').value.trim(),
     desc: document.getElementById('ns-desc').value.trim(),
     category: document.getElementById('ns-category').value.trim(),
-    price: parseInt(document.getElementById('ns-price').value, 10) || 0,
+    price: getMoneyInput(document.getElementById('ns-price')),
     unit: document.getElementById('ns-unit').value.trim(),
     badge: document.getElementById('ns-badge').value.trim(),
     icon: document.getElementById('ns-icon').value,

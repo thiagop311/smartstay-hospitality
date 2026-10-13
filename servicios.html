@@ -125,9 +125,7 @@
   }
 
   function priceLabel(item) {
-    if (item.priceLabel) return item.priceLabel;
-    if (item.price > 0) return '$' + item.price.toLocaleString('es-PY') + (item.unit ? ' ' + item.unit : '');
-    return 'Sin cargo';
+    return servicePriceLabel(item);
   }
 
   function slugifyCat(cat) {

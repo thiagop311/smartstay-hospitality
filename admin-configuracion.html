@@ -96,6 +96,11 @@
 
       <div data-settings-panels class="settings-content">
         <div class="settings-panel card panel-card" id="panel-hotel">
+          <div id="demoBox" style="display:none; border:1px dashed var(--blue-primary); background:var(--blue-lighter-bg); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:20px;">
+            <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Hotel de demostración completo</div>
+            <p id="demoText" style="font-size:12.5px; color:var(--text-secondary); margin-bottom:10px;"></p>
+            <button class="btn btn-primary btn-sm" id="demoBtn" onclick="runDemoLoad()">Cargar datos de demostración</button>
+          </div>
           <form onsubmit="saveHotelForm(event)">
             <div class="form-group"><label class="form-label">Nombre del hotel</label><input class="form-input" id="hf-name" style="padding-left:14px;"></div>
             <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="hf-address" style="padding-left:14px;"></div>
@@ -105,7 +110,7 @@
               <div class="form-group"><label class="form-label">Red Wi-Fi para huéspedes</label><input class="form-input" id="hf-wifiname" style="padding-left:14px;"></div>
               <div class="form-group"><label class="form-label">Clave del Wi-Fi</label><input class="form-input" id="hf-wifipass" style="padding-left:14px;"></div>
             </div>
-            <label class="form-label" style="display:block; margin-top:6px;">Tarifa por noche según tipo de habitación</label>
+            <label class="form-label" style="display:block; margin-top:6px;">Tarifa por noche según tipo de habitación (en guaraníes)</label>
             <p style="font-size:12px; color:var(--text-secondary); margin-top:-4px; margin-bottom:12px;">Los tipos se toman de tu inventario real en "Habitaciones". Agregá una habitación de un tipo nuevo para que aparezca acá.</p>
             <div class="room-grid" id="rateFieldsGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;"></div>
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
@@ -151,6 +156,12 @@
             <div class="form-group"><label class="form-label">Confirmar nueva contraseña</label><input class="form-input" id="sec-confirm" type="password" style="padding-left:14px;" placeholder="••••••••" required minlength="6"></div>
             <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
           </form>
+          <div style="border-top:1px solid var(--border-color); margin-top:26px; padding-top:20px;">
+            <h4 style="font-size:15px; margin-bottom:8px;">Clave de recuperación</h4>
+            <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">Sirve para elegir una contraseña nueva <strong>sin recibir correos</strong> (desde "¿Olvidaste tu contraseña?"). Al generar una nueva, la anterior deja de servir. Se muestra una sola vez: guardala.</p>
+            <button class="btn btn-outline" type="button" onclick="makeRecoveryKey()">Generar clave de recuperación</button>
+            <div id="rkSlot"></div>
+          </div>
         </div>
 
         <div class="settings-panel card panel-card" id="panel-backup" hidden>
@@ -192,7 +203,7 @@ function renderRateFields() {
   grid.innerHTML = types.length ? types.map((type, i) => `
     <div class="form-group">
       <label class="form-label" style="font-weight:400;">${type}</label>
-      <input class="form-input rate-input" type="number" min="0" step="1000" data-type="${type.replace(/"/g, '&quot;')}" id="rate-input-${i}" style="padding-left:14px;" value="${rates[type] || ''}">
+      <div class="money-field"><span>Gs.</span><input class="form-input money-input rate-input" inputmode="numeric" autocomplete="off" data-type="${type.replace(/"/g, '&quot;')}" id="rate-input-${i}" placeholder="Ej: 40.000" value="${rates[type] ? formatNumberPy(rates[type]) : ''}"></div>
     </div>`).join('') : '<p style="font-size:13px; color:var(--text-secondary);">Todavía no hay habitaciones cargadas.</p>';
 }
 renderRateFields();
@@ -225,6 +236,12 @@ function handleChangePassword(e) {
   }
   showToast('Contraseña actualizada correctamente');
   e.target.reset();
+}
+
+function makeRecoveryKey() {
+  const key = createRecoveryKey('staff');
+  document.getElementById('rkSlot').innerHTML = key ? recoveryKeyHtml(key)
+    : '<p class="rk-note" style="color:#b91c1c;">No se pudo crear la clave. Si usás la nube, falta correr la actualización de la base (guía de la nube, "Clave de recuperación").</p>';
 }
 
 function downloadHotelBackup() {
@@ -279,12 +296,46 @@ function saveHotelForm(e) {
     wifiName: document.getElementById('hf-wifiname').value.trim(),
     wifiPassword: document.getElementById('hf-wifipass').value.trim(),
     roomRates: Array.from(document.querySelectorAll('.rate-input')).reduce((acc, el) => {
-      acc[el.dataset.type] = parseInt(el.value, 10) || 0;
+      acc[el.dataset.type] = getMoneyInput(el);
       return acc;
     }, {}),
   });
   showToast('Datos del hotel actualizados');
 }
+
+// ---- demo hotel: fills in rooms, services and rates that are missing ----
+function renderDemoBox() {
+  const hid = getActiveHotelId();
+  const box = document.getElementById('demoBox');
+  if (!hid) { box.style.display = 'none'; return; }
+  const gap = getHotelDemoGap(hid);
+  const missing = demoGapCount(gap);
+  const stale = gap.staleServices.length + gap.staleRates.length;
+  box.style.display = '';
+  document.getElementById('demoText').textContent = missing
+    ? 'Este hotel tiene ' + gap.rooms + ' habitaciones y ' + gap.services + ' servicios. Podés completar el hotel de demostración: se agregan ' + gap.missingRooms.length + ' habitaciones y ' + gap.missingServices.length + ' servicios que faltan (más las tarifas de cada tipo de habitación, en guaraníes)' + (stale ? ' y se pasan a guaraníes ' + stale + ' precios de demostración que no editaste' : '') + '. No se borra nada de lo que ya tenés, los precios que cambiaste a mano quedan como están y no se crean huéspedes.'
+    : 'Este hotel ya tiene el set completo de demostración: ' + gap.rooms + ' habitaciones y ' + gap.services + ' servicios.';
+  document.getElementById('demoBtn').style.display = missing ? '' : 'none';
+}
+function runDemoLoad() {
+  const hid = getActiveHotelId();
+  if (!hid) return;
+  const btn = document.getElementById('demoBtn');
+  btn.disabled = true; btn.textContent = 'Cargando…';
+  setTimeout(() => {
+    const r = loadDemoDataForHotel(hid);
+    btn.disabled = false; btn.textContent = 'Cargar datos de demostración';
+    if (r) showToast('Listo: ' + r.rooms + ' habitaciones y ' + r.services + ' servicios agregados' + (r.updated ? ' · ' + r.updated + ' precios actualizados a guaraníes' : ''));
+    renderDemoBox(); renderRateFields();
+    const info = getHotelInfo();
+    document.getElementById('hf-address').value = info.address || '';
+    document.getElementById('hf-phone').value = info.phone || '';
+    document.getElementById('hf-email').value = info.email || '';
+    document.getElementById('hf-wifiname').value = info.wifiName || '';
+    document.getElementById('hf-wifipass').value = info.wifiPassword || '';
+  }, 50);
+}
+renderDemoBox();
 
 const myHotel = SS_CLOUD ? getHotelById(getActiveHotelId()) : null;
 if (myHotel && myHotel.staffCode) {

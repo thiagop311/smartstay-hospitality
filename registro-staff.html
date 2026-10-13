@@ -81,7 +81,8 @@
         <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
         <h1>¡Cuenta creada!</h1>
         <p class="sub">Ya podés acceder al panel administrativo de SmartStay.</p>
-        <a href="admin.html" class="btn btn-primary btn-block">Ir al panel administrativo</a>
+        <div id="rkSlot"></div>
+        <a href="admin.html" class="btn btn-primary btn-block" style="margin-top:16px;">Ir al panel administrativo</a>
       </div>
     </div>
   </div>
@@ -145,6 +146,8 @@
       showToast(registerErrorMessage(result));
       return;
     }
+    const rk = createRecoveryKey('staff');
+    if (rk) document.getElementById('rkSlot').innerHTML = recoveryKeyHtml(rk);
     document.getElementById('formState').style.display = 'none';
     document.getElementById('sentState').style.display = 'block';
   }

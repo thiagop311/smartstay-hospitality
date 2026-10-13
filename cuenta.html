@@ -18,7 +18,35 @@
   .bill-row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border-color); font-size: 13.5px; }
   .bill-row:last-child { border-bottom: none; }
   .bill-row .label { color: var(--text-secondary); }
+  .pay-sum .bill-row.strong { font-weight: 700; font-size: 14.5px; }
+  .pay-sum .bill-row.ok { color: #15803d; }
+  .pay-opts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin: 16px 0 14px; }
+  .pay-opt { border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; background: #fff; text-align: left; font: inherit; color: inherit; transition: border-color .15s, background .15s; }
+  .pay-opt:hover { border-color: var(--blue-primary); }
+  .pay-opt.selected { border-color: var(--blue-primary); background: var(--blue-lighter-bg); box-shadow: 0 0 0 3px rgba(37,84,232,0.10); }
+  .pay-opt .icon-circle { width: 34px; height: 34px; flex-shrink: 0; }
+  .pay-opt .icon-circle svg { width: 17px; height: 17px; }
+  .pay-opt h6 { font-size: 13.5px; font-weight: 600; margin: 0 0 2px; }
+  .pay-opt p { font-size: 11.5px; margin: 0; line-height: 1.35; }
+  .pay-form .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .pay-form .form-input { padding-left: 14px; }
+  .pay-form .form-input.bad { border-color: #dc2626; }
+  .pay-err { color: #dc2626; font-size: 12px; margin-top: 4px; }
+  .pay-banner { border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; margin-top: 12px; }
+  .pay-banner.err { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+  .pay-banner.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+  .pay-test { font-size: 11.5px; color: var(--text-secondary); margin-top: 12px; line-height: 1.45; }
+  .pay-hist { margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 12px; }
+  .pay-hist h5 { font-size: 13px; margin-bottom: 6px; }
+  .pay-hist-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid var(--border-color); }
+  .pay-hist-row:last-child { border-bottom: none; }
+  .pay-hist-row .when { font-size: 11.5px; color: var(--text-secondary); }
+  .pay-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .pay-pill.paid { background: #dcfce7; color: #15803d; }
+  .pay-pill.pending { background: #fef3c7; color: #b45309; }
+  .pay-pill.canceled { background: #f1f5f9; color: #64748b; }
   @media (max-width: 900px) { .cuenta-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 420px) { .pay-opts, .pay-form .row2 { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -101,12 +129,9 @@
         <button class="btn btn-outline btn-block" style="margin-top:16px;" onclick="downloadReceipt()" data-i18n="cta.downloadReceipt">Descargar comprobante</button>
       </div>
 
-      <div class="card card-pad" style="margin-bottom:20px;">
-        <h4 style="font-size:16px; margin-bottom:12px;" data-i18n="cta.paymentMethod">Método de pago</h4>
-        <div class="hint-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          <span data-i18n="cta.cardOnFile">Visa terminada en 4821, guardada para consumos adicionales durante tu estadía.</span>
-        </div>
+      <div class="card card-pad" id="pagar" style="margin-bottom:20px;">
+        <h4 style="font-size:16px; margin-bottom:12px;" data-i18n="pay.title">Pagar mi cuenta</h4>
+        <div id="payBody"></div>
       </div>
 
       <div class="card card-pad" id="checkoutCard">
@@ -128,7 +153,7 @@
   document.getElementById('cta-email').value = cuentaGuest.email || '';
   document.getElementById('cta-phone').value = cuentaGuest.phone || '';
 
-  function money(n) { return '$' + n.toLocaleString('es-PY'); }
+  function money(n) { return formatMoney(n); }
   function renderBilling() {
     const { items, total } = getMyBilling();
     const rows = document.getElementById('billRows');
@@ -140,6 +165,106 @@
       + `<div class="bill-row" style="font-weight:700; font-size:14.5px;"><span>${t('cta.total')}</span><span>${money(total)}</span></div>`;
   }
   renderBilling();
+
+  // ---------- Pay my account: card online (1st option) or cash at the desk (2nd) ----------
+  let payMethod = 'card';
+  let payBusy = false;
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  const CARD_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>';
+  const CASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/></svg>';
+
+  function renderPayment(banner) {
+    const b = getMyBilling();
+    const box = document.getElementById('payBody');
+    if (!b.total) { box.innerHTML = `<p style="font-size:13.5px; color:var(--text-secondary);">${t('pay.nothing')}</p>`; return; }
+    let html = `<div class="pay-sum">
+      <div class="bill-row"><span class="label">${t('pay.total')}</span><span>${money(b.total)}</span></div>
+      ${b.paid ? `<div class="bill-row ok"><span class="label" style="color:inherit;">${t('pay.paid')}</span><span>− ${money(b.paid)}</span></div>` : ''}
+      ${b.pendingCash ? `<div class="bill-row"><span class="label">${t('pay.pendingCash')}</span><span>${money(b.pendingCash)}</span></div>` : ''}
+      <div class="bill-row strong"><span>${t('pay.balance')}</span><span>${money(b.due)}</span></div>
+    </div>`;
+    if (b.toPay > 0) {
+      html += `<div class="pay-opts" role="radiogroup" aria-label="${t('pay.chooseWay')}">
+        <button type="button" class="pay-opt ${payMethod === 'card' ? 'selected' : ''}" role="radio" aria-checked="${payMethod === 'card'}" onclick="choosePayMethod('card')">
+          <div class="icon-circle icon-circle--light">${CARD_SVG}</div><div><h6>${t('pay.optCard')}</h6><p>${t('pay.optCardDesc')}</p></div>
+        </button>
+        <button type="button" class="pay-opt ${payMethod === 'cash' ? 'selected' : ''}" role="radio" aria-checked="${payMethod === 'cash'}" onclick="choosePayMethod('cash')">
+          <div class="icon-circle icon-circle--light">${CASH_SVG}</div><div><h6>${t('pay.optCash')}</h6><p>${t('pay.optCashDesc')}</p></div>
+        </button>
+      </div>`;
+      if (payMethod === 'card') {
+        html += `<form class="pay-form" onsubmit="submitCardPayment(event)" autocomplete="on" novalidate>
+          <div class="form-group"><label class="form-label" for="pc-number">${t('pay.cardNumber')}</label>
+            <input class="form-input" id="pc-number" inputmode="numeric" autocomplete="cc-number" placeholder="1234 1234 1234 1234" maxlength="23" oninput="this.value = formatCardNumber(this.value)"><div class="pay-err" id="pe-number"></div></div>
+          <div class="form-group"><label class="form-label" for="pc-name">${t('pay.cardName')}</label>
+            <input class="form-input" id="pc-name" autocomplete="cc-name" placeholder="${t('pay.phName')}" value="${esc((getGuestFullName() || '').toUpperCase())}"><div class="pay-err" id="pe-name"></div></div>
+          <div class="row2">
+            <div class="form-group"><label class="form-label" for="pc-expiry">${t('pay.cardExpiry')}</label>
+              <input class="form-input" id="pc-expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="${t('pay.phExpiry')}" maxlength="5" oninput="this.value = formatCardExpiry(this.value)"><div class="pay-err" id="pe-expiry"></div></div>
+            <div class="form-group"><label class="form-label" for="pc-cvv">${t('pay.cardCvv')}</label>
+              <input class="form-input" id="pc-cvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" type="password" oninput="this.value = this.value.replace(/\D/g, '')"><div class="pay-err" id="pe-cvv"></div></div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="payBtn">${t('pay.payNow')} ${money(b.toPay)}</button>
+          <p class="pay-test">${t('pay.testNote')}</p>
+        </form>`;
+      } else {
+        html += `<p style="font-size:13px; margin-bottom:14px;">${t('pay.cashInfo')}</p>
+          <button class="btn btn-primary btn-block" id="payBtn" onclick="submitCashPayment()">${t('pay.cashBtn')} · ${money(b.toPay)}</button>`;
+      }
+    } else if (!b.pendingCash) {
+      html += `<div class="pay-banner ok">${t('pay.settled')}</div>`;
+    }
+    if (banner) html += `<div class="pay-banner ${banner.kind}" role="status">${esc(banner.text)}</div>`;
+    if (b.payments.length) {
+      html += `<div class="pay-hist"><h5>${t('pay.history')}</h5>` + b.payments.slice().reverse().map(p => {
+        const label = p.method === 'card' ? t('pay.byCard') + (p.last4 ? ' ' + esc(p.brand || '') + ' ••••' + esc(p.last4) : '') : t('pay.byCash');
+        return `<div class="pay-hist-row"><div><div>${label} · ${money(p.amount)}</div><div class="when">${new Date(p.ts).toLocaleString(getLanguage() === 'en' ? 'en-US' : 'es-PY', { dateStyle: 'short', timeStyle: 'short' })}</div></div><span class="pay-pill ${esc(p.status)}">${t('pay.st.' + p.status)}</span></div>`;
+      }).join('') + `</div>`;
+    }
+    box.innerHTML = html;
+  }
+  function choosePayMethod(m) { if (payBusy) return; payMethod = m; renderPayment(); }
+  const PAY_ERR_TEXT = { number: 'pay.errNumber', name: 'pay.errName', cvv: 'pay.errCvv' };
+  async function submitCardPayment(e) {
+    e.preventDefault();
+    if (payBusy) return;
+    ['number', 'name', 'expiry', 'cvv'].forEach(k => { document.getElementById('pe-' + k).textContent = ''; document.getElementById('pc-' + k).classList.remove('bad'); });
+    const card = {
+      number: document.getElementById('pc-number').value,
+      name: document.getElementById('pc-name').value,
+      expiry: document.getElementById('pc-expiry').value,
+      cvv: document.getElementById('pc-cvv').value,
+    };
+    const v = validateCardInput(card);
+    if (!v.ok) {
+      Object.keys(v.errors).forEach(k => {
+        document.getElementById('pe-' + k).textContent = t(k === 'expiry' ? (v.errors.expiry === 'expired' ? 'pay.errExpired' : 'pay.errExpiry') : PAY_ERR_TEXT[k]);
+        document.getElementById('pc-' + k).classList.add('bad');
+      });
+      document.getElementById('pc-' + Object.keys(v.errors)[0]).focus();
+      return;
+    }
+    payBusy = true;
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true; btn.textContent = t('pay.processing');
+    const r = await payMyAccountWithCard(card);
+    payBusy = false;
+    card.number = card.cvv = ''; // never keep the card around
+    if (r.ok) { renderPayment({ kind: 'ok', text: t('pay.okCard') }); renderBilling(); showToast(t('pay.okCard')); return; }
+    btn.disabled = false;
+    const msg = r.error === 'declined' ? t('pay.declined') : r.error === 'funds' ? t('pay.funds') : r.error === 'amount' ? t('pay.errAmount') : r.error === 'nostay' ? t('pay.errStay') : t('pay.errNetwork');
+    renderPayment({ kind: 'err', text: msg });
+  }
+  function submitCashPayment() {
+    if (payBusy) return;
+    const r = payMyAccountCash();
+    if (r.ok) { renderPayment({ kind: 'ok', text: t('pay.okCash') }); showToast(t('pay.okCash')); return; }
+    renderPayment({ kind: 'err', text: r.error === 'amount' ? t('pay.errAmount') : r.error === 'nostay' ? t('pay.errStay') : t('pay.errNetwork') });
+  }
+  renderPayment();
+  window.addEventListener('ss:lang', () => renderPayment());
+  window.ssRefreshPage = ssReloadIfIdle;
+  if (location.hash === '#pagar') document.getElementById('pagar').scrollIntoView();
 
   function renderHistory() {
     const history = getMyStayHistory();
@@ -154,7 +279,7 @@
   renderHistory();
 
   function downloadReceipt() {
-    const { items, total } = getMyBilling();
+    const { items, total, paid, pendingCash, due, payments } = getMyBilling();
     const hotel = getHotelInfo();
     const name = getGuestFullNameOrDefault('Huésped');
     const pad = (s, n) => s + ' '.repeat(Math.max(1, n - s.length));
@@ -168,12 +293,19 @@
       '-'.repeat(42),
     ];
     if (items.length) {
-      items.forEach(i => lines.push(pad(i.title, 30) + (i.price ? '$' + i.price.toLocaleString('es-PY') : 'Sin cargo')));
+      items.forEach(i => lines.push(pad(i.title, 30) + (i.price ? formatMoney(i.price) : 'Sin cargo')));
     } else {
       lines.push('Sin consumos registrados durante la estadía.');
     }
     lines.push('-'.repeat(42));
-    lines.push(pad('TOTAL', 30) + '$' + total.toLocaleString('es-PY'));
+    lines.push(pad('TOTAL', 30) + formatMoney(total));
+    const live = payments.filter(p => p.status !== 'canceled');
+    if (live.length) {
+      lines.push('-'.repeat(42));
+      live.forEach(p => lines.push(pad((p.method === 'card' ? 'Pago con tarjeta' + (p.last4 ? ' ••••' + p.last4 : '') : 'Pago en efectivo') + (p.status === 'pending' ? ' (pendiente)' : ''), 30) + formatMoney(p.amount)));
+      lines.push(pad('PAGADO', 30) + formatMoney(paid));
+      lines.push(pad('SALDO', 30) + formatMoney(due));
+    }
     const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -189,8 +321,8 @@
   function confirmCheckout() {
     const myGuest = getMyGuestRecord();
     if (!myGuest) return;
-    const { total } = getMyBilling();
-    const balanceNote = total ? ' Se registra un saldo de ' + money(total) + ', que quedará en tu comprobante.' : '';
+    const { due, pendingCash } = getMyBilling();
+    const balanceNote = due ? ' Queda un saldo de ' + money(due) + (pendingCash ? ' (incluye ' + money(pendingCash) + ' en efectivo por entregar)' : '') + ' para saldar en recepción.' : '';
     const ok = confirm('¿Confirmar el check-out de la habitación ' + (myGuest.room || '') + '?' + balanceNote + ' Tu sesión se cerrará y la habitación pasará a limpieza.');
     if (!ok) return;
 

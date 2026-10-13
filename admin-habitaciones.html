@@ -18,10 +18,23 @@
   .room-tile { cursor: pointer; transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
   .room-tile:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
   .room-tile:active { transform: translateY(0px) scale(0.98); }
-  .room-tile.st-occupied { border-color: #bfdbfe; }
-  .room-tile.st-available { border-color: #bbf7d0; }
-  .room-tile.st-cleaning { border-color: #fde68a; }
-  .room-tile.st-maintenance { border-color: #fecaca; }
+  /* The border of every room says its state at a glance */
+  .room-tile { border: 3px solid var(--border-color); }
+  .room-tile.st-available   { border-color: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.10); }
+  .room-tile.st-occupied    { border-color: #2554e8; box-shadow: 0 0 0 3px rgba(37,84,232,0.10); }
+  .room-tile.st-cleaning    { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
+  .room-tile.st-maintenance { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,0.10); }
+  .room-tile.st-available:hover   { box-shadow: 0 0 0 3px rgba(34,197,94,0.18), var(--shadow-md); }
+  .room-tile.st-occupied:hover    { box-shadow: 0 0 0 3px rgba(37,84,232,0.18), var(--shadow-md); }
+  .room-tile.st-cleaning:hover    { box-shadow: 0 0 0 3px rgba(245,158,11,0.20), var(--shadow-md); }
+  .room-tile.st-maintenance:hover { box-shadow: 0 0 0 3px rgba(239,68,68,0.18), var(--shadow-md); }
+  .room-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 4px 0 16px; font-size: 12.5px; color: var(--text-secondary); }
+  .room-legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .room-legend i { width: 14px; height: 14px; border-radius: 4px; border: 3px solid; background: #fff; display: inline-block; }
+  .room-legend .lg-available i { border-color: #22c55e; }
+  .room-legend .lg-occupied i { border-color: #2554e8; }
+  .room-legend .lg-cleaning i { border-color: #f59e0b; }
+  .room-legend .lg-maintenance i { border-color: #ef4444; }
   #roomModal .btn-sm { white-space: normal; line-height: 1.25; text-align: center; justify-content: center; }
 </style>
 </head>
@@ -95,18 +108,24 @@
       <div class="stat-grid">
         <div class="card stat-card"><div class="stat-value" id="cnt-total">0</div><div class="stat-label">Total habitaciones</div></div>
         <div class="card stat-card"><div class="stat-value" id="cnt-occupied">0</div><div class="stat-label">Ocupadas</div></div>
-        <div class="card stat-card"><div class="stat-value" id="cnt-available">0</div><div class="stat-label">Disponibles</div></div>
+        <div class="card stat-card"><div class="stat-value" id="cnt-available">0</div><div class="stat-label">Libres</div></div>
         <div class="card stat-card"><div class="stat-value" id="cnt-cleaning">0</div><div class="stat-label">En limpieza / mantenimiento</div></div>
       </div>
 
       <div class="filter-tabs" id="filterTabs">
         <button class="filter-tab active" data-f="todas" onclick="setFilter(this,'todas')">Todas</button>
         <button class="filter-tab" data-f="occupied" onclick="setFilter(this,'occupied')">Ocupadas</button>
-        <button class="filter-tab" data-f="available" onclick="setFilter(this,'available')">Disponibles</button>
+        <button class="filter-tab" data-f="available" onclick="setFilter(this,'available')">Libres</button>
         <button class="filter-tab" data-f="cleaning" onclick="setFilter(this,'cleaning')">Limpieza</button>
         <button class="filter-tab" data-f="maintenance" onclick="setFilter(this,'maintenance')">Mantenimiento</button>
       </div>
 
+      <div class="room-legend" id="roomLegend" aria-label="Significado de los colores">
+        <span class="lg-available"><i></i>Libre</span>
+        <span class="lg-occupied"><i></i>Ocupada</span>
+        <span class="lg-cleaning"><i></i>En limpieza</span>
+        <span class="lg-maintenance"><i></i>En mantenimiento</span>
+      </div>
       <div class="room-grid-admin" id="roomGrid"></div>
       <p id="emptyRoomsState" style="display:none; text-align:center; padding:40px 0; font-size:13.5px; color:var(--text-secondary);">Todavía no cargaste ninguna habitación. Usá "Nueva habitación" para armar tu inventario real.</p>
     </div>
@@ -123,7 +142,7 @@
     <div id="rm-guest" style="margin-bottom:16px;"></div>
     <p style="font-size:13px; font-weight:600; margin-bottom:10px;">Cambiar estado</p>
     <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; margin-bottom:16px;">
-      <button class="btn btn-outline btn-sm" onclick="setRoomStatus('available')">Disponible</button>
+      <button class="btn btn-outline btn-sm" onclick="setRoomStatus('available')">Libre</button>
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('cleaning')">Enviar a limpieza</button>
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('maintenance')">Mantenimiento</button>
       <button class="btn btn-outline btn-sm" onclick="setRoomStatus('occupied')">Marcar ocupada</button>
@@ -159,7 +178,7 @@
 <script>
 let rooms = getRoomsWithOccupancy();
 
-const statusLabel = { occupied: "Ocupada", available: "Disponible", cleaning: "Limpieza", maintenance: "Mantenimiento" };
+const statusLabel = { occupied: "Ocupada", available: "Libre", cleaning: "Limpieza", maintenance: "Mantenimiento" };
 const statusPillClass = { occupied: "pending", available: "ok", cleaning: "warn", maintenance: "danger" };
 
 let currentFilter = 'todas';
@@ -180,6 +199,7 @@ function renderGrid() {
   const grid = document.getElementById('roomGrid');
   document.getElementById('emptyRoomsState').style.display = rooms.length ? 'none' : 'block';
   document.getElementById('filterTabs').style.display = rooms.length ? '' : 'none';
+  document.getElementById('roomLegend').style.display = rooms.length ? '' : 'none';
   const filtered = rooms.filter(r => currentFilter === 'todas' || r.status === currentFilter);
   grid.innerHTML = filtered.map(r => {
     const rate = roomRate(r.type);
@@ -190,7 +210,7 @@ function renderGrid() {
         <span class="status-pill ${statusPillClass[r.status]}">${statusLabel[r.status]}</span>
       </div>
       <div class="rt-type">${r.type} · Piso ${r.floor}</div>
-      <div class="rt-type" style="color:var(--blue-primary); font-weight:600;">${rate ? '$' + rate.toLocaleString('es-PY') + ' / noche' : 'Sin tarifa configurada'}</div>
+      <div class="rt-type" style="color:var(--blue-primary); font-weight:600;">${rate ? formatMoney(rate) + ' / noche' : 'Sin tarifa configurada'}</div>
       ${r.guest ? `<div class="rt-guest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>${r.guest}</div>` : `<div class="rt-guest" style="color:var(--text-secondary); font-weight:500;">Sin huésped</div>`}
     </div>`;
   }).join('');
@@ -208,7 +228,7 @@ function openRoom(n) {
   activeRoom = rooms.find(r => r.n === n);
   document.getElementById('rm-title').textContent = 'Habitación ' + activeRoom.n;
   const rate = roomRate(activeRoom.type);
-  const rateLabel = rate ? '$' + rate.toLocaleString('es-PY') + ' / noche' : 'sin tarifa configurada';
+  const rateLabel = rate ? formatMoney(rate) + ' / noche' : 'sin tarifa configurada';
   document.getElementById('rm-sub').textContent = activeRoom.type + ' · Piso ' + activeRoom.floor + ' · ' + statusLabel[activeRoom.status] + ' · ' + rateLabel;
   document.getElementById('rm-guest').innerHTML = activeRoom.guest
     ? `<div class="hint-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Huésped actual: <strong>${activeRoom.guest}</strong></div>`

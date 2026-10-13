@@ -251,7 +251,7 @@
       </div>
       <div class="reserva-feature">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg></div>
-        <div><h5 data-i18n="portal.nfcTitle">Tarjeta NFC</h5><p data-i18n="ci.feature2Desc">Accede a tu habitación y áreas autorizadas.</p></div>
+        <div><h5 data-i18n="ci.keyTitle">Llave digital NFC</h5><p data-i18n="ci.feature2Desc">Accede a tu habitación y áreas autorizadas.</p></div>
       </div>
       <div class="reserva-feature">
         <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 18h6"/></svg></div>
@@ -371,7 +371,10 @@ function submitReservationSearch() {
     // Same reservation, new device (or cleared browser): the stay already
     // exists in the cloud, so skip the form and go straight to it.
     showToast('Ya hiciste tu check-in. Te llevamos a tu estadía.');
-    setTimeout(() => { window.location.href = 'portal.html'; }, 900);
+    // came from a door tag on another phone: go straight back to that door
+    const nextPage = new URLSearchParams(window.location.search).get('next') || '';
+    const target = /^puerta\.html\?[\w=&%.\-]*$/.test(nextPage) ? nextPage : 'portal.html';
+    setTimeout(() => { window.location.href = target; }, 900);
     return;
   }
   goNext();
@@ -781,7 +784,7 @@ function renderMain() {
         <p class="subtitle">Lee y acepta los términos antes de finalizar tu registro.</p>
         <div class="terms-box">
           <p>Al aceptar estos términos, confirmas que la información proporcionada es correcta y autorizas a SmartStay Hospitality S.A. a procesar tus datos personales para gestionar tu estadía.</p>
-          <p>El hotel se reserva el derecho de solicitar una garantía sobre consumos adicionales. La tarjeta NFC es de uso personal e intransferible durante la estadía; en caso de pérdida debes reportarla de inmediato.</p>
+          <p>El hotel se reserva el derecho de solicitar una garantía sobre consumos adicionales. La llave digital de tu celular (y la tarjeta NFC física, si la pedís) es de uso personal e intransferible durante la estadía; en caso de pérdida debes reportarla de inmediato.</p>
           <p>El check-out se realiza de forma automática a la hora indicada, salvo coordinación previa con recepción.</p>
         </div>
         <label class="terms-check">
@@ -830,7 +833,7 @@ function renderMain() {
         <div class="complete-state">
           <div class="icon-circle icon-circle--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
           <h2>¡Check-in completado!</h2>
-          <p>Tu registro fue exitoso. Retira tu tarjeta NFC en recepción para acceder a tu habitación y disfruta de todos los servicios del hotel.</p>
+          <p>${t('ci.doneText')}</p>
           <a href="portal.html" class="btn btn-primary" style="margin-top:24px;">
             Ir a mi estadía
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>

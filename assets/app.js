@@ -1,5 +1,19 @@
 // SmartStay Hospitality — shared UI helpers (toast, modal, accordion, tabs, copy)
 
+// A Supabase recovery email can land on ANY page of the site: if its redirect
+// address isn't in the project's allowed list, Supabase falls back to the Site
+// URL (usually the home page). Forward that link to the reset page with the
+// one-time token (or the "expired" error) still attached.
+(function ssForwardRecoveryLink() {
+  try {
+    const h = location.hash || '';
+    if (/resetear-password\.html$/.test(location.pathname)) return;
+    const isRecovery = /(^#|&)type=recovery(&|$)/.test(h) && /access_token=/.test(h);
+    const isLinkError = /error_code=otp_expired/.test(h);
+    if (isRecovery || isLinkError) location.replace(location.pathname.replace(/[^/]*$/, '') + 'resetear-password.html' + h);
+  } catch (e) {}
+})();
+
 function showToast(message, icon) {
   let toast = document.getElementById('sharedToast');
   if (!toast) {
@@ -46,11 +60,11 @@ const I18N = {
     'hero.badge': 'Tecnología que transforma tu estadía',
     'hero.title': 'Bienvenido a',
     'hero.lead': 'La plataforma inteligente que te acompaña durante toda tu estadía, desde tu llegada hasta tu salida.',
-    'hero.feature1': 'Tarjeta<br>NFC', 'hero.feature2': 'Servicios<br>a un clic', 'hero.feature3': 'Control de<br>consumos',
+    'hero.feature1': 'Llave digital<br>NFC', 'hero.feature2': 'Servicios<br>a un clic', 'hero.feature3': 'Control de<br>consumos',
     'continue.heading': '¿Cómo deseas continuar?', 'continue.sub': 'Selecciona una opción para empezar',
     'continue.guestTitle': 'Soy huésped', 'continue.guestDesc': 'Realiza tu check-in, accede a tu habitación y gestiona tu estadía.', 'continue.guestBtn': 'Continuar',
     'continue.staffTitle': 'Soy personal del hotel', 'continue.staffDesc': 'Accede al panel administrativo para gestionar huéspedes, servicios y más.', 'continue.staffBtn': 'Iniciar sesión',
-    'benefits.b1Title': 'Acceso sin límites', 'benefits.b1Desc': 'Tarjeta NFC para habitaciones y áreas del hotel',
+    'benefits.b1Title': 'Acceso sin límites', 'benefits.b1Desc': 'Tu celular es tu llave NFC para habitaciones y áreas del hotel',
     'benefits.b2Title': 'Todo en un solo lugar', 'benefits.b2Desc': 'Servicios, consumos, información y más desde tu móvil',
     'benefits.b3Title': 'Seguridad y confianza', 'benefits.b3Desc': 'Tecnología avanzada para proteger tu información y accesos',
     'benefits.b4Title': 'Soporte 24/7', 'benefits.b4Desc': 'Estamos para ayudarte en todo momento',
@@ -99,7 +113,7 @@ const I18N = {
     'ci.secureTitle': 'Tu información está segura', 'ci.secureDesc': 'Usamos tecnología avanzada para proteger tus datos personales.',
     'ci.yourReservation': 'Tu reserva', 'ci.reservaPlaceholder': 'Buscaremos tu reserva para mostrar el resumen aquí.',
     'ci.feature1Title': 'Check-in 100% digital', 'ci.feature1Desc': 'Rápido, cómodo y seguro.',
-    'ci.feature2Desc': 'Accede a tu habitación y áreas autorizadas.',
+    'ci.feature2Desc': 'Tu celular abre tu habitación y las áreas autorizadas.',
     'ci.feature3Title': 'Todo en tu móvil', 'ci.feature3Desc': 'Gestiona tu estadía de forma fácil y segura.',
     'ci.helpDesc': 'Nuestro equipo de recepción está disponible las 24 horas.',
     'ci.call': 'Llamar', 'ci.reception': 'Recepción', 'ci.receptionNotified': 'Aviso enviado a recepción',
@@ -111,7 +125,6 @@ const I18N = {
     'cta.preferences': 'Preferencias', 'cta.pushTitle': 'Notificaciones push', 'cta.pushDesc': 'Recibir avisos sobre tu estadía y servicios.',
     'cta.offersTitle': 'Ofertas y novedades', 'cta.offersDesc': 'Recibir promociones de SmartStay por email.', 'cta.prefUpdated': 'Preferencia actualizada',
     'cta.billing': 'Facturación de la estadía', 'cta.downloadReceipt': 'Descargar comprobante', 'cta.total': 'Total',
-    'cta.paymentMethod': 'Método de pago', 'cta.cardOnFile': 'Visa terminada en 4821, guardada para consumos adicionales durante tu estadía.',
     'cta.finishStay': 'Finalizar tu estadía', 'cta.finishStayDesc': 'Cuando estés listo/a para irte, confirmá tu check-out. Vamos a verificar tu cuenta y liberar la habitación para el hotel.',
     'cta.confirmCheckout': 'Confirmar check-out',
     'info.title': 'Información del hotel', 'info.subtitle': 'Todo lo que necesitás saber durante tu estadía.',
@@ -123,13 +136,13 @@ const I18N = {
     'asis.subtitle': 'Estamos disponibles las 24 horas para ayudarte con lo que necesites.',
     'asis.faq': 'Preguntas frecuentes',
     'asis.q1': '¿Cómo abro la puerta de mi habitación?',
-    'asis.a1': 'Acercá la tarjeta NFC que te entrega recepción al lector de la puerta. La tarjeta se activa cuando recepción te la entrega, después de completar el check-in digital.',
+    'asis.a1': 'Acercá tu celular a la etiqueta NFC de la puerta o tocá "Abrir mi habitación" en "Mi estadía". Tu celular es tu llave y se activa solo al completar el check-in digital. Si tu celular no tiene NFC, pedí una tarjeta física (opcional) desde "Mi estadía" o en recepción.',
     'asis.q2': '¿Puedo cambiar la hora de mi check-out?',
     'asis.a2': 'Sí, escribinos por WhatsApp o contactá a recepción con al menos 3 horas de anticipación para coordinar un check-out tardío, sujeto a disponibilidad.',
     'asis.q3': '¿Cómo solicito un servicio a mi habitación?',
     'asis.a3': 'Ingresá a la sección "Servicios" desde el menú principal, elegí lo que necesites y tocá "Solicitar". Se carga automáticamente a tu habitación.',
-    'asis.q4': '¿Qué hago si pierdo mi tarjeta NFC?',
-    'asis.a4': 'Bloqueala ahora desde "Mi estadía" con el botón "Perdí mi tarjeta", o avisá a recepción (WhatsApp, llamada o en persona). La tarjeta perdida deja de abrir tu puerta y te entregamos una nueva.',
+    'asis.q4': '¿Qué hago si pierdo mi celular o mi tarjeta?',
+    'asis.a4': 'Bloqueá la llave desde "Mi estadía" (botón "Perdí mi celular" o "Perdí mi tarjeta"; podés entrar desde otro celular con tu código de reserva) o avisá a recepción. La llave bloqueada deja de abrir tu puerta y recepción te la reactiva o te entrega una nueva.',
     'asis.writeUs': 'Escribinos', 'asis.subject': 'Asunto', 'asis.message': 'Mensaje', 'asis.sendMessage': 'Enviar mensaje',
     'asis.messageSent': '¡Mensaje enviado!', 'asis.willReply': 'Nuestro equipo te va a responder a la brevedad.',
     'asis.directContact': 'Contacto directo', 'asis.replyMinutes': 'Respuesta en minutos', 'asis.chat': 'Chatear',
@@ -143,16 +156,49 @@ const I18N = {
     'portal.qMore': 'Más', 'portal.qMoreDesc': 'Todas las opciones disponibles.',
     'portal.spending': 'Control de consumos', 'portal.notifications': 'Notificaciones',
     'portal.greeting': 'Hola, ', 'portal.room': 'Habitación', 'portal.checkinActive': 'Check-in activo',
-    'portal.nfcTitle': 'Tarjeta NFC', 'portal.nfcDescPending': 'Retírala en recepción para ingresar a tu habitación.',
-    'portal.nfcDescActive': 'Acércala al lector de la puerta para ingresar.', 'portal.nfcDescBlocked': 'Tu tarjeta está bloqueada. Pide una nueva en recepción.',
-    'portal.cardNo': 'N.º', 'portal.cardPending': 'Pendiente', 'portal.cardBlocked': 'Bloqueada', 'portal.lostCard': 'Perdí mi tarjeta',
+    'portal.cardNo': 'N.º', 'portal.cardBlocked': 'Bloqueada', 'portal.lostCard': 'Perdí mi tarjeta',
     'portal.lostCardConfirm': '¿Bloquear tu tarjeta NFC? Dejará de abrir tu habitación y vas a poder pedir una nueva en recepción.',
     'portal.cardBlockedToast': 'Tarjeta bloqueada. Pide una nueva en recepción.',
     'portal.stayTotal': 'Total estadía', 'portal.noServicesYet': 'Todavía no solicitaste ningún servicio.',
-    'portal.checkinConfirmedTitle': 'Check-in confirmado', 'portal.keyActive': 'Tu tarjeta NFC ya está activa.', 'portal.keyPending': 'Retira tu tarjeta NFC en recepción.', 'portal.keyBlocked': 'Tu tarjeta NFC está bloqueada. Pide una nueva en recepción.',
+    'portal.checkinConfirmedTitle': 'Check-in confirmado',
     'portal.completed': 'Completado', 'portal.inProgress': 'En proceso', 'portal.requestReceived': 'Solicitud recibida',
     'portal.checkoutReminderTitle': 'Recordatorio de check-out', 'portal.departureIs': 'Tu salida es',
     'portal.coordinateWithReception': 'a coordinar con recepción',
+    'key.phoneTitle': 'Llave digital en tu celular', 'key.phoneActive': 'Activa', 'key.phoneBlockedPill': 'Bloqueada',
+    'key.phoneDescActive': 'Acercá tu celular a la etiqueta NFC de la puerta o tocá "Abrir mi habitación".',
+    'key.phoneDescBlocked': 'Tu llave digital está bloqueada. Avisá a recepción para reactivarla.',
+    'key.openRoom': 'Abrir mi habitación', 'key.lostPhone': 'Perdí mi celular',
+    'key.lostPhoneConfirm': '¿Bloquear la llave digital de tu celular? Dejará de abrir tu habitación hasta que recepción la reactive.',
+    'key.phoneBlockedToast': 'Llave del celular bloqueada. Avisá a recepción.',
+    'key.cardTitle': 'Tarjeta física (opcional)',
+    'key.cardDescNone': '¿Tu celular no tiene NFC? Pedí una tarjeta en recepción.', 'key.cardRequest': 'Pedir tarjeta',
+    'key.cardRequestedPill': 'Solicitada', 'key.cardRequested': 'Pedido enviado: retirá tu tarjeta en recepción.', 'key.cardRequestedToast': 'Avisamos a recepción: retirá tu tarjeta ahí.',
+    'key.cardActiveDesc': 'Acercala al lector de la puerta para ingresar.',
+    'key.cardBlockedDesc': 'Tu tarjeta está bloqueada. Pedí una nueva en recepción.',
+    'key.notifPhone': 'Tu celular ya es tu llave: acercalo a la etiqueta NFC de tu puerta.',
+    'key.notifPhoneBlocked': 'Tu llave del celular está bloqueada. Avisá a recepción.',
+    'door.title': 'Puerta', 'door.room': 'Habitación', 'door.common': 'Áreas comunes', 'door.open': 'Puerta abierta', 'door.denied': 'No se pudo abrir',
+    'door.opening': 'Comprobando tu llave…', 'door.retry': 'Volver a intentar', 'door.backToStay': 'Ir a mi estadía',
+    'door.needLogin': 'Para abrir la puerta con tu celular, ingresá primero con tu código de reserva.', 'door.login': 'Ingresar con mi código',
+    'door.openedMsg': 'Entrá y disfrutá tu estadía.', 'door.demoNote': 'Demostración: no hay cerradura física conectada, el sistema simula la apertura y la deja registrada.',
+    'door.r.blocked': 'Tu llave está bloqueada. Avisá a recepción.', 'door.r.ended': 'Tu estadía ya finalizó.', 'door.r.nostay': 'Todavía no completaste el check-in.',
+    'door.r.wrongDoor': 'Esta no es la puerta de tu habitación.', 'door.r.wrongHotel': 'Esta puerta pertenece a otro hotel.',
+    'door.r.unknown': 'No encontramos tu reserva.', 'door.r.error': 'No pudimos comprobar tu llave. Revisá tu conexión.',
+    'pay.title': 'Pagar mi cuenta', 'pay.total': 'Total de la estadía', 'pay.paid': 'Pagado', 'pay.pendingCash': 'Efectivo por entregar en recepción', 'pay.balance': 'Saldo a pagar',
+    'pay.settled': 'Tu cuenta está saldada. ¡Gracias!', 'pay.nothing': 'Todavía no tenés consumos para pagar.',
+    'pay.chooseWay': 'Elegí cómo pagar',
+    'pay.optCard': 'Tarjeta de crédito o débito', 'pay.optCardDesc': 'Pagás ahora, acá mismo.', 'pay.optCash': 'Efectivo en recepción', 'pay.optCashDesc': 'Pagás cuando pasés por el mostrador.',
+    'pay.phName': 'NOMBRE APELLIDO', 'pay.phExpiry': 'MM/AA', 'pay.cardNumber': 'Número de tarjeta', 'pay.cardName': 'Nombre en la tarjeta', 'pay.cardExpiry': 'Vencimiento (MM/AA)', 'pay.cardCvv': 'CVV',
+    'pay.payNow': 'Pagar', 'pay.processing': 'Procesando el pago…',
+    'pay.cashBtn': 'Pagaré en efectivo en recepción', 'pay.cashInfo': 'Registramos tu pago como pendiente: acercate a recepción con el monto y lo confirman al recibirlo.',
+    'pay.testNote': 'Pagos en modo de prueba: no se cobra dinero real. Tarjeta de prueba: 4242 4242 4242 4242, cualquier fecha futura y 3 dígitos. Solo guardamos la marca y los últimos 4 dígitos.',
+    'pay.history': 'Pagos de esta estadía', 'pay.byCard': 'Tarjeta', 'pay.byCash': 'Efectivo', 'pay.st.paid': 'Pagado', 'pay.st.pending': 'Pendiente', 'pay.st.canceled': 'Anulado',
+    'pay.errNumber': 'Revisá el número de la tarjeta.', 'pay.errName': 'Ingresá el nombre que figura en la tarjeta.', 'pay.errExpiry': 'Revisá el vencimiento (MM/AA).', 'pay.errExpired': 'La tarjeta está vencida.', 'pay.errCvv': 'Revisá el código de seguridad (CVV).',
+    'pay.declined': 'La tarjeta fue rechazada. Probá con otra.', 'pay.funds': 'Fondos insuficientes. Probá con otra tarjeta o pagá en efectivo.',
+    'pay.errAmount': 'Ese monto no es válido para tu saldo actual.', 'pay.errNetwork': 'No pudimos registrar el pago. Revisá tu conexión e intentá de nuevo.', 'pay.errStay': 'Tu estadía no está activa.',
+    'pay.okCard': '¡Pago aprobado! Gracias.', 'pay.okCash': 'Listo: avisamos a recepción. Pagá en el mostrador.',
+    'pay.receiptPaid': 'PAGADO', 'pay.receiptBalance': 'SALDO',
+    'ci.keyTitle': 'Llave digital NFC', 'ci.doneText': 'Tu registro fue exitoso. Tu celular ya es tu llave: acercalo a la etiqueta NFC de tu puerta o tocá "Abrir mi habitación" en tu estadía. Si tu celular no tiene NFC, podés pedir una tarjeta física (opcional) en recepción.',
   },
   en: {
     'nav.home': 'Home', 'nav.advantages': 'Advantages', 'nav.features': 'Features',
@@ -160,11 +206,11 @@ const I18N = {
     'hero.badge': 'Technology that transforms your stay',
     'hero.title': 'Welcome to',
     'hero.lead': 'The smart platform that goes with you through your whole stay, from arrival to departure.',
-    'hero.feature1': 'NFC room<br>card', 'hero.feature2': 'Services<br>in one tap', 'hero.feature3': 'Spending<br>tracker',
+    'hero.feature1': 'NFC digital<br>key', 'hero.feature2': 'Services<br>in one tap', 'hero.feature3': 'Spending<br>tracker',
     'continue.heading': 'How would you like to continue?', 'continue.sub': 'Choose an option to get started',
     'continue.guestTitle': "I'm a guest", 'continue.guestDesc': 'Check in, unlock your room, and manage your stay.', 'continue.guestBtn': 'Continue',
     'continue.staffTitle': "I'm hotel staff", 'continue.staffDesc': 'Access the admin panel to manage guests, services, and more.', 'continue.staffBtn': 'Sign in',
-    'benefits.b1Title': 'Unlimited access', 'benefits.b1Desc': 'NFC card for rooms and hotel areas',
+    'benefits.b1Title': 'Unlimited access', 'benefits.b1Desc': 'Your phone is your NFC key for rooms and hotel areas',
     'benefits.b2Title': 'Everything in one place', 'benefits.b2Desc': 'Services, spending, information and more from your phone',
     'benefits.b3Title': 'Security and trust', 'benefits.b3Desc': 'Advanced technology to protect your information and access',
     'benefits.b4Title': '24/7 support', 'benefits.b4Desc': "We're here to help at any time",
@@ -213,7 +259,7 @@ const I18N = {
     'ci.secureTitle': 'Your information is secure', 'ci.secureDesc': 'We use advanced technology to protect your personal data.',
     'ci.yourReservation': 'Your reservation', 'ci.reservaPlaceholder': "We'll look up your reservation to show a summary here.",
     'ci.feature1Title': '100% digital check-in', 'ci.feature1Desc': 'Fast, comfortable, and secure.',
-    'ci.feature2Desc': 'Access your room and authorized areas.',
+    'ci.feature2Desc': 'Your phone opens your room and authorized areas.',
     'ci.feature3Title': 'Everything on your phone', 'ci.feature3Desc': 'Manage your stay easily and securely.',
     'ci.helpDesc': 'Our front desk team is available 24 hours a day.',
     'ci.call': 'Call', 'ci.reception': 'Front desk', 'ci.receptionNotified': 'The front desk has been notified',
@@ -225,7 +271,6 @@ const I18N = {
     'cta.preferences': 'Preferences', 'cta.pushTitle': 'Push notifications', 'cta.pushDesc': 'Get alerts about your stay and services.',
     'cta.offersTitle': 'Offers and news', 'cta.offersDesc': 'Receive SmartStay promotions by email.', 'cta.prefUpdated': 'Preference updated',
     'cta.billing': 'Stay billing', 'cta.downloadReceipt': 'Download receipt', 'cta.total': 'Total',
-    'cta.paymentMethod': 'Payment method', 'cta.cardOnFile': 'Visa ending in 4821, saved for extra charges during your stay.',
     'cta.finishStay': 'Finish your stay', 'cta.finishStayDesc': "When you're ready to leave, confirm your check-out. We'll verify your account and free up the room for the hotel.",
     'cta.confirmCheckout': 'Confirm check-out',
     'info.title': 'Hotel information', 'info.subtitle': 'Everything you need to know during your stay.',
@@ -237,13 +282,13 @@ const I18N = {
     'asis.subtitle': "We're available 24 hours a day to help with anything you need.",
     'asis.faq': 'Frequently asked questions',
     'asis.q1': 'How do I open my room door?',
-    'asis.a1': 'Hold the NFC card the front desk gives you near the door\'s reader. The card is activated when the front desk hands it to you, after you complete digital check-in.',
+    'asis.a1': 'Hold your phone near the NFC tag on the door, or tap "Open my room" in "My stay". Your phone is your key and it turns on by itself once you complete digital check-in. If your phone has no NFC, ask for a physical card (optional) from "My stay" or at the front desk.',
     'asis.q2': 'Can I change my check-out time?',
     'asis.a2': 'Yes — message us on WhatsApp or contact the front desk at least 3 hours ahead to arrange a late check-out, subject to availability.',
     'asis.q3': 'How do I request a service to my room?',
     'asis.a3': 'Go to the "Services" section from the main menu, choose what you need, and tap "Request." It\'s charged to your room automatically.',
-    'asis.q4': 'What do I do if I lose my NFC card?',
-    'asis.a4': "Block it right away from \"My stay\" with the \"I lost my card\" button, or tell the front desk (WhatsApp, call, or in person). The lost card stops opening your door and we hand you a new one.",
+    'asis.q4': 'What do I do if I lose my phone or my card?',
+    'asis.a4': "Block the key from \"My stay\" (\"I lost my phone\" or \"I lost my card\" button; you can sign in from another phone with your reservation code) or tell the front desk. A blocked key stops opening your door and the front desk re-enables it or hands you a new one.",
     'asis.writeUs': 'Message us', 'asis.subject': 'Subject', 'asis.message': 'Message', 'asis.sendMessage': 'Send message',
     'asis.messageSent': 'Message sent!', 'asis.willReply': "Our team will get back to you shortly.",
     'asis.directContact': 'Direct contact', 'asis.replyMinutes': 'Reply within minutes', 'asis.chat': 'Chat',
@@ -257,16 +302,49 @@ const I18N = {
     'portal.qMore': 'More', 'portal.qMoreDesc': 'All the available options.',
     'portal.spending': 'Spending', 'portal.notifications': 'Notifications',
     'portal.greeting': 'Hi, ', 'portal.room': 'Room', 'portal.checkinActive': 'Check-in active',
-    'portal.nfcTitle': 'NFC card', 'portal.nfcDescPending': 'Pick it up at the front desk to enter your room.',
-    'portal.nfcDescActive': 'Hold it near the door reader to get in.', 'portal.nfcDescBlocked': 'Your card is blocked. Ask the front desk for a new one.',
-    'portal.cardNo': 'No.', 'portal.cardPending': 'Pending', 'portal.cardBlocked': 'Blocked', 'portal.lostCard': 'I lost my card',
+    'portal.cardNo': 'No.', 'portal.cardBlocked': 'Blocked', 'portal.lostCard': 'I lost my card',
     'portal.lostCardConfirm': 'Block your NFC card? It will stop opening your room and you can ask the front desk for a new one.',
     'portal.cardBlockedToast': 'Card blocked. Ask the front desk for a new one.',
     'portal.stayTotal': 'Stay total', 'portal.noServicesYet': "You haven't requested any service yet.",
-    'portal.checkinConfirmedTitle': 'Check-in confirmed', 'portal.keyActive': 'Your NFC card is already active.', 'portal.keyPending': 'Pick up your NFC card at the front desk.', 'portal.keyBlocked': 'Your NFC card is blocked. Ask the front desk for a new one.',
+    'portal.checkinConfirmedTitle': 'Check-in confirmed',
     'portal.completed': 'Completed', 'portal.inProgress': 'In progress', 'portal.requestReceived': 'Request received',
     'portal.checkoutReminderTitle': 'Check-out reminder', 'portal.departureIs': 'Your departure is',
     'portal.coordinateWithReception': 'to be coordinated with the front desk',
+    'key.phoneTitle': 'Digital key on your phone', 'key.phoneActive': 'Active', 'key.phoneBlockedPill': 'Blocked',
+    'key.phoneDescActive': 'Hold your phone near the NFC tag on the door, or tap "Open my room".',
+    'key.phoneDescBlocked': 'Your digital key is blocked. Tell the front desk to re-enable it.',
+    'key.openRoom': 'Open my room', 'key.lostPhone': 'I lost my phone',
+    'key.lostPhoneConfirm': 'Block your phone\'s digital key? It will stop opening your room until the front desk re-enables it.',
+    'key.phoneBlockedToast': 'Phone key blocked. Tell the front desk.',
+    'key.cardTitle': 'Physical card (optional)',
+    'key.cardDescNone': 'Your phone has no NFC? Ask for a card at the front desk.', 'key.cardRequest': 'Ask for a card',
+    'key.cardRequestedPill': 'Requested', 'key.cardRequested': 'Request sent: pick up your card at the front desk.', 'key.cardRequestedToast': 'We told the front desk: pick up your card there.',
+    'key.cardActiveDesc': 'Hold it near the door reader to get in.',
+    'key.cardBlockedDesc': 'Your card is blocked. Ask the front desk for a new one.',
+    'key.notifPhone': 'Your phone is already your key: hold it near the NFC tag on your door.',
+    'key.notifPhoneBlocked': 'Your phone key is blocked. Tell the front desk.',
+    'door.title': 'Door', 'door.room': 'Room', 'door.common': 'Common areas', 'door.open': 'Door open', 'door.denied': 'Could not open',
+    'door.opening': 'Checking your key…', 'door.retry': 'Try again', 'door.backToStay': 'Go to my stay',
+    'door.needLogin': 'To open the door with your phone, sign in first with your reservation code.', 'door.login': 'Sign in with my code',
+    'door.openedMsg': 'Come in and enjoy your stay.', 'door.demoNote': 'Demo: no physical lock is connected; the system simulates the opening and logs it.',
+    'door.r.blocked': 'Your key is blocked. Tell the front desk.', 'door.r.ended': 'Your stay has ended.', 'door.r.nostay': 'You have not completed check-in yet.',
+    'door.r.wrongDoor': 'This is not your room\'s door.', 'door.r.wrongHotel': 'This door belongs to another hotel.',
+    'door.r.unknown': 'We could not find your reservation.', 'door.r.error': 'We could not check your key. Check your connection.',
+    'pay.title': 'Pay my bill', 'pay.total': 'Stay total', 'pay.paid': 'Paid', 'pay.pendingCash': 'Cash to hand in at the front desk', 'pay.balance': 'Balance due',
+    'pay.settled': 'Your bill is settled. Thank you!', 'pay.nothing': 'You have no charges to pay yet.',
+    'pay.chooseWay': 'Choose how to pay',
+    'pay.optCard': 'Credit or debit card', 'pay.optCardDesc': 'Pay now, right here.', 'pay.optCash': 'Cash at the front desk', 'pay.optCashDesc': 'Pay when you stop by the desk.',
+    'pay.phName': 'FIRST LAST NAME', 'pay.phExpiry': 'MM/YY', 'pay.cardNumber': 'Card number', 'pay.cardName': 'Name on card', 'pay.cardExpiry': 'Expiry (MM/YY)', 'pay.cardCvv': 'CVV',
+    'pay.payNow': 'Pay', 'pay.processing': 'Processing payment…',
+    'pay.cashBtn': 'I will pay cash at the front desk', 'pay.cashInfo': 'We record your payment as pending: come to the front desk with the amount and they confirm it when they receive it.',
+    'pay.testNote': 'Test-mode payments: no real money is charged. Test card: 4242 4242 4242 4242, any future date and 3 digits. We only keep the brand and the last 4 digits.',
+    'pay.history': 'Payments for this stay', 'pay.byCard': 'Card', 'pay.byCash': 'Cash', 'pay.st.paid': 'Paid', 'pay.st.pending': 'Pending', 'pay.st.canceled': 'Voided',
+    'pay.errNumber': 'Check the card number.', 'pay.errName': 'Enter the name printed on the card.', 'pay.errExpiry': 'Check the expiry date (MM/YY).', 'pay.errExpired': 'The card has expired.', 'pay.errCvv': 'Check the security code (CVV).',
+    'pay.declined': 'The card was declined. Try another one.', 'pay.funds': 'Insufficient funds. Try another card or pay cash.',
+    'pay.errAmount': 'That amount is not valid for your current balance.', 'pay.errNetwork': 'We could not record the payment. Check your connection and try again.', 'pay.errStay': 'Your stay is not active.',
+    'pay.okCard': 'Payment approved! Thank you.', 'pay.okCash': 'Done: we told the front desk. Pay at the desk.',
+    'pay.receiptPaid': 'PAID', 'pay.receiptBalance': 'BALANCE',
+    'ci.keyTitle': 'NFC digital key', 'ci.doneText': 'Your registration was successful. Your phone is now your key: hold it near the NFC tag on your door or tap "Open my room" in your stay. If your phone has no NFC, you can ask for a physical card (optional) at the front desk.',
   },
 };
 function getLanguage() {
@@ -329,6 +407,44 @@ function showSettingsTab(btn, panelId) {
   container.querySelectorAll('.settings-panel').forEach(p => p.setAttribute('hidden', ''));
   const panel = document.getElementById(panelId);
   if (panel) panel.removeAttribute('hidden');
+}
+
+// =========================================================
+// Money: everything is in Paraguayan guaraníes (Gs.). The guaraní has no
+// decimals, so amounts are whole numbers shown with dots as thousands
+// separators (Gs. 40.000). Price fields use <input class="money-input">,
+// which formats as you type; read them with getMoneyInput().
+// =========================================================
+const CURRENCY_SYMBOL = 'Gs.';
+function formatNumberPy(n) {
+  const v = Math.round(Number(n) || 0);
+  return (v < 0 ? '-' : '') + String(Math.abs(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function formatMoney(n) { return CURRENCY_SYMBOL + ' ' + formatNumberPy(n); }
+// "40.000", "40000", "Gs. 40.000" -> 40000 (a comma starts decimals, which Gs. doesn't use)
+function parseMoney(raw) {
+  const d = String(raw == null ? '' : raw).split(',')[0].replace(/\D/g, '');
+  return d ? parseInt(d, 10) : 0;
+}
+function setMoneyInput(el, n) { el.value = n ? formatNumberPy(n) : ''; }
+function getMoneyInput(el) { return parseMoney(el.value); }
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (!el || !el.classList || !el.classList.contains('money-input')) return;
+  const caret = el.selectionStart;
+  const digitsBefore = el.value.slice(0, caret == null ? el.value.length : caret).replace(/\D/g, '').length;
+  const digits = el.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 12);
+  el.value = digits ? formatNumberPy(digits) : '';
+  let i = 0, c = 0;
+  while (i < el.value.length && c < digitsBefore) { if (/\d/.test(el.value[i])) c++; i++; }
+  try { el.setSelectionRange(i, i); } catch (err) {}
+});
+// Price text of a service: custom text wins; otherwise "Gs. 35.000 / pedido"
+// ("Desde Gs. ..." when the service's price is a starting price).
+function servicePriceLabel(item) {
+  if (item.priceLabel) return item.priceLabel;
+  if (item.price > 0) return (item.priceFrom ? 'Desde ' : '') + formatMoney(item.price) + (item.unit ? ' ' + item.unit : '');
+  return 'Sin cargo';
 }
 
 // ---- Guest identity (captured during check-in, used across guest pages) ----
@@ -467,7 +583,8 @@ function ssHttp(method, path, body, opts) {
   let data = null;
   try { data = xhr.responseText ? JSON.parse(xhr.responseText) : null; } catch (e) {}
   const message = data && (data.message || data.msg || data.error_description || data.error) || '';
-  return { ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, data, message: String(message) };
+  const code = data && (data.error_code || data.code) || '';
+  return { ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, data, message: String(message), code: String(code) };
 }
 function ssRpc(name, args, opts) { return ssHttp('POST', '/rest/v1/rpc/' + name, args || {}, opts); }
 
@@ -576,8 +693,25 @@ function ssPersistRow(key, spec, r, prev) {
   const id = spec.id(r);
   const { data, files } = ssRowBody(spec, r);
   let res;
+  // When this changes an existing row, only the fields THIS page changed are
+  // sent on top of what the cloud holds right now. Otherwise a page with
+  // slightly old data (e.g. reception's screen) would wipe what someone else
+  // saved meanwhile — like a guest's payment or a blocked key.
+  let merged = null;
   if (prev) {
-    res = ssHttp('PATCH', '/rest/v1/' + spec.table + '?id=eq.' + ssEnc(id), { data }, { prefer: 'return=representation' });
+    let body = data;
+    const fresh = ssHttp('GET', '/rest/v1/' + spec.table + '?id=eq.' + ssEnc(id) + '&select=data');
+    if (fresh.ok && Array.isArray(fresh.data) && fresh.data[0] && fresh.data[0].data) {
+      const base = ssRowBody(spec, prev).data;
+      body = { ...fresh.data[0].data };
+      Object.keys(data).forEach(k => {
+        if (JSON.stringify(data[k]) === JSON.stringify(base[k])) return;
+        if (data[k] === undefined) delete body[k]; else body[k] = data[k];
+      });
+      Object.keys(base).forEach(k => { if (!(k in data)) delete body[k]; });
+      merged = body;
+    }
+    res = ssHttp('PATCH', '/rest/v1/' + spec.table + '?id=eq.' + ssEnc(id), { data: body }, { prefer: 'return=representation' });
     if (res.ok && Array.isArray(res.data) && !res.data.length) res = { ok: false, status: 403, message: 'sin permiso' };
   } else if (spec.profile) {
     return null; // accounts are only created by registering (claim_staff / claim_cgo)
@@ -601,7 +735,12 @@ function ssPersistRow(key, spec, r, prev) {
       if (prev && prev[f] && !r[f]) ssHttp('DELETE', '/rest/v1/guest_files?guest_id=eq.' + ssEnc(id) + '&kind=eq.' + SS_FILE_FIELDS[f]);
     });
   }
-  const out = ssWithPlaceholders(spec, r, prev, files);
+  let out = ssWithPlaceholders(spec, r, prev, files);
+  if (merged) {
+    const withPh = out;
+    out = { ...merged };
+    Object.keys(SS_FILE_FIELDS).forEach(f => { if (withPh[f]) out[f] = withPh[f]; else delete out[f]; });
+  }
   if (spec.table === 'hotels') {
     const row = Array.isArray(res.data) && res.data[0];
     out.staffCode = (row && row.staff_code) || (prev && prev.staffCode) || '';
@@ -676,6 +815,40 @@ function ssCloudWrite(key, list) {
   });
   SS_CACHE[key] = JSON.stringify(result);
   if (changed) SS_WRITES++;
+}
+
+// Puts a guest record that a database function just returned into the cache
+function ssReplaceCachedGuest(rec) {
+  const key = 'ss_guests_registry';
+  const list = JSON.parse(SS_CACHE[key] || '[]');
+  const i = list.findIndex(x => x.id === rec.id);
+  if (i >= 0) list[i] = rec; else list.push(rec);
+  SS_CACHE[key] = JSON.stringify(list);
+  SS_WRITES++;
+}
+// Saves many rows at once (one request per table instead of one per row).
+// New rows are added; with { upsert: true } rows that already exist are
+// replaced, otherwise they are left alone. Returns how many were sent.
+function ssBulkInsert(key, rows, opts) {
+  const upsert = !!(opts && opts.upsert);
+  const spec = SS_COLL[key];
+  if (!rows.length) return 0;
+  if (SS_MODE !== 'staff' && SS_MODE !== 'cgo') { ssNotifyError('Iniciá sesión para guardar los cambios.'); return 0; }
+  if (!ssAuthRefresh()) { ssNotifyError('Tu sesión expiró. Iniciá sesión de nuevo.'); return 0; }
+  const body = rows.map(r => {
+    const row = { id: spec.id(r), data: ssRowBody(spec, r).data };
+    if (spec.hotel) row.hotel_id = r.hotelId;
+    return row;
+  });
+  const res = ssHttp('POST', '/rest/v1/' + spec.table + '?on_conflict=id', body, { prefer: 'resolution=' + (upsert ? 'merge-duplicates' : 'ignore-duplicates') + ',return=minimal' });
+  if (!res.ok) { ssNotifyError('No se pudo guardar en la nube: ' + (res.message || 'error ' + res.status)); return 0; }
+  const cached = JSON.parse(SS_CACHE[key] || '[]');
+  const byId = new Map(rows.map(r => [spec.id(r), r]));
+  const kept = cached.map(r => (upsert && byId.has(spec.id(r))) ? byId.get(spec.id(r)) : r);
+  const ids = new Set(cached.map(spec.id));
+  SS_CACHE[key] = JSON.stringify(kept.concat(rows.filter(r => !ids.has(spec.id(r)))));
+  SS_WRITES++;
+  return rows.length;
 }
 
 // Real photos for a guest record whose photo fields hold the "@file" marker
@@ -762,7 +935,7 @@ function getHotelsRegistry() {
   if (list.length || SS_CLOUD) return list;
   // Seeds the original demo hotel so existing flows (and a fresh visitor
   // who hasn't used the CGO panel yet) keep working out of the box.
-  const seeded = [{ id: 'h_default', createdAt: new Date().toISOString(), active: true, ...DEFAULT_HOTEL }];
+  const seeded = [{ id: 'h_default', createdAt: new Date().toISOString(), active: true, gsMigrated: true, ...DEFAULT_HOTEL }];
   saveHotelsRegistry(seeded);
   return seeded;
 }
@@ -779,6 +952,7 @@ function registerHotel(data) {
     id: _newId('h'),
     createdAt: new Date().toISOString(),
     active: true,
+    gsMigrated: true, // born in guaraníes: nothing to convert
     wifiName: slug + '_Guest',
     wifiPassword: 'bienvenido' + Math.floor(1000 + Math.random() * 9000),
     ...data,
@@ -927,13 +1101,20 @@ function findGuestByRoom(roomPrefix) {
   return getGuestsRegistry().find(g => g.room && g.room.startsWith(roomPrefix) && g.status !== 'revocado');
 }
 
-// ---- NFC room cards ----
-// The room key is a physical NFC card: after digital check-in, reception
-// encodes one and hands it to the guest. It deliberately doesn't depend on
-// the guest's phone (many phones have no NFC, and iPhones can't act as a
-// card). The card lives on the guest record — cardUid, cardStatus
-// ('active' | 'blocked'; absent means "not delivered yet"), retiredCards
-// (UIDs replaced after a loss) — and every door read is kept in the log.
+// ---- Digital room key: the guest's phone, plus an optional physical card ----
+// The phone IS the key. After digital check-in the guest's phone opens the
+// room: they hold it near the NFC tag stuck on the door (or tap "Abrir mi
+// habitación" in the app) and the system decides — by the stay it finds for
+// that guest — whether the door opens. No app to install and no phone-side
+// card emulation needed, so it works on any phone that can read an NFC tag
+// (Android and iPhone alike).
+// A physical NFC card is OPTIONAL, for guests whose phone has no NFC (or who
+// simply prefer a card): the guest can ask for one from the portal and
+// reception encodes it. Both keys live on the guest record:
+//   phoneKeyStatus ('blocked' when lost; absent = active),
+//   cardUid / cardStatus ('active' | 'blocked'; absent = no card),
+//   cardRequested (the guest asked for a card), retiredCards (replaced UIDs).
+// Every door read — granted or denied, phone or card — is kept in the log.
 const ACCESS_LOG_KEY = 'ss_access_log';
 
 function _generateCardUid() {
@@ -946,14 +1127,39 @@ function _generateCardUid() {
 function shortCardUid(uid) {
   return uid ? uid.split(':').slice(-2).join('') : '';
 }
-// 'none' (no stay in progress: pending reservation, canceled or checked
-// out — a checked-out guest's card stops working by itself),
-// 'pending' (checked in, card not handed over yet), 'active' or 'blocked'.
+function _roomNumberOf(g) {
+  return String((g && g.room) || '').split('·')[0].trim();
+}
+// A stay in progress is the only time any key works: pending reservations,
+// canceled ones and checked-out stays have nothing to open.
+function _stayInProgress(g) {
+  return !!g && g.status !== 'pendiente' && g.status !== 'cancelada' && g.status !== 'checkout';
+}
+// State of the guest's PHONE key: 'none' (no stay in progress), 'active'
+// (the default from check-in on) or 'blocked' (lost phone / reception).
+function getPhoneKeyState(g) {
+  if (!_stayInProgress(g)) return 'none';
+  if (g.status === 'revocado' || g.phoneKeyStatus === 'blocked') return 'blocked';
+  return 'active';
+}
+// State of the optional physical CARD: 'none' (no stay in progress),
+// 'nocard' (stay in progress, no card — the normal case), 'active' or 'blocked'.
 function getCardState(g) {
-  if (!g || g.status === 'pendiente' || g.status === 'cancelada' || g.status === 'checkout') return 'none';
+  if (!_stayInProgress(g)) return 'none';
   if (g.status === 'revocado') return 'blocked'; // older records from when the key was revoked per guest
   if (g.cardStatus === 'active' || g.cardStatus === 'blocked') return g.cardStatus;
-  return 'pending';
+  return 'nocard';
+}
+// reason: 'lost' (reported by the guest) or 'reception'
+function blockPhoneKey(guestId, reason) {
+  return updateGuest(guestId, { phoneKeyStatus: 'blocked', phoneKeyBlockReason: reason || 'reception', phoneKeyBlockedAt: new Date().toISOString() });
+}
+function unblockPhoneKey(guestId) {
+  return updateGuest(guestId, { phoneKeyStatus: 'active', phoneKeyBlockReason: '' });
+}
+// The guest asks for a physical card (phone without NFC, or by preference).
+function requestPhysicalCard(guestId) {
+  return updateGuest(guestId, { cardRequested: true, cardRequestedAt: new Date().toISOString() });
 }
 // Who currently holds a card. Cards go back to reception at check-out and
 // get reused, so several records can carry the same UID over time: the
@@ -988,6 +1194,7 @@ function assignCard(guestId, rawUid, method) {
     cardMethod: method || 'manual',
     cardIssuedAt: new Date().toISOString(),
     cardBlockReason: '',
+    cardRequested: false,
     retiredCards: (g.retiredCards || []).filter(u => u !== uid).concat(g.cardUid && g.cardUid !== uid ? [g.cardUid] : []),
   };
   if (g.status === 'revocado') changes.status = 'activo';
@@ -1007,32 +1214,77 @@ function getAccessLog() {
   const hid = getActiveHotelId();
   return _readList(ACCESS_LOG_KEY).filter(e => e.hotelId === hid).sort((a, b) => b.ts.localeCompare(a.ts));
 }
-// Simulates what a door's NFC reader + controller decide when a card is
-// held against it. door is a room number, or 'common' for shared areas
-// (gym, pool...). Every read — granted or denied — goes to the access log.
+// '' = the door opens; otherwise why it doesn't. credential: 'phone' | 'card'.
+function _doorDenyReason(g, door, credential) {
+  if (!g) return 'unknown';
+  const state = credential === 'phone' ? getPhoneKeyState(g) : getCardState(g);
+  if (state === 'blocked') return 'blocked';
+  if (state === 'none') return g.status === 'checkout' ? 'ended' : 'nostay';
+  if (state === 'nocard') return 'unknown';
+  if (door !== 'common' && String(door) !== _roomNumberOf(g)) return 'wrongDoor';
+  return '';
+}
+function _logDoorRead(entry) {
+  const all = _readList(ACCESS_LOG_KEY);
+  all.unshift({ id: _newId('a'), ts: new Date().toISOString(), hotelId: getActiveHotelId(), uid: '', guestId: '', guestName: '', ...entry });
+  _writeList(ACCESS_LOG_KEY, all.slice(0, 1000));
+}
+// Simulates what a door's NFC reader + controller decide when a CARD is held
+// against it. door is a room number, or 'common' for shared areas (gym,
+// pool...). Every read — granted or denied — goes to the access log.
 function tryDoorAccess(uid, door) {
   const guests = getGuestsRegistry();
   const owner = findCardOwner(uid);
   const previous = owner ? null : guests.find(g => (g.retiredCards || []).includes(uid));
   const g = owner || previous || null;
-  let reason = '';
-  if (!g) reason = 'unknown';
-  else if (previous) reason = 'replaced';
-  else {
-    const state = getCardState(g);
-    if (state === 'blocked') reason = 'blocked';
-    else if (state === 'none') reason = 'ended';
-    else if (door !== 'common' && String(door) !== (g.room || '').split('·')[0].trim()) reason = 'wrongDoor';
-  }
+  const reason = previous ? 'replaced' : _doorDenyReason(g, String(door), 'card');
   const result = reason ? 'denied' : 'granted';
-  const all = _readList(ACCESS_LOG_KEY);
-  all.unshift({
-    id: _newId('a'), ts: new Date().toISOString(), hotelId: getActiveHotelId(),
+  _logDoorRead({
     uid, guestId: g ? g.id : '', guestName: g ? ((g.firstName || '') + ' ' + (g.lastName || '')).trim() : '',
-    door: String(door), result, reason,
+    door: String(door), result, reason, credential: 'card',
   });
-  _writeList(ACCESS_LOG_KEY, all.slice(0, 1000));
   return { result, reason, guest: g };
+}
+// The same decision for a guest's PHONE (used by reception's door test and
+// by local mode). A guest's own phone goes through phoneDoorAccess().
+function tryPhoneAccess(guestId, door) {
+  const g = getGuestsRegistry().find(x => x.id === guestId) || null;
+  const reason = _doorDenyReason(g, String(door), 'phone');
+  const result = reason ? 'denied' : 'granted';
+  _logDoorRead({
+    guestId: g ? g.id : '', guestName: g ? ((g.firstName || '') + ' ' + (g.lastName || '')).trim() : '',
+    door: String(door), result, reason, credential: 'phone',
+  });
+  return { result, reason, guest: g };
+}
+// The signed-in guest holds their phone against a door (the NFC tag / QR on
+// it, or the "Abrir mi habitación" button). In the cloud the DATABASE decides
+// from the guest's session and stay, and writes the access log itself.
+// hotelId (from the door's tag) makes a tag of another hotel useless.
+function phoneDoorAccess(door, hotelId) {
+  door = String(door);
+  const info = getGuestInfo() || {};
+  if (SS_CLOUD && SS_MODE === 'guest') {
+    const r = ssRpc('guest_door_open', { p_id: info.registeredGuestId, p_token: ssGuestToken(), p_door: door, p_hotel: hotelId || '' }, { anon: true });
+    if (!r.ok || !r.data) {
+      ssNotifyError('No se pudo comprobar la llave: ' + (r.message || 'error ' + r.status));
+      return { result: 'denied', reason: 'error', guest: getMyGuestRecord() };
+    }
+    return { result: r.data.result, reason: r.data.reason, guest: getMyGuestRecord() };
+  }
+  const g = getMyGuestRecord();
+  if (!g) return { result: 'denied', reason: 'nostay', guest: null };
+  if (hotelId && g.hotelId && hotelId !== g.hotelId) {
+    _logDoorRead({ guestId: g.id, guestName: ((g.firstName || '') + ' ' + (g.lastName || '')).trim(), door, result: 'denied', reason: 'wrongHotel', credential: 'phone' });
+    return { result: 'denied', reason: 'wrongHotel', guest: g };
+  }
+  return tryPhoneAccess(g.id, door);
+}
+// Link that goes on each door's NFC sticker / QR: holding a phone to it opens
+// this page, which asks the system to open that door for the signed-in guest.
+function doorTagUrl(door, hotelId) {
+  const base = location.origin + location.pathname.replace(/[^/]*$/, '');
+  return base + 'puerta.html?h=' + encodeURIComponent(hotelId || getActiveHotelId() || '') + '&d=' + encodeURIComponent(door);
 }
 
 // ---- Reading and writing real NFC cards (Web NFC) ----
@@ -1099,15 +1351,183 @@ function nfcTapCard({ timeoutMs = 30000, writeText = null, signal = null } = {})
 }
 
 // Everything the account holds for a stay, so a tapped card can show the
-// guest's data: the services requested and the stay's running total.
+// guest's data: the services requested, the stay's running total and what
+// has been paid so far.
 function getGuestAccountSummary(g) {
   const hid = g.hotelId;
   const name = ((g.firstName || '') + ' ' + (g.lastName || '')).trim();
   const hotelInfo = { ...DEFAULT_HOTEL, ...(getHotelById(hid) || {}) };
+  const total = _billingForGuestRecord(g, hid, hotelInfo);
   return {
     services: _servicesForGuestRecord(g, hid, name),
-    total: _billingForGuestRecord(g, hid, hotelInfo),
+    total,
+    ...paymentFigures(g, total),
   };
+}
+
+// =========================================================
+// Payments. A guest settles the account from "Mi cuenta" with a bank card
+// paid online (first option) or in cash at the front desk (second option).
+// Payments live on the guest record: payments = [{ id, ts, method:'card'|'cash',
+// amount, status:'paid'|'pending'|'canceled', brand, last4, ref, channel }].
+//   • card  → 'paid' as soon as the payment gateway approves it.
+//   • cash  → 'pending' until reception confirms it collected the money.
+// The card number and CVV never leave the form: only brand + last 4 digits
+// are stored. The gateway here (ssGatewayCharge) is a TEST-MODE stand-in; to
+// charge real money, replace that one function with a call to a real
+// provider (Bancard, Pagopar, Stripe...) — everything around it stays.
+// =========================================================
+function getPayments(g) {
+  return Array.isArray(g && g.payments) ? g.payments : [];
+}
+// total: the stay's charges. paid = money already received, pendingCash =
+// cash the guest promised to bring to reception, due = still to be received,
+// toPay = what is still open for the guest to choose a way to pay.
+function paymentFigures(g, total) {
+  const pays = getPayments(g);
+  const sum = st => pays.filter(p => p.status === st).reduce((a, p) => a + (p.amount || 0), 0);
+  const paid = sum('paid');
+  const pendingCash = sum('pending');
+  return {
+    payments: pays,
+    paid,
+    pendingCash,
+    due: Math.max(0, total - paid),
+    toPay: Math.max(0, total - paid - pendingCash),
+  };
+}
+
+// ---- card form helpers (also used for live formatting in the page) ----
+function luhnValid(digits) {
+  const d = String(digits || '').replace(/\D/g, '');
+  if (d.length < 12) return false;
+  let sum = 0, dbl = false;
+  for (let i = d.length - 1; i >= 0; i--) {
+    let n = d.charCodeAt(i) - 48;
+    if (dbl) { n *= 2; if (n > 9) n -= 9; }
+    sum += n; dbl = !dbl;
+  }
+  return sum % 10 === 0;
+}
+function detectCardBrand(digits) {
+  const d = String(digits || '').replace(/\D/g, '');
+  if (/^4/.test(d)) return 'Visa';
+  if (/^(5[1-5]|2(2[2-9]|[3-6]\d|7[01]|720))/.test(d)) return 'Mastercard';
+  if (/^3[47]/.test(d)) return 'American Express';
+  if (/^(6011|65|64[4-9])/.test(d)) return 'Discover';
+  return '';
+}
+function formatCardNumber(raw) {
+  const d = String(raw || '').replace(/\D/g, '').slice(0, 19);
+  return (/^3[47]/.test(d) ? [d.slice(0, 4), d.slice(4, 10), d.slice(10, 15)] : (d.match(/.{1,4}/g) || [])).filter(Boolean).join(' ');
+}
+function formatCardExpiry(raw) {
+  const d = String(raw || '').replace(/\D/g, '').slice(0, 4);
+  return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+}
+// Returns { ok, errors: { number, name, expiry, cvv }, brand, last4 }.
+function validateCardInput({ number, name, expiry, cvv }) {
+  const errors = {};
+  const digits = String(number || '').replace(/\D/g, '');
+  const brand = detectCardBrand(digits);
+  if (!luhnValid(digits) || digits.length < 13 || digits.length > 19) errors.number = 'invalid';
+  if (!String(name || '').trim() || String(name).trim().length < 3) errors.name = 'invalid';
+  const m = /^(\d{2})\/(\d{2})$/.exec(String(expiry || '').trim());
+  if (!m || +m[1] < 1 || +m[1] > 12) errors.expiry = 'invalid';
+  else {
+    const now = new Date();
+    const yy = now.getFullYear() % 100, mm = now.getMonth() + 1;
+    if (+m[2] < yy || (+m[2] === yy && +m[1] < mm)) errors.expiry = 'expired';
+  }
+  const cvvLen = brand === 'American Express' ? 4 : 3;
+  if (!new RegExp('^\\d{' + cvvLen + '}$').test(String(cvv || '').trim())) errors.cvv = 'invalid';
+  return { ok: !Object.keys(errors).length, errors, brand, last4: digits.slice(-4) };
+}
+// TEST-MODE payment gateway. Resolves { approved, ref, reason }.
+// Test cards (like any gateway's sandbox): 4242 4242 4242 4242 is approved,
+// 4000 0000 0000 0002 is declined, 4000 0000 0000 9995 has no funds.
+function ssGatewayCharge(card, amount) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const d = String(card.number || '').replace(/\D/g, '');
+      if (d === '4000000000000002') return resolve({ approved: false, reason: 'declined' });
+      if (d === '4000000000009995') return resolve({ approved: false, reason: 'funds' });
+      const ref = 'TEST-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      resolve({ approved: true, ref });
+    }, 1400);
+  });
+}
+
+function _newPaymentRecord(p) {
+  return { id: _newId('p'), ts: new Date().toISOString(), status: 'paid', ...p };
+}
+// Adds a payment to the signed-in guest's own account. In the cloud this goes
+// through guest_pay, which re-checks the amount against the real bill.
+function _addMyPayment(payment) {
+  const g = getMyGuestRecord();
+  if (!g) return { ok: false, error: 'nostay' };
+  if (SS_CLOUD && SS_MODE === 'guest') {
+    const info = getGuestInfo() || {};
+    const r = ssRpc('guest_pay', { p_id: info.registeredGuestId, p_token: ssGuestToken(), p_payment: payment }, { anon: true });
+    if (!r.ok || !r.data) {
+      return { ok: false, error: /bad_amount/.test(r.message) ? 'amount' : /stay_not_active/.test(r.message) ? 'nostay' : 'network', message: r.message };
+    }
+    ssReplaceCachedGuest(r.data);
+    return { ok: true, guest: r.data };
+  }
+  const rec = _newPaymentRecord(payment);
+  const updated = updateGuest(g.id, { payments: [...getPayments(g), rec] });
+  return updated ? { ok: true, guest: updated, payment: rec } : { ok: false, error: 'network' };
+}
+// Pays (part of) the open balance by card. Resolves { ok, payment? , error? }
+// where error is 'invalid' (with .errors), 'declined', 'funds', 'amount' or 'network'.
+async function payMyAccountWithCard(card, amount) {
+  const g = getMyGuestRecord();
+  const { total } = getMyBilling();
+  const open = paymentFigures(g, total).toPay;
+  amount = Math.round(amount || open);
+  if (amount <= 0 || amount > open) return { ok: false, error: 'amount' };
+  const v = validateCardInput(card);
+  if (!v.ok) return { ok: false, error: 'invalid', errors: v.errors };
+  const charge = await ssGatewayCharge(card, amount);
+  if (!charge.approved) return { ok: false, error: charge.reason };
+  const r = _addMyPayment({ method: 'card', amount, brand: v.brand, last4: v.last4, ref: charge.ref });
+  return r.ok ? { ok: true, guest: r.guest } : r;
+}
+// The guest says they will pay in cash at the front desk.
+function payMyAccountCash(amount) {
+  const g = getMyGuestRecord();
+  const { total } = getMyBilling();
+  const open = paymentFigures(g, total).toPay;
+  amount = Math.round(amount || open);
+  if (amount <= 0 || amount > open) return { ok: false, error: 'amount' };
+  return _addMyPayment({ method: 'cash', amount, status: 'pending' });
+}
+// ---- reception side ----
+// Reception received the cash a guest had promised.
+function confirmCashPayment(guestId, paymentId) {
+  const g = _readList(GUESTS_KEY).find(x => x.id === guestId);
+  if (!g) return null;
+  const staff = getCurrentStaff();
+  const who = staff ? ((staff.firstName || '') + ' ' + (staff.lastName || '')).trim() : '';
+  const list = getPayments(g).map(p => p.id === paymentId && p.status === 'pending'
+    ? { ...p, status: 'paid', confirmedAt: new Date().toISOString(), confirmedBy: who } : p);
+  return updateGuest(guestId, { payments: list });
+}
+// Reception registers money it collected itself ('cash' or 'card' at its own terminal).
+function recordStaffPayment(guestId, { method, amount, note }) {
+  const g = _readList(GUESTS_KEY).find(x => x.id === guestId);
+  amount = Math.round(amount || 0);
+  if (!g || amount <= 0) return null;
+  const staff = getCurrentStaff();
+  const who = staff ? ((staff.firstName || '') + ' ' + (staff.lastName || '')).trim() : '';
+  const rec = _newPaymentRecord({ method: method === 'card' ? 'card' : 'cash', amount, channel: 'reception', confirmedBy: who, confirmedAt: new Date().toISOString(), note: note || '' });
+  return updateGuest(guestId, { payments: [...getPayments(g), rec] });
+}
+function cancelPayment(guestId, paymentId) {
+  const g = _readList(GUESTS_KEY).find(x => x.id === guestId);
+  if (!g) return null;
+  return updateGuest(guestId, { payments: getPayments(g).map(p => p.id === paymentId && p.status !== 'canceled' ? { ...p, status: 'canceled' } : p) });
 }
 
 // ---- Staff registry ----
@@ -1182,6 +1602,12 @@ function requestPasswordReset(email, kind) {
   const resetUrl = location.origin + location.pathname.replace(/[^/]*$/, '') + 'resetear-password.html?email=' + encodeURIComponent(account.email) + '&token=' + token;
   return { found: true, resetUrl, firstName: account.firstName };
 }
+// Checks a reset link without using it: 'ok' | 'invalid' | 'expired'
+function checkPasswordReset(email, token) {
+  const m = _readList(PASSWORD_RESETS_KEY).find(r => r.token === token && r.email.toLowerCase() === (email || '').toLowerCase());
+  if (!m) return 'invalid';
+  return Date.now() > m.expiresAt ? 'expired' : 'ok';
+}
 // Redeems a reset token: 'invalid' (unknown/mismatched token), 'expired',
 // or 'ok' (password changed and the token burned so it can't be reused).
 function consumePasswordReset(email, token, newPassword) {
@@ -1204,6 +1630,208 @@ function consumePasswordReset(email, token, newPassword) {
 function findAnyAccountByEmail(email) {
   return findStaffByEmail(email) || findCGOByEmail(email);
 }
+
+// =========================================================
+// Changing a password WITHOUT email.
+//  • Recovery key: every staff / CGO account can have one (shown once, only its
+//    hash is stored in the cloud). With the account's email + that key a new
+//    password is chosen on recuperar-con-clave.html; using it issues a NEW key.
+//  • The CGO can reset the password of any hotel staff member.
+// In the cloud these run as database functions (nube/schema.sql); in local
+// mode they work on the browser's own account records.
+// =========================================================
+const RECOVERY_ATTEMPTS_KEY = 'ss_recovery_attempts';
+function normalizeRecoveryKey(k) { return String(k || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase(); }
+function _newLocalRecoveryKey() {
+  const bytes = new Uint8Array(10);
+  (window.crypto || window.msCrypto).getRandomValues(bytes);
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+  return [hex.slice(0, 5), hex.slice(5, 10), hex.slice(10, 15), hex.slice(15, 20)].join('-');
+}
+// A random temporary password (no look-alike characters) for the CGO to hand over.
+function generateTempPassword() {
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const bytes = new Uint8Array(10);
+  (window.crypto || window.msCrypto).getRandomValues(bytes);
+  return Array.from(bytes).map(b => chars[b % chars.length]).join('');
+}
+// The signed-in staff / CGO creates (or renews) their recovery key. Returns the
+// key — the only time it can be seen — or '' if it couldn't be created.
+function createRecoveryKey(kind) {
+  if (SS_CLOUD) {
+    if ((SS_MODE !== 'staff' && SS_MODE !== 'cgo') || !ssAuthRefresh()) return '';
+    const r = ssRpc('create_recovery_key');
+    return r.ok && typeof r.data === 'string' ? r.data : '';
+  }
+  // (local mode can hold a staff and a CGO session at once: kind says which one)
+  const cgo = kind === 'staff' ? null : getCurrentCGO();
+  const acct = cgo || (kind === 'cgo' ? null : getCurrentStaff());
+  if (!acct) return '';
+  const key = _newLocalRecoveryKey();
+  const list = cgo ? getCGORegistry() : getStaffRegistry();
+  const idx = list.findIndex(a => a.id === acct.id);
+  if (idx === -1) return '';
+  list[idx] = { ...list[idx], recoveryKey: normalizeRecoveryKey(key) };
+  cgo ? saveCGORegistry(list) : saveStaffRegistry(list);
+  return key;
+}
+// Chooses a new password with the account's email + recovery key (nobody
+// signed in). Returns { ok: true, newKey, kind } or { ok: false, error } where
+// error is 'invalid' (wrong key/email, or too many attempts), 'weak',
+// 'network' or 'unavailable' (the cloud update hasn't been installed).
+function resetPasswordWithKey(email, key, newPassword) {
+  if (String(newPassword || '').length < 6) return { ok: false, error: 'weak' };
+  email = String(email || '').trim();
+  if (SS_CLOUD) {
+    const r = ssRpc('reset_password_with_key', { p_email: email, p_key: key || '', p_new_password: newPassword }, { anon: true });
+    if (r.status === 0) return { ok: false, error: 'network' };
+    if (!r.ok) {
+      if (/weak_password/.test(r.message + r.code)) return { ok: false, error: 'weak' };
+      if (r.status === 404 || /could not find the function|schema cache/i.test(r.message)) return { ok: false, error: 'unavailable' };
+      return { ok: false, error: 'invalid' };
+    }
+    return r.data && r.data.ok ? { ok: true, newKey: r.data.newKey, kind: r.data.kind } : { ok: false, error: 'invalid' };
+  }
+  // local mode: 5 wrong tries lock that email for 15 minutes
+  let tries = {};
+  try { tries = JSON.parse(localStorage.getItem(RECOVERY_ATTEMPTS_KEY) || '{}'); } catch (e) {}
+  const id = email.toLowerCase();
+  if (tries[id] && tries[id].until > Date.now()) return { ok: false, error: 'invalid' };
+  const staff = findStaffByEmail(email);
+  const cgo = staff ? null : findCGOByEmail(email);
+  const acct = staff || cgo;
+  if (!acct || !acct.recoveryKey || acct.recoveryKey !== normalizeRecoveryKey(key)) {
+    const t = tries[id] || { n: 0, until: 0 };
+    t.n = (t.n || 0) + 1;
+    if (t.n >= 5) { t.n = 0; t.until = Date.now() + 15 * 60 * 1000; }
+    tries[id] = t;
+    localStorage.setItem(RECOVERY_ATTEMPTS_KEY, JSON.stringify(tries));
+    return { ok: false, error: 'invalid' };
+  }
+  const newKey = _newLocalRecoveryKey();
+  const list = cgo ? getCGORegistry() : getStaffRegistry();
+  const idx = list.findIndex(a => a.id === acct.id);
+  list[idx] = { ...list[idx], password: newPassword, recoveryKey: normalizeRecoveryKey(newKey) };
+  cgo ? saveCGORegistry(list) : saveStaffRegistry(list);
+  delete tries[id];
+  localStorage.setItem(RECOVERY_ATTEMPTS_KEY, JSON.stringify(tries));
+  return { ok: true, newKey, kind: cgo ? 'cgo' : 'staff' };
+}
+// The CGO sets a new password for a hotel staff member (any hotel).
+function cgoResetStaffPassword(staffId, newPassword) {
+  if (!getCurrentCGO()) return { ok: false, error: 'forbidden' };
+  if (String(newPassword || '').length < 6) return { ok: false, error: 'weak' };
+  if (SS_CLOUD) {
+    if (!ssAuthRefresh()) return { ok: false, error: 'session' };
+    const r = ssRpc('admin_reset_password', { p_user_id: staffId, p_new_password: newPassword });
+    if (r.status === 0) return { ok: false, error: 'network' };
+    if (!r.ok) return { ok: false, error: (r.status === 404 || /could not find the function/i.test(r.message)) ? 'unavailable' : 'failed' };
+    return { ok: true };
+  }
+  const list = getStaffRegistry();
+  const idx = list.findIndex(a => a.id === staffId);
+  if (idx === -1) return { ok: false, error: 'failed' };
+  list[idx] = { ...list[idx], password: newPassword };
+  saveStaffRegistry(list);
+  return { ok: true };
+}
+// Changes the signed-in account's own password (staff or CGO), checking the current one.
+// 'ok' | 'no-session' | 'wrong-current' | 'weak' | 'error'
+function changeCurrentAccountPassword(currentPassword, newPassword) {
+  if (SS_CLOUD) {
+    const r = ssChangePassword(currentPassword, newPassword);
+    return r;
+  }
+  const cgo = getCurrentCGO();
+  if (!cgo) return changeCurrentStaffPassword(currentPassword, newPassword);
+  if (cgo.password !== currentPassword) return 'wrong-current';
+  const list = getCGORegistry();
+  const idx = list.findIndex(a => a.id === cgo.id);
+  if (idx === -1) return 'no-session';
+  list[idx] = { ...list[idx], password: newPassword };
+  saveCGORegistry(list);
+  return 'ok';
+}
+
+// ---- how a recovery key is shown (always with the warning that it's shown once) ----
+function recoveryKeyHtml(key) {
+  return `<div class="rk-box">
+    <div class="rk-label">Tu clave de recuperación</div>
+    <div class="rk-key" data-rk="${key}">${key}</div>
+    <div class="rk-actions">
+      <button type="button" class="btn btn-outline btn-sm" onclick="copyToClipboard('${key}', this)">Copiar</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="downloadRecoveryKey('${key}')">Descargar .txt</button>
+    </div>
+    <p class="rk-note"><strong>Guardala ahora</strong> (foto, papel o archivo): se muestra una sola vez. Si algún día olvidás tu contraseña y no te llega el correo, con esta clave elegís una nueva en "¿Olvidaste tu contraseña?".</p>
+  </div>`;
+}
+function downloadRecoveryKey(key) {
+  const text = 'SmartStay Hospitality S.A. — clave de recuperación\n\n' + key + '\n\nGuardala en un lugar seguro. Sirve para elegir una contraseña nueva sin correo: ' +
+    location.origin + location.pathname.replace(/[^/]*$/, '') + 'recuperar-con-clave.html\nCuando la usás se genera una clave nueva y esta deja de servir.\n';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+  a.download = 'smartstay-clave-de-recuperacion.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+// ---- CGO: "Mi cuenta" window (change password + recovery key) from the top bar ----
+function initAccountSecurityUi() {
+  if (!getCurrentCGO()) return;
+  const trigger = document.querySelector('.admin-user');
+  if (!trigger || document.getElementById('accountSecurityModal')) return;
+  trigger.style.cursor = 'pointer';
+  trigger.setAttribute('title', 'Mi cuenta: contraseña y clave de recuperación');
+  trigger.setAttribute('role', 'button');
+  trigger.setAttribute('tabindex', '0');
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.id = 'accountSecurityModal';
+  modal.hidden = true;
+  modal.innerHTML = `<div class="modal-card">
+    <button class="modal-close" onclick="closeModal('accountSecurityModal')" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <h3>Mi cuenta · seguridad</h3>
+    <p class="modal-sub" id="acctEmail"></p>
+    <h4 style="font-size:14px; margin-bottom:10px;">Cambiar contraseña</h4>
+    <form id="acctPassForm" autocomplete="off">
+      <div class="form-group"><label class="form-label" for="acct-cur">Contraseña actual</label><input class="form-input" id="acct-cur" type="password" style="padding-left:14px;" required></div>
+      <div class="form-group"><label class="form-label" for="acct-new">Nueva contraseña</label><input class="form-input" id="acct-new" type="password" style="padding-left:14px;" minlength="6" required></div>
+      <div class="form-group"><label class="form-label" for="acct-new2">Repetir nueva contraseña</label><input class="form-input" id="acct-new2" type="password" style="padding-left:14px;" minlength="6" required></div>
+      <button class="btn btn-primary btn-block" type="submit">Actualizar contraseña</button>
+    </form>
+    <div style="border-top:1px solid var(--border-color); margin-top:20px; padding-top:16px;">
+      <h4 style="font-size:14px; margin-bottom:6px;">Clave de recuperación</h4>
+      <p style="font-size:12.5px; margin-bottom:12px;">Sirve para elegir una contraseña nueva <strong>sin recibir correos</strong>. Al generar una nueva, la anterior deja de servir.</p>
+      <button class="btn btn-outline btn-block" id="acctKeyBtn" type="button">Generar clave de recuperación</button>
+      <div id="acctKeySlot"></div>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  const open = () => {
+    const c = getCurrentCGO();
+    document.getElementById('acctEmail').textContent = c ? c.email : '';
+    document.getElementById('acctKeySlot').innerHTML = '';
+    document.getElementById('acctPassForm').reset();
+    openModal('accountSecurityModal');
+  };
+  trigger.addEventListener('click', open);
+  trigger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+  document.getElementById('acctPassForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const cur = document.getElementById('acct-cur').value;
+    const nw = document.getElementById('acct-new').value;
+    if (nw !== document.getElementById('acct-new2').value) { showToast('Las contraseñas nuevas no coinciden'); return; }
+    const r = changeCurrentAccountPassword(cur, nw);
+    const msg = { ok: 'Contraseña actualizada correctamente', 'wrong-current': 'La contraseña actual es incorrecta', 'no-session': 'Tu sesión expiró: iniciá sesión de nuevo', weak: 'La contraseña nueva es muy corta: usá al menos 6 caracteres', error: 'No se pudo cambiar la contraseña. Intentá de nuevo.' };
+    showToast(msg[r] || msg.error);
+    if (r === 'ok') e.target.reset();
+  });
+  document.getElementById('acctKeyBtn').addEventListener('click', () => {
+    const key = createRecoveryKey('cgo');
+    document.getElementById('acctKeySlot').innerHTML = key ? recoveryKeyHtml(key)
+      : '<p class="rk-note" style="color:#b91c1c;">No se pudo crear la clave. Si usás la nube, falta correr la actualización de la base (guía de la nube, "Clave de recuperación").</p>';
+  });
+}
+document.addEventListener('DOMContentLoaded', initAccountSecurityUi);
 
 function setCurrentStaffEmail(email) {
   if (SS_CLOUD) return; // the cloud session was already set when logging in
@@ -1352,12 +1980,18 @@ function getCGOHotelStats(hotelId) {
   const requests = _readList(REQUESTS_KEY).filter(r => r.hotelId === hotelId);
   const billableGuests = guests.filter(g => g.status === 'activo' || g.status === 'checkout');
   const revenue = billableGuests.reduce((sum, g) => sum + _billingForGuestRecord(g, hotelId, hotelInfo), 0);
+  // money actually received (card or confirmed cash) and cash still to be collected
+  const payFigs = billableGuests.map(g => paymentFigures(g, _billingForGuestRecord(g, hotelId, hotelInfo)));
+  const collected = payFigs.reduce((sum, f) => sum + f.paid, 0);
+  const pendingCash = payFigs.reduce((sum, f) => sum + f.pendingCash, 0);
   const occupiedRooms = rooms.filter(r => r.status === 'occupied' || guests.some(g => g.status === 'activo' && (g.room || '').split('·')[0].trim() === String(r.n))).length;
   return {
     hotelId,
     name: hotel.name || 'Hotel',
     active: hotel.active !== false,
     revenue,
+    collected,
+    pendingCash,
     totalRooms: rooms.length,
     occupiedRooms,
     occupancyPct: rooms.length ? Math.round((occupiedRooms / rooms.length) * 100) : 0,
@@ -1375,13 +2009,15 @@ function getCGOAggregateReport() {
   const hotels = getHotelsRegistry().map(h => getCGOHotelStats(h.id));
   const totals = hotels.reduce((acc, h) => ({
     revenue: acc.revenue + h.revenue,
+    collected: acc.collected + h.collected,
+    pendingCash: acc.pendingCash + h.pendingCash,
     totalRooms: acc.totalRooms + h.totalRooms,
     occupiedRooms: acc.occupiedRooms + h.occupiedRooms,
     activeGuests: acc.activeGuests + h.activeGuests,
     totalGuests: acc.totalGuests + h.totalGuests,
     staffCount: acc.staffCount + h.staffCount,
     serviceRequestCount: acc.serviceRequestCount + h.serviceRequestCount,
-  }), { revenue: 0, totalRooms: 0, occupiedRooms: 0, activeGuests: 0, totalGuests: 0, staffCount: 0, serviceRequestCount: 0 });
+  }), { revenue: 0, collected: 0, pendingCash: 0, totalRooms: 0, occupiedRooms: 0, activeGuests: 0, totalGuests: 0, staffCount: 0, serviceRequestCount: 0 });
   totals.occupancyPct = totals.totalRooms ? Math.round((totals.occupiedRooms / totals.totalRooms) * 100) : 0;
   totals.hotelCount = hotels.length;
   totals.activeHotelCount = hotels.filter(h => h.active).length;
@@ -1416,18 +2052,51 @@ document.addEventListener('DOMContentLoaded', applyStaffInfo);
 // real service menu (own names, prices, categories) from scratch.
 // =========================================================
 const CATALOG_KEY = 'ss_service_catalog';
+// Prices the demo catalog and rates had before the switch to guaraníes. The demo
+// loader only replaces a price that still equals one of these (i.e. nobody edited it).
+const LEGACY_DEMO_PRICES = {svc1: 3200, svc2: 4200, svc3: 0, svc12: 18500, svc13: 2800, svc14: 2400, svc4: 9500, svc5: 0, svc6: 6800, svc15: 4500, svc16: 7800, svc17: 0, svc7: 2500, svc8: 4100, svc18: 3600, svc9: 0, svc10: 0, svc19: 6500, svc20: 0, svc11: 8900, svc21: 38000, svc22: 0, svc23: 14500, svc24: 9800, svc25: 22000, svc26: 300, svc27: 0, svc28: 1800, svc29: 12000, svc30: 3500, svc31: 8500, svc32: 4000};
+const LEGACY_DEMO_RATES = { Individual: 45000, Doble: 58000, 'Doble Superior': 72000, Familiar: 85000, Suite: 98000, 'Suite Presidencial': 150000 };
 const DEFAULT_CATALOG = [
-  { id: 'svc1', category: 'Room service', icon: 'food', title: 'Desayuno a la habitación', desc: 'Selección de desayuno continental o americano servido en tu habitación.', price: 3200, unit: '/ pedido', badge: '24/7' },
-  { id: 'svc2', category: 'Room service', icon: 'restaurant', title: 'Carta de almuerzo y cena', desc: 'Platos principales, entradas y postres del restaurante del hotel.', price: 4200, unit: '/ plato', priceLabel: 'Desde $4.200 / plato', badge: '30 min' },
+  // Room service
+  { id: 'svc1', category: 'Room service', icon: 'food', title: 'Desayuno a la habitación', desc: 'Selección de desayuno continental o americano servido en tu habitación.', price: 35000, unit: '/ pedido', badge: '24/7' },
+  { id: 'svc2', category: 'Room service', icon: 'restaurant', title: 'Carta de almuerzo y cena', desc: 'Platos principales, entradas y postres del restaurante del hotel.', price: 45000, priceFrom: true, unit: '/ plato', badge: '30 min' },
   { id: 'svc3', category: 'Room service', icon: 'minibar', title: 'Reposición de minibar', desc: 'Solicita la reposición de bebidas y snacks de tu minibar.', price: 0, priceLabel: 'Según consumo', badge: 'Incluido' },
-  { id: 'svc4', category: 'Spa & bienestar', icon: 'spa', title: 'Masaje relajante', desc: 'Sesión de masaje corporal completo en nuestro spa.', price: 9500, unit: '/ sesión', badge: '60 min' },
+  { id: 'svc12', category: 'Room service', icon: 'restaurant', title: 'Cena romántica en la habitación', desc: 'Menú de tres pasos para dos, con copa de espumante y decoración.', price: 280000, unit: '/ pareja', badge: 'Reserva previa' },
+  { id: 'svc13', category: 'Room service', icon: 'cocktail', title: 'Bar nocturno y coctelería', desc: 'Tragos de autor y bebidas servidos en tu habitación por la noche.', price: 25000, priceFrom: true, unit: '/ bebida', badge: '18:00 a 00:00' },
+  { id: 'svc14', category: 'Room service', icon: 'food', title: 'Menú infantil', desc: 'Platos pensados para los más chicos, listos en pocos minutos.', price: 30000, unit: '/ plato', badge: '30 min' },
+  // Spa & bienestar
+  { id: 'svc4', category: 'Spa & bienestar', icon: 'spa', title: 'Masaje relajante', desc: 'Sesión de masaje corporal completo en nuestro spa.', price: 180000, unit: '/ sesión', badge: '60 min' },
   { id: 'svc5', category: 'Spa & bienestar', icon: 'pool', title: 'Acceso a piscina climatizada', desc: 'Uso exclusivo de la piscina y área de descanso del spa.', price: 0, priceLabel: 'Incluido', badge: 'Todo el día' },
-  { id: 'svc6', category: 'Spa & bienestar', icon: 'yoga', title: 'Sesión de yoga privada', desc: 'Clase individual guiada por un instructor certificado.', price: 6800, unit: '/ sesión', badge: '45 min' },
-  { id: 'svc7', category: 'Lavandería', icon: 'laundry', title: 'Lavado y planchado', desc: 'Servicio completo de lavado y planchado de tu ropa.', price: 2500, unit: '/ bolsa', badge: '24 hs' },
-  { id: 'svc8', category: 'Lavandería', icon: 'laundry-express', title: 'Lavado exprés', desc: 'Servicio urgente de lavado listo en pocas horas.', price: 4100, unit: '/ bolsa', badge: 'Express · 4 hs' },
+  { id: 'svc6', category: 'Spa & bienestar', icon: 'yoga', title: 'Sesión de yoga privada', desc: 'Clase individual guiada por un instructor certificado.', price: 120000, unit: '/ sesión', badge: '45 min' },
+  { id: 'svc15', category: 'Spa & bienestar', icon: 'sauna', title: 'Sauna y vapor', desc: 'Circuito de sauna seco y baño de vapor, con toalla y bebida de cortesía.', price: 80000, unit: '/ sesión', badge: '45 min' },
+  { id: 'svc16', category: 'Spa & bienestar', icon: 'facial', title: 'Tratamiento facial', desc: 'Limpieza e hidratación profunda con productos de cosmética natural.', price: 150000, unit: '/ sesión', badge: '50 min' },
+  { id: 'svc17', category: 'Spa & bienestar', icon: 'gym', title: 'Gimnasio 24 horas', desc: 'Equipos de cardio y musculación, abierto todo el día para huéspedes.', price: 0, priceLabel: 'Incluido', badge: '24/7' },
+  // Lavandería
+  { id: 'svc7', category: 'Lavandería', icon: 'laundry', title: 'Lavado y planchado', desc: 'Servicio completo de lavado y planchado de tu ropa.', price: 60000, unit: '/ bolsa', badge: '24 hs' },
+  { id: 'svc8', category: 'Lavandería', icon: 'laundry-express', title: 'Lavado exprés', desc: 'Servicio urgente de lavado listo en pocas horas.', price: 95000, unit: '/ bolsa', badge: 'Express · 4 hs' },
+  { id: 'svc18', category: 'Lavandería', icon: 'dryclean', title: 'Lavado en seco', desc: 'Trajes, vestidos y prendas delicadas, entregadas en percha.', price: 45000, unit: '/ prenda', badge: '48 hs' },
+  // Limpieza
   { id: 'svc9', category: 'Limpieza', icon: 'cleaning', title: 'Limpieza extra de habitación', desc: 'Servicio de limpieza adicional fuera del horario habitual.', price: 0, priceLabel: 'Sin cargo', badge: '30 min' },
   { id: 'svc10', category: 'Limpieza', icon: 'amenities', title: 'Amenities adicionales', desc: 'Toallas, almohadas y artículos de aseo extra para tu habitación.', price: 0, priceLabel: 'Sin cargo', badge: 'A pedido' },
-  { id: 'svc11', category: 'Transporte', icon: 'transport', title: 'Traslado al aeropuerto', desc: 'Servicio de traslado privado desde y hacia el aeropuerto.', price: 8900, unit: '/ trayecto', badge: 'Reserva previa' },
+  { id: 'svc19', category: 'Limpieza', icon: 'bed', title: 'Cama extra', desc: 'Una cama adicional armada en tu habitación, con ropa de cama completa.', price: 90000, unit: '/ noche', badge: 'A pedido' },
+  { id: 'svc20', category: 'Limpieza', icon: 'bed', title: 'Cuna para bebé', desc: 'Cuna segura con colchón y sábanas, sin costo para huéspedes con bebés.', price: 0, priceLabel: 'Sin cargo', badge: 'A pedido' },
+  // Transporte
+  { id: 'svc11', category: 'Transporte', icon: 'transport', title: 'Traslado al aeropuerto', desc: 'Servicio de traslado privado desde y hacia el aeropuerto.', price: 150000, unit: '/ trayecto', badge: 'Reserva previa' },
+  { id: 'svc21', category: 'Transporte', icon: 'car', title: 'Alquiler de auto', desc: 'Vehículo compacto con seguro incluido, entregado en el hotel.', price: 450000, unit: '/ día', badge: 'Reserva previa' },
+  { id: 'svc22', category: 'Transporte', icon: 'transport', title: 'Taxi o remís a pedido', desc: 'Pedimos un taxi de confianza y te avisamos cuando llegue a la puerta.', price: 0, priceLabel: 'Según trayecto', badge: '15 min' },
+  // Tours y excursiones
+  { id: 'svc23', category: 'Tours y excursiones', icon: 'tour', title: 'City tour por Asunción', desc: 'Recorrido guiado por el centro histórico, museos y la costanera.', price: 200000, unit: '/ persona', badge: '4 hs' },
+  { id: 'svc24', category: 'Tours y excursiones', icon: 'tour', title: 'Paseo al Cerro Lambaré', desc: 'Salida guiada al mirador del cerro, con vista panorámica de la ciudad.', price: 120000, unit: '/ persona', badge: '3 hs' },
+  // Negocios y conserjería
+  { id: 'svc25', category: 'Negocios y conserjería', icon: 'meeting', title: 'Sala de reuniones', desc: 'Sala equipada con proyector, pizarra y café para hasta 10 personas.', price: 250000, unit: '/ hora', badge: 'Reserva previa' },
+  { id: 'svc26', category: 'Negocios y conserjería', icon: 'printer', title: 'Impresiones y escaneo', desc: 'Imprimimos o escaneamos tus documentos en recepción.', price: 1000, unit: '/ hoja', badge: 'En el día' },
+  { id: 'svc27', category: 'Negocios y conserjería', icon: 'clock', title: 'Servicio de despertador', desc: 'Te llamamos a la hora que indiques para que no pierdas tu vuelo.', price: 0, priceLabel: 'Sin cargo', badge: 'A pedido' },
+  { id: 'svc28', category: 'Negocios y conserjería', icon: 'wifi', title: 'Wi-Fi premium', desc: 'Conexión de alta velocidad para videollamadas y trabajo remoto.', price: 25000, unit: '/ día', badge: 'Alta velocidad' },
+  // Extras de la estadía
+  { id: 'svc29', category: 'Extras de la estadía', icon: 'clock', title: 'Late check-out', desc: 'Quedate en la habitación hasta las 16:00, sujeto a disponibilidad.', price: 120000, unit: '/ pedido', badge: 'Hasta 16:00' },
+  { id: 'svc30', category: 'Extras de la estadía', icon: 'parking', title: 'Estacionamiento privado', desc: 'Cochera techada y vigilada dentro del hotel.', price: 30000, unit: '/ día', badge: 'Todo el día' },
+  { id: 'svc31', category: 'Extras de la estadía', icon: 'gift', title: 'Detalle de bienvenida', desc: 'Ramo de flores y una sorpresa en la habitación para una ocasión especial.', price: 150000, unit: '/ pedido', badge: 'Reserva previa' },
+  { id: 'svc32', category: 'Extras de la estadía', icon: 'pet', title: 'Mascotas bienvenidas', desc: 'Cama, comedero y paseo corto para tu mascota durante la estadía.', price: 50000, unit: '/ noche', badge: 'A pedido' },
 ];
 const SERVICE_ICONS = {
   food: '<path d="M3 17h18M4 17c0-4 2-6 2-6h12s2 2 2 6"/>',
@@ -1444,6 +2113,19 @@ const SERVICE_ICONS = {
   wifi: '<path d="M5 12.5a11 11 0 0 1 14 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/>',
   gym: '<path d="M6.5 6.5l11 11M4 4l4 4M16 16l4 4M2.5 9.5l3-3M14.5 21.5l3-3M7 13l6-6"/>',
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/>',
+  cocktail: '<path d="M5 4h14l-7 8zM12 12v8M8 20h8"/>',
+  sauna: '<path d="M8 3c-1.5 2 1.5 3 0 5M12 3c-1.5 2 1.5 3 0 5M16 3c-1.5 2 1.5 3 0 5M4 13h16l-1 7H5z"/>',
+  facial: '<circle cx="12" cy="12" r="9"/><path d="M8 14c1 1.5 2.3 2 4 2s3-.5 4-2M9 9.5h.01M15 9.5h.01"/>',
+  dryclean: '<path d="M12 4a2 2 0 1 1 2 2c-1 .5-2 1-2 2v1M3 18l9-8 9 8z"/>',
+  bed: '<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M7 11.5h.01"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  car: '<path d="M4 16v-3l2-5h12l2 5v3zM4 16v2M20 16v2M7.5 13h.01M16.5 13h.01"/>',
+  tour: '<path d="M9 3l-6 3v15l6-3 6 3 6-3V3l-6 3zM9 3v15M15 6v15"/>',
+  meeting: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  printer: '<path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/>',
+  parking: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 17V8h3a2.5 2.5 0 0 1 0 5h-3"/>',
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8c-3 0-4-4-1.5-4S12 8 12 8zM12 8c3 0 4-4 1.5-4S12 8 12 8z"/>',
+  pet: '<circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="6.5" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M8 17c0-3 2-5 4-5s4 2 4 5c0 1.5-1.5 2-4 2s-4-.5-4-2z"/>',
 };
 function serviceIconSvg(key) {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (SERVICE_ICONS[key] || SERVICE_ICONS.bell) + '</svg>';
@@ -1559,7 +2241,7 @@ function getMyBilling() {
   }
   const items = roomItem ? [roomItem, ...serviceItems] : serviceItems;
   const total = items.reduce((sum, r) => sum + (r.price || 0), 0);
-  return { items, total, roomItem, serviceItems };
+  return { items, total, roomItem, serviceItems, ...paymentFigures(g, total) };
 }
 
 // Past, already-checked-out stays at this hotel that belong to the same
@@ -1612,6 +2294,10 @@ const DEFAULT_ROOMS = [
   {n:305,type:"Individual",floor:3,status:"available"}, {n:306,type:"Suite",floor:3,status:"available"},
   {n:401,type:"Doble",floor:4,status:"cleaning"}, {n:402,type:"Doble",floor:4,status:"available"},
   {n:403,type:"Suite",floor:4,status:"available"}, {n:404,type:"Doble Superior",floor:4,status:"available"},
+  {n:405,type:"Familiar",floor:4,status:"available"}, {n:406,type:"Familiar",floor:4,status:"available"},
+  {n:501,type:"Familiar",floor:5,status:"available"}, {n:502,type:"Familiar",floor:5,status:"cleaning"},
+  {n:503,type:"Doble Superior",floor:5,status:"available"}, {n:504,type:"Suite",floor:5,status:"maintenance"},
+  {n:505,type:"Suite",floor:5,status:"available"}, {n:506,type:"Suite Presidencial",floor:5,status:"available"},
 ];
 
 function getRooms() {
@@ -1693,6 +2379,129 @@ function getRoomsWithOccupancy() {
   return rooms;
 }
 
+// =========================================================
+// Demo hotel. Fills a hotel with a complete, realistic setup so the whole
+// site can be shown working: 30 rooms across 5 floors (available, cleaning
+// and maintenance), a full service menu (32 services in 8 categories),
+// nightly rates for every room type and the hotel's contact + Wi-Fi details.
+// It only ADDS what is missing — nothing the hotel already has is replaced
+// or removed — and it never creates guests or reservations.
+// Returns { rooms, services, info } with what was added.
+// =========================================================
+// What a hotel is missing compared with the demo setup (rooms by number,
+// services by id or title — so a service created by hand isn't duplicated).
+// stale* = demo prices that still have their old pre-guaraní value (nobody
+// edited them), which the loader brings up to the real guaraní amounts.
+function getHotelDemoGap(hotelId) {
+  const hotel = getHotelById(hotelId) || {};
+  const rooms = _readList(ROOMS_KEY).filter(r => r.hotelId === hotelId);
+  const catalog = _readList(CATALOG_KEY).filter(s => s.hotelId === hotelId);
+  const haveRooms = new Set(rooms.map(r => r.n));
+  const haveIds = new Set(catalog.map(s => s.id));
+  const haveTitles = new Set(catalog.map(s => String(s.title || '').trim().toLowerCase()));
+  const migrated = !!hotel.gsMigrated;
+  const staleServices = migrated ? [] : catalog.filter(sv => {
+    const legacy = LEGACY_DEMO_PRICES[sv.id];
+    const def = DEFAULT_CATALOG.find(x => x.id === sv.id);
+    return def && legacy > 0 && sv.price === legacy && def.price !== legacy;
+  });
+  const rates = hotel.roomRates || {};
+  const staleRates = migrated ? [] : Object.keys(LEGACY_DEMO_RATES).filter(t => rates[t] === LEGACY_DEMO_RATES[t] && DEFAULT_HOTEL.roomRates[t] !== LEGACY_DEMO_RATES[t]);
+  return {
+    rooms: rooms.length,
+    services: catalog.length,
+    missingRooms: DEFAULT_ROOMS.filter(r => !haveRooms.has(r.n)).map(r => ({ ...r, hotelId })),
+    missingServices: DEFAULT_CATALOG.filter(s => !haveIds.has(s.id) && !haveTitles.has(s.title.toLowerCase())).map(s => ({ ...s, hotelId })),
+    staleServices,
+    staleRates,
+  };
+}
+function demoGapCount(gap) {
+  return gap.missingRooms.length + gap.missingServices.length + gap.staleServices.length + gap.staleRates.length;
+}
+// The site used to show unit-less prices ("$"); everything is now in guaraníes.
+// A hotel's old DEMO prices — the ones that still equal the old default of
+// that service or room type, i.e. nobody edited them — are converted once,
+// and the hotel is stamped (gsMigrated) so a price someone types later is
+// never touched. This also covers the charges already placed for those same
+// demo services. Returns how many prices were converted.
+function migrateHotelPricesToGs(hotelId) {
+  const hotel = hotelId && getHotelById(hotelId);
+  if (!hotel || hotel.gsMigrated) return 0;
+  let n = 0;
+  const gap = getHotelDemoGap(hotelId);
+
+  if (gap.staleRates.length) {
+    const rates = { ...(hotel.roomRates || {}) };
+    gap.staleRates.forEach(t => { rates[t] = DEFAULT_HOTEL.roomRates[t]; });
+    updateHotel(hotelId, { roomRates: rates });
+    n += gap.staleRates.length;
+  }
+  if (gap.staleServices.length) {
+    const stale = new Set(gap.staleServices.map(sv => sv.id));
+    const all = _readList(CATALOG_KEY).map(sv => {
+      if (sv.hotelId !== hotelId || !stale.has(sv.id)) return sv;
+      const def = DEFAULT_CATALOG.find(x => x.id === sv.id);
+      const next = { ...sv, price: def.price };
+      if (def.priceFrom) { next.priceFrom = true; if (/^Desde \$/.test(next.priceLabel || '')) delete next.priceLabel; }
+      return next;
+    });
+    if (SS_CLOUD) ssBulkInsert(CATALOG_KEY, all.filter(sv => sv.hotelId === hotelId && stale.has(sv.id)), { upsert: true });
+    else _writeList(CATALOG_KEY, all);
+    n += gap.staleServices.length;
+  }
+  // charges already placed for those demo services
+  const reqs = _readList(REQUESTS_KEY);
+  let reqChanged = 0;
+  const nextReqs = reqs.map(r => {
+    const legacy = LEGACY_DEMO_PRICES[r.serviceId];
+    const def = r.hotelId === hotelId && DEFAULT_CATALOG.find(x => x.id === r.serviceId);
+    if (!def || !(legacy > 0) || r.price !== legacy || def.price === legacy) return r;
+    reqChanged++;
+    return { ...r, price: def.price };
+  });
+  if (reqChanged) { _writeList(REQUESTS_KEY, nextReqs); n += reqChanged; }
+
+  updateHotel(hotelId, { gsMigrated: true });
+  return n;
+}
+// Runs for whoever signs in as hotel staff (their hotel) or CGO (every hotel).
+function migrateAllPricesToGs() {
+  const cgo = getCurrentCGO();
+  const staff = cgo ? null : getCurrentStaff();
+  const ids = cgo ? getHotelsRegistry().map(h => h.id) : (staff && staff.hotelId ? [staff.hotelId] : []);
+  return ids.reduce((sum, id) => sum + migrateHotelPricesToGs(id), 0);
+}
+function loadDemoDataForHotel(hotelId) {
+  const hotel = hotelId && getHotelById(hotelId);
+  if (!hotel) return null;
+  const added = { rooms: 0, services: 0, info: false, updated: 0 };
+
+  // hotel details: fill blanks and add rates for room types that have none
+  const info = {};
+  ['address', 'phone', 'email', 'wifiName', 'wifiPassword'].forEach(k => {
+    if (!hotel[k]) info[k] = k === 'wifiName' ? (String(hotel.name || 'Hotel').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') + '_Guest') : DEFAULT_HOTEL[k];
+  });
+  const rates = { ...(hotel.roomRates || {}) };
+  Object.keys(DEFAULT_HOTEL.roomRates).forEach(type => { if (!rates[type]) rates[type] = DEFAULT_HOTEL.roomRates[type]; });
+  if (JSON.stringify(rates) !== JSON.stringify(hotel.roomRates || {})) info.roomRates = rates;
+  if (Object.keys(info).length) { updateHotel(hotelId, info); added.info = true; }
+  // old demo prices (nobody edited them) -> guaraníes
+  added.updated += migrateHotelPricesToGs(hotelId);
+
+  const fresh = getHotelDemoGap(hotelId);
+  if (SS_CLOUD) {
+    added.rooms = ssBulkInsert(ROOMS_KEY, fresh.missingRooms);
+    added.services = ssBulkInsert(CATALOG_KEY, fresh.missingServices);
+  } else {
+    if (fresh.missingRooms.length) _writeList(ROOMS_KEY, [..._readList(ROOMS_KEY), ...fresh.missingRooms]);
+    if (fresh.missingServices.length) _writeList(CATALOG_KEY, [..._readList(CATALOG_KEY), ...fresh.missingServices]);
+    added.rooms = fresh.missingRooms.length;
+    added.services = fresh.missingServices.length;
+  }
+  return added;
+}
+
 function getOccupancyStats() {
   const rooms = getRoomsWithOccupancy();
   const total = rooms.length;
@@ -1722,7 +2531,8 @@ const DEFAULT_HOTEL = {
   email: 'soporte.smartstay@gmail.com',
   wifiName: 'SmartStay_Guest',
   wifiPassword: 'stay2025',
-  roomRates: { Individual: 45000, Doble: 58000, 'Doble Superior': 72000, Suite: 98000 },
+  // nightly rates in guaraníes
+  roomRates: { Individual: 180000, Doble: 250000, 'Doble Superior': 320000, Familiar: 380000, Suite: 480000, 'Suite Presidencial': 850000 },
 };
 
 // Resolves to the ACTIVE hotel's own info (the logged-in staff's hotel, or
@@ -1883,7 +2693,7 @@ function ssRegisterAccount(kind, data) {
 }
 function ssChangePassword(currentPassword, newPassword) {
   const a = ssAuthRead();
-  if (!a || SS_MODE !== 'staff') return 'no-session';
+  if (!a || (SS_MODE !== 'staff' && SS_MODE !== 'cgo')) return 'no-session';
   const chk = ssHttp('POST', '/auth/v1/token?grant_type=password', { email: a.email, password: currentPassword }, { anon: true });
   if (!chk.ok) return 'wrong-current';
   ssAuthSave(chk.data);
@@ -1892,18 +2702,41 @@ function ssChangePassword(currentPassword, newPassword) {
   return /weak|least/i.test(u.message) ? 'weak' : 'error';
 }
 // Supabase sends the recovery email itself; the link brings the person back
-// to resetear-password.html with a one-time token in the URL.
+// to resetear-password.html with a one-time token in the URL fragment.
+// (No query string on that address: Supabase only honours redirect addresses
+// that are in its allowed list, and a plain one is the safest match.)
+// reason, when it fails: 'network' | 'rate' (too many emails) | 'smtp' (the
+// project has no mail server set up yet) | 'other'.
 function ssRequestPasswordReset(email, kind) {
-  const back = location.origin + location.pathname.replace(/[^/]*$/, '') + 'resetear-password.html?kind=' + kind;
+  const back = location.origin + location.pathname.replace(/[^/]*$/, '') + 'resetear-password.html';
   const r = ssHttp('POST', '/auth/v1/recover?redirect_to=' + ssEnc(back), { email: (email || '').trim().toLowerCase() }, { anon: true });
-  return { found: r.ok, sent: r.ok, cloud: true, status: r.status, message: r.message };
+  let reason = '';
+  if (!r.ok) {
+    const txt = r.message + ' ' + r.code;
+    if (r.status === 0) reason = 'network';
+    else if (r.status === 429 || /rate.?limit/i.test(txt)) reason = 'rate';
+    else if (r.status >= 500 || /authorized|smtp|sending|mail/i.test(txt)) reason = 'smtp';
+    else reason = 'other';
+    console.warn('[SmartStay] recovery email not sent:', r.status, r.code, r.message);
+  }
+  return { found: r.ok, sent: r.ok, cloud: true, status: r.status, message: r.message, reason };
 }
-// token: the access_token from the recovery link. 'ok' | 'expired' | 'weak' | 'error'
+// token: the access_token from the recovery link.
+// 'ok' | 'expired' | 'weak' | 'same' (equal to the old one) | 'error'
 function ssSetRecoveredPassword(token, newPassword) {
   const r = ssHttp('PUT', '/auth/v1/user', { password: newPassword }, { token });
   if (r.ok) return 'ok';
-  if (r.status === 401 || r.status === 403) return 'expired';
-  return /weak|least/i.test(r.message) ? 'weak' : 'error';
+  const txt = r.message + ' ' + r.code;
+  if (/same_password|different from the old/i.test(txt)) return 'same';
+  if (/weak|least/i.test(txt)) return 'weak';
+  if (r.status === 401 || r.status === 403 || /jwt|expired/i.test(txt)) return 'expired';
+  return 'error';
+}
+// Which kind of account the recovery link belongs to ('cgo' | 'staff' | ''),
+// so the "Iniciar sesión" button after resetting goes to the right login.
+function ssRecoveredKind(token) {
+  const r = ssRpc('app_snapshot', {}, { token });
+  return r.ok && r.data && r.data.profile ? r.data.profile.kind : '';
 }
 // Check-in step 1. A guest has no account: the reservation code (or ID
 // number) is what identifies them, and this device gets its own secret
@@ -1925,4 +2758,9 @@ function ssFindReservation({ code, lastname, documentNumber }) {
 }
 
 ssCloudBoot();
-document.addEventListener('DOMContentLoaded', ssStartPolling);
+let SS_PRICES_CONVERTED = 0;
+try { SS_PRICES_CONVERTED = migrateAllPricesToGs(); } catch (e) { console.warn('[SmartStay] price conversion', e); }
+document.addEventListener('DOMContentLoaded', () => {
+  ssStartPolling();
+  if (SS_PRICES_CONVERTED) showToast('Precios de demostración pasados a guaraníes (' + SS_PRICES_CONVERTED + ')');
+});

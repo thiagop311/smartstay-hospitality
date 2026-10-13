@@ -116,8 +116,9 @@
           <div class="top-row">
             <div class="icon-circle icon-circle--light icon-circle-md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
           </div>
-          <div class="stat-value" id="statTodayRevenue">$0</div>
+          <div class="stat-value" id="statTodayRevenue">Gs. 0</div>
           <div class="stat-label">Ingresos totales (habitación + servicios)</div>
+          <div class="stat-label" id="statCollected" style="margin-top:4px; font-weight:600; color:#15803d;"></div>
         </div>
       </div>
 
@@ -173,7 +174,9 @@
   document.getElementById('statActiveGuests').textContent = guests.filter(g => g.status === 'activo').length;
   document.getElementById('statPendingRequests').textContent = requests.filter(r => r.status === 'pending').length;
   const hotelStats = getCGOHotelStats(getActiveHotelId());
-  document.getElementById('statTodayRevenue').textContent = '$' + Math.round(hotelStats.revenue).toLocaleString('es-PY');
+  document.getElementById('statTodayRevenue').textContent = formatMoney(hotelStats.revenue);
+  document.getElementById('statCollected').textContent = 'Cobrado ' + formatMoney(hotelStats.collected)
+    + (hotelStats.pendingCash ? ' · efectivo por cobrar ' + formatMoney(hotelStats.pendingCash) : '');
 
   const occ = getOccupancyStats();
   document.getElementById('statOccupancyPct').textContent = occ.pct + '%';

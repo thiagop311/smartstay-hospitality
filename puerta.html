@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Puerta — SmartStay Hospitality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  /* Page a phone lands on when it is held against the NFC tag (or QR) stuck on a room door */
+  body { min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(160deg, #0d1b4c 0%, #122763 55%, #1d3fd6 130%); }
+  .door-top { padding: 22px 20px 0; display: flex; justify-content: center; }
+  .door-top .logo-text span { color: #fff; }
+  .door-top .logo-sub { color: rgba(255,255,255,0.7) !important; }
+  .door-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 16px 40px; }
+  .door-card { width: 100%; max-width: 420px; padding: 34px 28px 28px; text-align: center; }
+  .door-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: var(--blue-lighter-bg, #e8effe); color: var(--blue-primary, #2554e8); margin-bottom: 18px; }
+  .door-circle { width: 108px; height: 108px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .door-circle svg { width: 50px; height: 50px; }
+  .door-circle.wait { background: var(--blue-lighter-bg, #e8effe); color: var(--blue-primary, #2554e8); }
+  .door-circle.wait::before, .door-circle.wait::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid currentColor; opacity: 0; animation: doorPulse 1.6s ease-out infinite; }
+  .door-circle.wait::after { animation-delay: .8s; }
+  .door-circle.ok { background: #dcfce7; color: #16a34a; animation: doorPop .35s ease-out; }
+  .door-circle.denied { background: #fee2e2; color: #dc2626; animation: doorPop .35s ease-out; }
+  @keyframes doorPulse { 0% { transform: scale(.85); opacity: .55; } 100% { transform: scale(1.35); opacity: 0; } }
+  @keyframes doorPop { 0% { transform: scale(.6); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+  .door-card h1 { font-size: 24px; }
+  .door-card p { font-size: 14px; margin-top: 8px; }
+  .door-card .door-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+  .door-note { font-size: 11.5px !important; color: var(--text-secondary); margin-top: 20px !important; }
+</style>
+</head>
+<body>
+
+<div class="door-top">
+  <a href="index.html" class="logo">
+    <img src="assets/logo-white.svg" alt="SmartStay">
+    <div class="logo-text"><span class="logo-main">SMARTSTAY</span><span class="logo-sub">HOSPITALITY</span></div>
+  </a>
+</div>
+
+<div class="door-main">
+  <div class="card door-card" id="doorCard" aria-live="polite"></div>
+</div>
+
+<script>
+  const ICON_WAIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9.5 6a4 4 0 0 1 5 0M11 18h2"/></svg>';
+  const ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  const ICON_NO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+
+  const qs = new URLSearchParams(location.search);
+  const door = (qs.get('d') || '').trim();
+  const hotelFromTag = (qs.get('h') || '').trim();
+  const doorValid = /^(\d{1,5}|common)$/.test(door);
+  const card = document.getElementById('doorCard');
+  const doorLabel = () => door === 'common' ? t('door.common') : t('door.room') + ' ' + door;
+
+  // The page remembers what it decided so a language switch just redraws it
+  // (it must not open the door a second time).
+  let outcome = null; // { kind: 'ok'|'denied'|'login'|'bad', reason }
+
+  function draw() {
+    const o = outcome;
+    if (!o) return;
+    let kind, title, text, actions = '', note = '';
+    if (o.kind === 'wait') {
+      kind = 'wait'; title = t('door.opening'); text = '';
+    } else if (o.kind === 'ok') {
+      kind = 'ok'; title = t('door.open'); text = t('door.openedMsg');
+      actions = `<a href="portal.html" class="btn btn-primary btn-block">${t('door.backToStay')}</a>`; note = t('door.demoNote');
+    } else if (o.kind === 'login') {
+      kind = 'denied'; title = t('door.denied'); text = t('door.needLogin');
+      const next = 'puerta.html?h=' + encodeURIComponent(hotelFromTag) + '&d=' + encodeURIComponent(door);
+      actions = `<a href="checkin.html?next=${encodeURIComponent(next)}" class="btn btn-primary btn-block">${t('door.login')}</a>`;
+    } else if (o.kind === 'bad') {
+      kind = 'denied'; title = t('door.denied'); text = t('door.r.wrongDoor');
+      actions = `<a href="index.html" class="btn btn-outline btn-block">SmartStay</a>`;
+    } else {
+      const key = 'door.r.' + o.reason;
+      kind = 'denied'; title = t('door.denied'); text = t(key) !== key ? t(key) : t('door.r.error');
+      actions = `<button class="btn btn-primary btn-block" onclick="tryOpen()">${t('door.retry')}</button>
+           <a href="portal.html" class="btn btn-outline btn-block">${t('door.backToStay')}</a>`;
+    }
+    card.innerHTML = `
+      <span class="door-badge">${doorValid ? doorLabel() : t('door.title')}</span>
+      <div class="door-circle ${kind}">${kind === 'ok' ? ICON_OK : kind === 'denied' ? ICON_NO : ICON_WAIT}</div>
+      <h1>${title}</h1>
+      <p>${text}</p>
+      ${actions ? `<div class="door-actions">${actions}</div>` : ''}
+      ${note ? `<p class="door-note">${note}</p>` : ''}`;
+  }
+
+  function tryOpen() {
+    outcome = { kind: 'wait' }; draw();
+    // short pause so the "checking" step is visible, like a real tap
+    setTimeout(() => {
+      const r = phoneDoorAccess(door, hotelFromTag);
+      outcome = r.result === 'granted' ? { kind: 'ok' } : { kind: 'denied', reason: r.reason };
+      draw();
+    }, 700);
+  }
+
+  if (!doorValid) outcome = { kind: 'bad' };
+  else if (!getMyGuestRecord()) outcome = { kind: 'login' };
+  if (outcome) draw(); else tryOpen();
+  window.addEventListener('ss:lang', draw);
+</script>
+</body>
+</html>

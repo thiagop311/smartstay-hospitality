@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
 <link rel="stylesheet" href="assets/admin.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   .admin-grid > div { min-width: 0; }
   .key-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border-color); }
@@ -22,7 +23,19 @@
   .key-row h6 { font-size: 13.5px; font-weight: 600; overflow-wrap: anywhere; }
   .key-row p { font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }
   .key-row .icon-circle { flex-shrink: 0; }
-  .key-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .key-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .key-row.stay { align-items: flex-start; }
+  .key-row .kline { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12.5px; padding: 6px 0 0; }
+  .key-row .kline + .kline { border-top: 1px dashed var(--border-color); margin-top: 6px; }
+  .key-row .kline .kl { display: flex; align-items: center; gap: 8px; min-width: 0; overflow-wrap: anywhere; }
+  .key-row .kline .kl strong { font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+  .seg button { border: none; background: #fff; padding: 8px 16px; font: inherit; font-size: 13px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+  .seg button.on { background: var(--blue-primary); color: #fff; }
+  .tag-box { display: flex; gap: 14px; align-items: flex-start; margin-top: 14px; }
+  .tag-box #tagQr { flex-shrink: 0; width: 120px; height: 120px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 6px; }
+  .tag-box #tagQr img { max-width: 100%; }
+  .tag-url { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--text-secondary); overflow-wrap: anywhere; margin-bottom: 8px; }
   .sim-result { margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 500; display: flex; gap: 10px; align-items: flex-start; overflow-wrap: anywhere; }
   .sim-result[hidden] { display: none; }
   .sim-result svg { width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
@@ -30,6 +43,7 @@
   .sim-result.denied { background: #fee2e2; color: #b91c1c; }
   .sim-hint { font-size: 12.5px; color: var(--text-secondary); margin: -6px 0 16px; }
   .btn-row { display: flex; gap: 10px; }
+  .btn[hidden] { display: none; }
   .btn-row .btn { flex: 1; justify-content: center; }
   .nfc-chip { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: 999px; margin-top: 10px; max-width: 100%; }
   .nfc-chip::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
@@ -137,36 +151,25 @@
       <div class="page-title">
         <div>
           <h1>Accesos</h1>
-          <p>Asignación y control de las tarjetas NFC de las habitaciones, y registro de accesos del hotel.</p>
+          <p>Llaves digitales en el celular de los huéspedes, tarjetas NFC opcionales y registro de accesos del hotel.</p>
           <span class="nfc-chip off" id="nfcSupport">Revisando lector NFC…</span>
         </div>
       </div>
 
       <div class="stat-grid cols-4">
         <div class="card stat-card"><div class="stat-value" id="cnt-access-today">0</div><div class="stat-label">Accesos hoy</div></div>
+        <div class="card stat-card"><div class="stat-value" id="cnt-phones">0</div><div class="stat-label">Llaves en celular activas</div></div>
         <div class="card stat-card"><div class="stat-value" id="cnt-active">0</div><div class="stat-label">Tarjetas activas</div></div>
-        <div class="card stat-card"><div class="stat-value" id="cnt-pending">0</div><div class="stat-label">Por entregar</div></div>
-        <div class="card stat-card"><div class="stat-value" id="cnt-blocked">0</div><div class="stat-label">Bloqueadas</div></div>
+        <div class="card stat-card"><div class="stat-value" id="cnt-requested">0</div><div class="stat-label">Tarjetas solicitadas</div></div>
       </div>
 
       <div class="admin-grid">
         <div>
           <div class="card panel-card" style="margin-bottom:20px;">
-            <div class="panel-head"><h3>Tarjetas por entregar</h3></div>
-            <div id="pendingList"></div>
-            <p id="pendingEmpty" style="display:none; text-align:center; padding:16px 0; font-size:13px;">No hay tarjetas pendientes. Cuando un huésped complete el check-in digital, aparecerá acá para asignarle su tarjeta.</p>
-          </div>
-
-          <div class="card panel-card" style="margin-bottom:20px;">
-            <div class="panel-head"><h3>Tarjetas activas</h3></div>
-            <div id="activeList"></div>
-            <p id="activeEmpty" style="display:none; text-align:center; padding:16px 0; font-size:13px;">Todavía no hay tarjetas activas.</p>
-          </div>
-
-          <div class="card panel-card" style="margin-bottom:20px;">
-            <div class="panel-head"><h3>Tarjetas bloqueadas</h3></div>
-            <div id="blockedList"></div>
-            <p id="blockedEmpty" style="display:none; text-align:center; padding:16px 0; font-size:13px;">No hay tarjetas bloqueadas.</p>
+            <div class="panel-head"><h3>Huéspedes alojados</h3></div>
+            <p class="sim-hint">El celular del huésped es su llave desde el check-in. La tarjeta NFC es opcional: se entrega a quien no tiene NFC en el celular o la prefiere.</p>
+            <div id="stayList"></div>
+            <p id="stayEmpty" style="display:none; text-align:center; padding:16px 0; font-size:13px;">No hay huéspedes alojados. Cuando alguien complete el check-in digital, su llave aparece acá.</p>
           </div>
         </div>
 
@@ -183,10 +186,14 @@
           </div>
 
           <div class="card panel-card" style="margin-bottom:20px;">
-            <div class="panel-head"><h3>Probar lector de puerta</h3></div>
-            <p class="sim-hint">Reproduce lo que hace la cerradura al acercar una tarjeta: el sistema decide si abre y lo anota en el registro.</p>
+            <div class="panel-head"><h3>Probar puerta</h3></div>
+            <p class="sim-hint">Reproduce lo que hace la cerradura: el sistema decide si abre y lo anota en el registro.</p>
+            <div class="seg" role="tablist" aria-label="Llave a probar">
+              <button type="button" class="on" id="seg-phone" onclick="setSimMode('phone')">Celular del huésped</button>
+              <button type="button" id="seg-card" onclick="setSimMode('card')">Tarjeta</button>
+            </div>
             <div class="form-group">
-              <label class="form-label" for="sim-card">Tarjeta</label>
+              <label class="form-label" for="sim-card" id="sim-card-label">Huésped</label>
               <select class="form-input" id="sim-card" style="padding-left:14px;" onchange="syncDoorToCard()"></select>
             </div>
             <div class="form-group">
@@ -194,10 +201,30 @@
               <select class="form-input" id="sim-door" style="padding-left:14px;"></select>
             </div>
             <div class="btn-row">
-              <button class="btn btn-primary" id="sim-nfcBtn" onclick="simulateRealRead()">Acercar tarjeta real</button>
-              <button class="btn btn-outline" onclick="simulateRead()">Usar la de la lista</button>
+              <button class="btn btn-primary" id="sim-nfcBtn" onclick="simulateRealRead()" hidden>Acercar tarjeta real</button>
+              <button class="btn btn-outline" id="sim-listBtn" onclick="simulateRead()">Probar apertura</button>
             </div>
             <div class="sim-result" id="simResult" hidden></div>
+          </div>
+
+          <div class="card panel-card" style="margin-bottom:20px;">
+            <div class="panel-head"><h3>Etiquetas de puerta</h3></div>
+            <p class="sim-hint">Cada puerta lleva una etiqueta NFC (o un QR). Al acercar el celular se abre una página que pide al sistema abrir esa puerta para el huésped que tiene la sesión iniciada.</p>
+            <div class="form-group">
+              <label class="form-label" for="tag-door">Puerta</label>
+              <select class="form-input" id="tag-door" style="padding-left:14px;" onchange="renderTag()"></select>
+            </div>
+            <div class="tag-box">
+              <div id="tagQr" aria-label="Código QR de la puerta"></div>
+              <div style="min-width:0; flex:1;">
+                <div class="tag-url" id="tagUrl">—</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="btn btn-outline btn-sm" onclick="copyTagUrl(this)">Copiar enlace</button>
+                  <button class="btn btn-primary btn-sm" id="tag-writeBtn" onclick="writeDoorTag()">Grabar etiqueta NFC</button>
+                </div>
+                <p class="as-hint" id="tagWriteStatus"></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -205,7 +232,7 @@
       <div class="card panel-card">
         <div class="panel-head"><h3>Registro de accesos recientes</h3></div>
         <table class="admin-table" id="accessLogTable">
-          <thead><tr><th>Huésped</th><th>Puerta</th><th>Hora</th><th>Resultado</th></tr></thead>
+          <thead><tr><th>Huésped</th><th>Llave</th><th>Puerta</th><th>Hora</th><th>Resultado</th></tr></thead>
           <tbody id="accessLogBody"></tbody>
         </table>
         <p id="accessLogEmpty" style="display:none; text-align:center; padding:24px 0; font-size:13.5px;">Todavía no hay accesos registrados. Usá "Probar lector de puerta" para generar uno.</p>
@@ -248,9 +275,11 @@
 <script>
 const BLOCK_REASONS = { lost: 'Reportada como perdida por el huésped', reception: 'Bloqueada por recepción' };
 const DENY_REASONS = {
-  unknown: 'Tarjeta no registrada', replaced: 'Tarjeta reemplazada', blocked: 'Tarjeta bloqueada',
-  ended: 'Estadía finalizada', wrongDoor: 'Sin permiso para esta puerta',
+  unknown: 'Tarjeta no registrada', replaced: 'Tarjeta reemplazada', blocked: 'Llave bloqueada',
+  ended: 'Estadía finalizada', nostay: 'Sin estadía activa', wrongDoor: 'Sin permiso para esta puerta',
+  wrongHotel: 'Puerta de otro hotel', error: 'Error de conexión',
 };
+const PHONE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2M9.5 6a4 4 0 0 1 5 0"/></svg>';
 const CARD_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/></svg>';
 const NS_ICONS = {
   idle: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="2"/>',
@@ -263,43 +292,60 @@ function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ 
 function guestName(g) { return ((g.firstName || '') + ' ' + (g.lastName || '')).trim(); }
 function roomNumber(g) { return (g.room || '').split('·')[0].trim(); }
 function doorLabel(d) { return d === 'common' ? 'Áreas comunes' : 'Habitación ' + d; }
-function money(n) { return '$' + (n || 0).toLocaleString('es-PY'); }
+function money(n) { return formatMoney(n); }
 function findGuest(id) { return getGuestsRegistry().find(g => g.id === id); }
 
 // ---------- lists ----------
-function keyRow(g, subtitle, actions) {
-  return `<div class="key-row">
-      <div class="icon-circle icon-circle--light">${CARD_ICON}</div>
-      <div class="ki"><h6>${esc(guestName(g))}</h6><p>${subtitle}</p></div>
-      <div class="key-actions">${actions}</div>
+// One row per guest in the hotel: the phone key (the main one) and, below,
+// the optional physical card.
+function stayRow(g) {
+  const ps = getPhoneKeyState(g);
+  const cs = getCardState(g);
+  const phoneLine = ps === 'blocked'
+    ? `<span class="kl"><strong>Celular</strong> <span class="status-pill danger">Bloqueada</span> <span style="color:var(--text-secondary);">${esc(BLOCK_REASONS[g.phoneKeyBlockReason] || BLOCK_REASONS.reception)}</span></span>
+       <span class="key-actions"><button class="btn btn-primary btn-sm" onclick="unblockGuestPhone('${esc(g.id)}')">Reactivar</button></span>`
+    : `<span class="kl"><strong>Celular</strong> <span class="status-pill ok">Activa</span></span>
+       <span class="key-actions"><button class="btn btn-outline btn-sm" onclick="blockGuestPhone('${esc(g.id)}')">Bloquear</button></span>`;
+  let cardLine;
+  if (cs === 'active') {
+    cardLine = `<span class="kl"><strong>Tarjeta</strong> <span class="status-pill ok">Activa</span> N.º ••••${esc(shortCardUid(g.cardUid))}</span>
+       <span class="key-actions"><button class="btn btn-outline btn-sm" onclick="openAssign('${esc(g.id)}')">Reemplazar</button>
+       <button class="btn btn-outline btn-sm" onclick="blockGuestCard('${esc(g.id)}')">Bloquear</button></span>`;
+  } else if (cs === 'blocked') {
+    cardLine = `<span class="kl"><strong>Tarjeta</strong> <span class="status-pill danger">Bloqueada</span> ••••${esc(shortCardUid(g.cardUid))}</span>
+       <span class="key-actions"><button class="btn btn-primary btn-sm" onclick="openAssign('${esc(g.id)}')">Asignar nueva</button></span>`;
+  } else if (g.cardRequested) {
+    cardLine = `<span class="kl"><strong>Tarjeta</strong> <span class="status-pill pending">Solicitada por el huésped</span></span>
+       <span class="key-actions"><button class="btn btn-primary btn-sm" onclick="openAssign('${esc(g.id)}')">Asignar tarjeta</button></span>`;
+  } else {
+    cardLine = `<span class="kl"><strong>Tarjeta</strong> <span style="color:var(--text-secondary);">Sin tarjeta (opcional)</span></span>
+       <span class="key-actions"><button class="btn btn-outline btn-sm" onclick="openAssign('${esc(g.id)}')">Entregar tarjeta</button></span>`;
+  }
+  return `<div class="key-row stay">
+      <div class="icon-circle icon-circle--light">${PHONE_ICON}</div>
+      <div class="ki">
+        <h6>${esc(guestName(g))}</h6>
+        <p>Habitación ${esc(roomNumber(g))} · salida ${esc(g.checkout || '—')}</p>
+        <div class="kline">${phoneLine}</div>
+        <div class="kline">${cardLine}</div>
+      </div>
     </div>`;
 }
 
 function renderAll() {
   const guests = getGuestsRegistry();
-  const withState = guests.map(g => ({ g, state: getCardState(g) }));
-  const pending = withState.filter(x => x.state === 'pending').map(x => x.g);
-  const active = withState.filter(x => x.state === 'active').map(x => x.g);
-  const blocked = withState.filter(x => x.state === 'blocked').map(x => x.g);
-
-  document.getElementById('pendingList').innerHTML = pending.map(g => keyRow(g,
-    'Habitación ' + esc(roomNumber(g)) + ' · check-in completado',
-    `<button class="btn btn-primary btn-sm" onclick="openAssign('${esc(g.id)}')">Asignar tarjeta</button>`)).join('');
-  document.getElementById('activeList').innerHTML = active.map(g => keyRow(g,
-    'Habitación ' + esc(roomNumber(g)) + ' · N.º ••••' + esc(shortCardUid(g.cardUid)),
-    `<button class="btn btn-outline btn-sm" onclick="openAssign('${esc(g.id)}')">Reemplazar</button>
-     <button class="btn btn-outline btn-sm" onclick="blockGuestCard('${esc(g.id)}')">Bloquear</button>`)).join('');
-  document.getElementById('blockedList').innerHTML = blocked.map(g => keyRow(g,
-    'Habitación ' + esc(roomNumber(g)) + ' · ' + esc(BLOCK_REASONS[g.cardBlockReason] || BLOCK_REASONS.reception),
-    `<button class="btn btn-primary btn-sm" onclick="openAssign('${esc(g.id)}')">Asignar nueva</button>`)).join('');
-  document.getElementById('pendingEmpty').style.display = pending.length ? 'none' : 'block';
-  document.getElementById('activeEmpty').style.display = active.length ? 'none' : 'block';
-  document.getElementById('blockedEmpty').style.display = blocked.length ? 'none' : 'block';
-  document.getElementById('cnt-pending').textContent = pending.length;
-  document.getElementById('cnt-active').textContent = active.length;
-  document.getElementById('cnt-blocked').textContent = blocked.length;
-
+  // a key row only makes sense while the stay is in progress
+  const inStay = guests.filter(g => getPhoneKeyState(g) !== 'none');
+  const requested = inStay.filter(g => g.cardRequested && getCardState(g) !== 'active');
+  const order = g => (g.cardRequested && getCardState(g) !== 'active' ? 0 : getPhoneKeyState(g) === 'blocked' || getCardState(g) === 'blocked' ? 1 : 2);
+  inStay.sort((a, b) => order(a) - order(b));
+  document.getElementById('stayList').innerHTML = inStay.map(stayRow).join('');
+  document.getElementById('stayEmpty').style.display = inStay.length ? 'none' : 'block';
+  document.getElementById('cnt-phones').textContent = inStay.filter(g => getPhoneKeyState(g) === 'active').length;
+  document.getElementById('cnt-active').textContent = inStay.filter(g => getCardState(g) === 'active').length;
+  document.getElementById('cnt-requested').textContent = requested.length;
   renderSimulator(guests);
+  renderTagDoors();
   renderLog();
 }
 
@@ -308,17 +354,29 @@ function blockGuestCard(id) {
   if (g) showToast('Tarjeta de ' + guestName(g) + ' bloqueada');
   renderAll();
 }
+function blockGuestPhone(id) {
+  const g = findGuest(id);
+  if (!g || !confirm('¿Bloquear la llave del celular de ' + guestName(g) + '? Dejará de abrir su habitación hasta que la reactives.')) return;
+  blockPhoneKey(id, 'reception');
+  showToast('Llave del celular de ' + guestName(g) + ' bloqueada');
+  renderAll();
+}
+function unblockGuestPhone(id) {
+  const g = unblockPhoneKey(id);
+  if (g) showToast('Llave del celular de ' + guestName(g) + ' reactivada');
+  renderAll();
+}
 
 // ---------- NFC support + error messages ----------
 function initNfcSupport() {
   const chip = document.getElementById('nfcSupport');
   if (NFC_SUPPORTED) {
     chip.className = 'nfc-chip on';
-    chip.textContent = 'Lector NFC de este dispositivo: disponible';
+    chip.textContent = 'Lector/grabador NFC de este dispositivo: disponible';
   } else {
     chip.className = 'nfc-chip off';
     chip.textContent = 'Este dispositivo no lee NFC desde el navegador. Abrí el panel en Chrome desde un Android con NFC, o ingresá el número de la tarjeta a mano.';
-    ['lk-nfcBtn', 'sim-nfcBtn', 'as-nfcBtn'].forEach(id => { const b = document.getElementById(id); b.disabled = true; b.title = 'Requiere Chrome en Android con NFC'; });
+    ['lk-nfcBtn', 'sim-nfcBtn', 'as-nfcBtn', 'tag-writeBtn'].forEach(id => { const b = document.getElementById(id); b.disabled = true; b.title = 'Requiere Chrome en Android con NFC'; });
     document.getElementById('as-write').disabled = true;
   }
 }
@@ -347,7 +405,7 @@ function openAssign(id) {
   if (!g) return;
   assignTarget = id;
   const had = getCardState(g) === 'active' || getCardState(g) === 'blocked';
-  document.getElementById('as-title').textContent = had ? 'Asignar tarjeta nueva' : 'Asignar tarjeta NFC';
+  document.getElementById('as-title').textContent = had ? 'Asignar tarjeta nueva' : 'Entregar tarjeta NFC (opcional)';
   document.getElementById('as-sub').textContent = guestName(g) + ' · Habitación ' + roomNumber(g) + (had ? ' · la tarjeta anterior dejará de funcionar' : '');
   document.getElementById('as-manual').value = '';
   setNfcStatus('idle', NFC_SUPPORTED ? 'Tocá "Acercar tarjeta y asignar" y acercá la tarjeta al dispositivo.' : 'Ingresá el número de la tarjeta, o usá un lector USB.');
@@ -421,6 +479,7 @@ function renderFicha(uid, scannedText) {
       <h4>${esc(guestName(owner))}</h4>
       <p class="f-sub">Habitación ${esc(owner.room || '—')} ${pill}</p>
       <dl>
+        <dt>Celular</dt><dd>${getPhoneKeyState(owner) === 'blocked' ? 'Llave bloqueada' : getPhoneKeyState(owner) === 'active' ? 'Llave activa' : '—'}</dd>
         <dt>Tarjeta</dt><dd class="uid">${esc(owner.cardUid)}</dd>
         <dt>Asignada</dt><dd>${owner.cardIssuedAt ? new Date(owner.cardIssuedAt).toLocaleString('es-PY', { dateStyle: 'short', timeStyle: 'short' }) : '—'}${owner.cardMethod === 'virtual' ? ' (de prueba)' : ''}</dd>
         <dt>Reserva</dt><dd>${esc(owner.reservationCode || '—')}</dd>
@@ -430,6 +489,8 @@ function renderFicha(uid, scannedText) {
       </dl>
       ${services ? `<ul>${services}</ul>` : '<p class="f-note" style="margin-top:0;">Sin servicios solicitados todavía.</p>'}
       <div class="f-total"><span>Total de la estadía</span><span>${money(acc.total)}</span></div>
+      <div class="f-total" style="border-top:none; margin-top:0; padding-top:4px; font-weight:500;"><span>Pagado</span><span>${money(acc.paid)}</span></div>
+      <div class="f-total" style="border-top:none; margin-top:0; padding-top:4px;"><span>Saldo</span><span>${money(acc.due)}</span></div>
       ${match ? `<p class="f-note">${match.trim()}</p>` : ''}
     </div>`;
 }
@@ -453,31 +514,55 @@ function lookupManual() {
   renderFicha(uid, '');
 }
 
-// ---------- door reader test ----------
-// Cards that can be tried on a door: every card on file (active, blocked or
+// ---------- door test ----------
+// Phone mode: pick a guest (every guest in the hotel, so you can also try a
+// checked-out one). Card mode: every card on file (active, blocked or
 // replaced), plus one that isn't registered at all.
+let simMode = 'phone';
+function setSimMode(mode) {
+  simMode = mode;
+  document.getElementById('seg-phone').classList.toggle('on', mode === 'phone');
+  document.getElementById('seg-card').classList.toggle('on', mode === 'card');
+  document.getElementById('sim-card-label').textContent = mode === 'phone' ? 'Huésped' : 'Tarjeta';
+  document.getElementById('sim-nfcBtn').hidden = mode !== 'card';
+  document.getElementById('sim-listBtn').textContent = mode === 'phone' ? 'Probar apertura' : 'Usar la de la lista';
+  document.getElementById('simResult').hidden = true;
+  renderSimulator(getGuestsRegistry());
+  syncDoorToCard();
+}
 function renderSimulator(guests) {
   const selCard = document.getElementById('sim-card');
   const prevCard = selCard.value;
   const opts = [];
-  guests.forEach(g => {
-    const state = getCardState(g);
-    if (g.cardUid) opts.push({ uid: g.cardUid, room: roomNumber(g), label: guestName(g) + ' · ' + roomNumber(g) + ' · ' + (state === 'active' ? '••••' + shortCardUid(g.cardUid) : state === 'blocked' ? 'bloqueada' : 'finalizada') });
-    (g.retiredCards || []).forEach(u => opts.push({ uid: u, room: roomNumber(g), label: guestName(g) + ' · anterior ••••' + shortCardUid(u) }));
-  });
-  opts.push({ uid: '04:00:00:00:00:00:00', room: '', label: 'Tarjeta desconocida (no registrada)' });
-  selCard.innerHTML = opts.map(o => `<option value="${esc(o.uid)}" data-room="${esc(o.room)}">${esc(o.label)}</option>`).join('');
+  if (simMode === 'phone') {
+    guests.filter(g => g.status !== 'pendiente' && g.status !== 'cancelada').forEach(g => {
+      const ps = getPhoneKeyState(g);
+      opts.push({ uid: g.id, room: roomNumber(g), label: guestName(g) + ' · ' + roomNumber(g) + ' · ' + (ps === 'active' ? 'celular activo' : ps === 'blocked' ? 'celular bloqueado' : 'estadía finalizada') });
+    });
+  } else {
+    guests.forEach(g => {
+      const state = getCardState(g);
+      if (g.cardUid) opts.push({ uid: g.cardUid, room: roomNumber(g), label: guestName(g) + ' · ' + roomNumber(g) + ' · ' + (state === 'active' ? '••••' + shortCardUid(g.cardUid) : state === 'blocked' ? 'bloqueada' : 'finalizada') });
+      (g.retiredCards || []).forEach(u => opts.push({ uid: u, room: roomNumber(g), label: guestName(g) + ' · anterior ••••' + shortCardUid(u) }));
+    });
+    opts.push({ uid: '04:00:00:00:00:00:00', room: '', label: 'Tarjeta desconocida (no registrada)' });
+  }
+  selCard.innerHTML = opts.length ? opts.map(o => `<option value="${esc(o.uid)}" data-room="${esc(o.room)}">${esc(o.label)}</option>`).join('') : '<option value="">' + (simMode === 'phone' ? 'No hay huéspedes con estadía' : 'No hay tarjetas') + '</option>';
   if (opts.some(o => o.uid === prevCard)) selCard.value = prevCard;
 
   const selDoor = document.getElementById('sim-door');
   const prevDoor = selDoor.value;
-  const rooms = [...new Set(guests.filter(g => getCardState(g) !== 'none' || g.cardUid).map(roomNumber).filter(Boolean))].sort((a, b) => a - b);
-  selDoor.innerHTML = rooms.map(r => `<option value="${esc(r)}">${esc(doorLabel(r))}</option>`).join('') + `<option value="common">${doorLabel('common')}</option>`;
+  selDoor.innerHTML = doorOptions();
   if ([...selDoor.options].some(o => o.value === prevDoor)) selDoor.value = prevDoor;
   else syncDoorToCard();
 }
+// Every room of the hotel + common areas
+function doorOptions() {
+  const nums = [...new Set(getRooms().map(r => String(r.n)).concat(getGuestsRegistry().map(roomNumber).filter(Boolean)))].sort((a, b) => a - b);
+  return nums.map(r => `<option value="${esc(r)}">${esc(doorLabel(r))}</option>`).join('') + `<option value="common">${doorLabel('common')}</option>`;
+}
 
-// Picking a card selects its own room's door by default (change it to test a wrong door).
+// Picking a guest/card selects its own room's door by default (change it to test a wrong door).
 function syncDoorToCard() {
   const opt = document.getElementById('sim-card').selectedOptions[0];
   const room = opt ? opt.dataset.room : '';
@@ -500,7 +585,9 @@ function showDoorResult(r, door) {
 }
 function simulateRead() {
   const door = document.getElementById('sim-door').value;
-  showDoorResult(tryDoorAccess(document.getElementById('sim-card').value, door), door);
+  const pick = document.getElementById('sim-card').value;
+  if (!pick) { showToast('No hay nada para probar todavía'); return; }
+  showDoorResult(simMode === 'phone' ? tryPhoneAccess(pick, door) : tryDoorAccess(pick, door), door);
 }
 async function simulateRealRead() {
   const btn = document.getElementById('sim-nfcBtn');
@@ -516,6 +603,44 @@ async function simulateRealRead() {
   btn.disabled = !NFC_SUPPORTED; btn.textContent = 'Acercar tarjeta real';
 }
 
+// ---------- door tags (NFC sticker / QR on each door) ----------
+function renderTagDoors() {
+  const sel = document.getElementById('tag-door');
+  const prev = sel.value;
+  sel.innerHTML = doorOptions();
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+  renderTag();
+}
+function currentTagUrl() { return doorTagUrl(document.getElementById('tag-door').value, getActiveHotelId()); }
+function renderTag() {
+  const url = currentTagUrl();
+  document.getElementById('tagUrl').textContent = url;
+  document.getElementById('tagWriteStatus').textContent = '';
+  const qr = document.getElementById('tagQr');
+  qr.innerHTML = '';
+  if (window.QRCode) new QRCode(qr, { text: url, width: 106, height: 106, colorDark: '#0d1b4c', colorLight: '#ffffff' });
+}
+function copyTagUrl(btn) { copyToClipboard(currentTagUrl(), btn); }
+async function writeDoorTag() {
+  const status = document.getElementById('tagWriteStatus');
+  const door = document.getElementById('tag-door').value;
+  if (!NFC_SUPPORTED) { status.textContent = 'Este dispositivo no puede grabar NFC desde el navegador.'; return; }
+  const btn = document.getElementById('tag-writeBtn');
+  btn.disabled = true;
+  status.textContent = 'Acercá una etiqueta NFC (NTAG213/215) a la parte trasera del celular…';
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 30000);
+  try {
+    await new NDEFReader().write({ records: [{ recordType: 'url', data: currentTagUrl() }] }, { overwrite: true, signal: ctrl.signal });
+    status.textContent = 'Listo: etiqueta grabada para ' + doorLabel(door) + '. Pegala en la puerta.';
+    showToast('Etiqueta de ' + doorLabel(door) + ' grabada');
+  } catch (e) {
+    status.textContent = ctrl.signal.aborted ? 'No se detectó ninguna etiqueta. Probá de nuevo.' : nfcErrorMessage(e);
+  }
+  clearTimeout(timer);
+  btn.disabled = !NFC_SUPPORTED;
+}
+
 // ---------- access log ----------
 function renderLog() {
   const log = getAccessLog();
@@ -525,10 +650,11 @@ function renderLog() {
     const d = new Date(e.ts);
     const when = d.toLocaleDateString('es-PY', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('es-PY', { hour: '2-digit', minute: '2-digit' });
     const who = e.guestName ? esc(e.guestName) : 'Tarjeta desconocida';
+    const key = e.credential === 'phone' ? 'Celular' : 'Tarjeta';
     const result = e.result === 'granted'
       ? '<span class="status-pill ok">Permitido</span>'
       : '<span class="status-pill danger">Denegado</span> <span style="font-size:12px; color:var(--text-secondary);">' + esc(DENY_REASONS[e.reason] || '') + '</span>';
-    return `<tr><td><div class="guest-cell"><div class="mini-avatar">${esc(e.guestName ? e.guestName.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?')}</div>${who}</div></td><td>${esc(doorLabel(e.door))}</td><td>${when}</td><td>${result}</td></tr>`;
+    return `<tr><td><div class="guest-cell"><div class="mini-avatar">${esc(e.guestName ? e.guestName.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() : '?')}</div>${who}</div></td><td>${key}</td><td>${esc(doorLabel(e.door))}</td><td>${when}</td><td>${result}</td></tr>`;
   }).join('');
   document.getElementById('accessLogTable').style.display = log.length ? '' : 'none';
   document.getElementById('accessLogEmpty').style.display = log.length ? 'none' : 'block';
