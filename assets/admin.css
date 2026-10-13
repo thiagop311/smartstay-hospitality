@@ -163,6 +163,11 @@ button.status-pill { cursor: pointer; }
   .stat-grid { grid-template-columns: 1fr 1fr !important; gap: 14px; }
   .room-grid-admin { grid-template-columns: 1fr 1fr; }
 }
+/* tablets: only the page you're on keeps its label, so every section fits without scrolling sideways */
+@media (min-width: 601px) and (max-width: 880px) {
+  .sidebar-nav a:not(.active), .sidebar-bottom a { font-size: 0; padding: 9px 11px; gap: 0; }
+  .sidebar-nav a:not(.active) svg, .sidebar-bottom a svg { width: 20px; height: 20px; }
+}
 @media (max-width: 600px) {
   .sidebar-nav a, .sidebar-bottom a { font-size: 0; padding: 9px; gap: 0; }
   .sidebar-nav a svg, .sidebar-bottom a svg { width: 20px; height: 20px; }

@@ -420,7 +420,8 @@ function formatNumberPy(n) {
   const v = Math.round(Number(n) || 0);
   return (v < 0 ? '-' : '') + String(Math.abs(v)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
-function formatMoney(n) { return CURRENCY_SYMBOL + ' ' + formatNumberPy(n); }
+// (a non-breaking space keeps "Gs." and the number together on one line, even in narrow columns)
+function formatMoney(n) { return CURRENCY_SYMBOL + '\u00a0' + formatNumberPy(n); }
 // "40.000", "40000", "Gs. 40.000" -> 40000 (a comma starts decimals, which Gs. doesn't use)
 function parseMoney(raw) {
   const d = String(raw == null ? '' : raw).split(',')[0].replace(/\D/g, '');
@@ -1832,6 +1833,10 @@ function initAccountSecurityUi() {
   });
 }
 document.addEventListener('DOMContentLoaded', initAccountSecurityUi);
+// admin menu: when only the icons fit (small screens) a hover/long-press still names each section
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sidebar-nav a, .sidebar-bottom a').forEach(a => { if (!a.title) a.title = (a.textContent || '').trim(); });
+});
 
 function setCurrentStaffEmail(email) {
   if (SS_CLOUD) return; // the cloud session was already set when logging in
